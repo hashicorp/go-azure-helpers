@@ -48,7 +48,7 @@ func (a azureCliParsingAuth) build(b Builder) (authMethod, error) {
 }
 
 func (a azureCliParsingAuth) isApplicable(b Builder) bool {
-	return b.SupportsAzureCliCloudShellParsing
+	return b.SupportsAzureCliParsing
 }
 
 func (a azureCliParsingAuth) getAuthorizationToken(oauthConfig *adal.OAuthConfig, endpoint string) (*autorest.BearerAuthorizer, error) {

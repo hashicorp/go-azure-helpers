@@ -20,14 +20,14 @@ func TestAzureCLIParsingAuth_isApplicable(t *testing.T) {
 		{
 			Description: "Feature Toggled off",
 			Builder: Builder{
-				SupportsAzureCliCloudShellParsing: false,
+				SupportsAzureCliParsing: false,
 			},
 			Valid: false,
 		},
 		{
 			Description: "Feature Toggled on",
 			Builder: Builder{
-				SupportsAzureCliCloudShellParsing: true,
+				SupportsAzureCliParsing: true,
 			},
 			Valid: true,
 		},
