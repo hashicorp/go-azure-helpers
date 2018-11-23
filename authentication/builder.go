@@ -21,6 +21,9 @@ type Builder struct {
 	// Azure CLI Parsing / CloudShell Auth
 	SupportsAzureCliCloudShellParsing bool
 
+	// CloudShell Auth
+	SupportsCloudShell bool
+
 	// Managed Service Identity Auth
 	SupportsManagedServiceIdentity bool
 	MsiEndpoint                    string
@@ -52,6 +55,8 @@ func (b Builder) Build() (*Config, error) {
 		servicePrincipalClientCertificateAuth{},
 		servicePrincipalClientSecretAuth{},
 		managedServiceIdentityAuth{},
+		cloudShellAuth{},
+		// TODO: deprecate support for Azure CLI Parsing auth
 		azureCliParsingAuth{},
 	}
 
