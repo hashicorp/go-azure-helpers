@@ -58,7 +58,6 @@ func (a azureCliParsingAuth) getAuthorizationToken(oauthConfig *adal.OAuthConfig
 	}
 
 	err = spt.Refresh()
-
 	if err != nil {
 		return nil, fmt.Errorf("Error refreshing Service Principal Token: %+v", err)
 	}
