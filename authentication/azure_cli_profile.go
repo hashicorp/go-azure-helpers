@@ -32,12 +32,6 @@ func (a *azureCLIProfile) populateFields() error {
 		}
 	}
 
-	// now we know the Subscription ID & Tenant ID we can find the associated Client ID/Access Token
-	err := a.populateClientIdAndAccessToken()
-	if err != nil {
-		return err
-	}
-
 	// always pull the environment from the Azure CLI, since the Access Token's associated with it
 	return a.populateEnvironment()
 }
