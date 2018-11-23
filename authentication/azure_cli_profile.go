@@ -13,7 +13,6 @@ type azureCLIProfile struct {
 	subscriptionId  string
 	tenantId        string
 	accessToken     *adal.Token
-	usingCloudShell bool
 }
 
 func (a *azureCLIProfile) populateFields() error {
