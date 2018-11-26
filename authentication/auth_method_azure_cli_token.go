@@ -2,6 +2,7 @@ package authentication
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"os/exec"
 	"strings"
@@ -10,7 +11,6 @@ import (
 	"github.com/Azure/go-autorest/autorest/adal"
 	"github.com/Azure/go-autorest/autorest/azure/cli"
 	"github.com/hashicorp/go-multierror"
-	"github.com/hashicorp/packer/common/json"
 )
 
 type azureCliTokenAuth struct {
