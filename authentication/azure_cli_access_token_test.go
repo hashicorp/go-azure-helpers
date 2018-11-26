@@ -84,10 +84,6 @@ func TestAzureFindValidAccessTokenForTenant_ExpiringIn(t *testing.T) {
 		if token.ClientID != expectedToken.ClientID {
 			t.Fatalf("Expected the Client ID to be %q for minute %d but got %q", expectedToken.ClientID, minute, token.ClientID)
 		}
-
-		if token.IsCloudShell {
-			t.Fatalf("Expected `IsCloudShell` to be false for minute %d but got true", minute)
-		}
 	}
 }
 
@@ -134,41 +130,7 @@ func TestAzureFindValidAccessTokenForTenant_DifferentTenant(t *testing.T) {
 	}
 }
 
-func TestAzureFindValidAccessTokenForTenant_ValidFromCloudShell(t *testing.T) {
-	expirationDate := time.Now().Add(1 * time.Hour)
-	tenantId := "c056adac-c6a6-4ddf-ab20-0f26d47f7eea"
-	expectedToken := cli.Token{
-		ExpiresOn:   expirationDate.Format(time.RFC3339),
-		AccessToken: "7cabcf30-8dca-43f9-91e6-fd56dfb8632f",
-		TokenType:   "9b10b986-7a61-4542-8d5a-9fcd96112585",
-		Resource:    "https://management.core.windows.net/",
-		Authority:   tenantId,
-	}
-	tokens := []cli.Token{expectedToken}
-	token, err := findValidAccessTokenForTenant(tokens, tenantId)
-
-	if err != nil {
-		t.Fatalf("Expected no error to be returned but got %+v", err)
-	}
-
-	if token == nil {
-		t.Fatalf("Expected Token to have a value but it was nil")
-	}
-
-	if token.AccessToken.AccessToken != expectedToken.AccessToken {
-		t.Fatalf("Expected the Access Token to be %q but got %q", expectedToken.AccessToken, token.AccessToken.AccessToken)
-	}
-
-	if token.ClientID != expectedToken.ClientID {
-		t.Fatalf("Expected the Client ID to be %q but got %q", expectedToken.ClientID, token.ClientID)
-	}
-
-	if !token.IsCloudShell {
-		t.Fatalf("Expected `IsCloudShell` to be true but got false")
-	}
-}
-
-func TestAzureFindValidAccessTokenForTenant_ValidFromAzureCLI(t *testing.T) {
+func TestAzureFindValidAccessTokenForTenant_Valid(t *testing.T) {
 	expirationDate := time.Now().Add(1 * time.Hour)
 	tenantId := "c056adac-c6a6-4ddf-ab20-0f26d47f7eea"
 	expectedToken := cli.Token{
@@ -196,10 +158,6 @@ func TestAzureFindValidAccessTokenForTenant_ValidFromAzureCLI(t *testing.T) {
 
 	if token.ClientID != expectedToken.ClientID {
 		t.Fatalf("Expected the Client ID to be %q but got %q", expectedToken.ClientID, token.ClientID)
-	}
-
-	if token.IsCloudShell {
-		t.Fatalf("Expected `IsCloudShell` to be false but got true")
 	}
 }
 

@@ -47,7 +47,6 @@ func (a *azureCLIProfile) populateClientIdAndAccessToken() error {
 	token := *validToken
 	a.accessToken = token.AccessToken
 	a.clientId = token.ClientID
-	a.usingCloudShell = token.IsCloudShell
 
 	return nil
 }

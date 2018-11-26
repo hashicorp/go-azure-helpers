@@ -18,8 +18,8 @@ type Builder struct {
 	// only applicable for Azure Stack at this time.
 	CustomResourceManagerEndpoint string
 
-	// Azure CLI Parsing / CloudShell Auth
-	SupportsAzureCliCloudShellParsing bool
+	// Azure CLI Parsing
+	SupportsAzureCliParsing bool
 
 	// Managed Service Identity Auth
 	SupportsManagedServiceIdentity bool
