@@ -46,7 +46,6 @@ func (a *azureCLIProfile) populateClientId() error {
 
 	token := *validToken
 	a.clientId = token.ClientID
-	a.usingCloudShell = token.IsCloudShell
 
 	return nil
 }
