@@ -15,7 +15,7 @@ type azureCliAccessToken struct {
 	AccessToken  *adal.Token
 }
 
-func findValidAccessTokenForTenant(tokens []cli.Token, tenantId string) (*azureCliAccessToken, error) {
+func findValidAccessTokenForTenant(tokens []cli.Token, tenantId string, allowExpired bool) (*azureCliAccessToken, error) {
 	for _, accessToken := range tokens {
 		token, err := accessToken.ToADALToken()
 		if err != nil {
@@ -27,7 +27,7 @@ func findValidAccessTokenForTenant(tokens []cli.Token, tenantId string) (*azureC
 			return nil, fmt.Errorf("Error parsing expiration date: %q", accessToken.ExpiresOn)
 		}
 
-		if expirationDate.UTC().Before(time.Now().UTC()) {
+		if expirationDate.UTC().Before(time.Now().UTC()) && !allowExpired {
 			log.Printf("[DEBUG] Token %q has expired", token.AccessToken)
 			continue
 		}

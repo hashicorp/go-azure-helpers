@@ -21,6 +21,9 @@ type Builder struct {
 	// Azure CLI Parsing
 	SupportsAzureCliParsing bool
 
+	// Azure CLI Tokens Auth
+	SupportsAzureCliToken bool
+
 	// Managed Service Identity Auth
 	SupportsManagedServiceIdentity bool
 	MsiEndpoint                    string
@@ -52,6 +55,7 @@ func (b Builder) Build() (*Config, error) {
 		servicePrincipalClientCertificateAuth{},
 		servicePrincipalClientSecretAuth{},
 		managedServiceIdentityAuth{},
+		azureCliTokenAuth{},
 		azureCliParsingAuth{},
 	}
 
