@@ -16,7 +16,7 @@ func TestParseStorageAccountConnectionString(t *testing.T) {
 	}
 
 	for _, test := range testCases {
-		result, err := ParseStorageAccountConnectionString(test.input)
+		result, err := ParseAccountSASConnectionString(test.input)
 		if err != nil {
 			t.Fatalf("Failed to parse resource type string: %s, %q", test.input, result)
 		}
@@ -76,7 +76,7 @@ func TestComputeSASToken(t *testing.T) {
 	}
 
 	for _, test := range testCases {
-		computedToken, err := ComputeSASToken(test.accountName,
+		computedToken, err := ComputeAccountSASToken(test.accountName,
 			test.accountKey,
 			test.permissions,
 			test.services,
