@@ -82,10 +82,15 @@ func ParseAccountSASConnectionString(connString string) (map[string]string, erro
 	for _, atoken := range tokens {
 		// The individual k-v are separated by an equals sign.
 		kv := strings.SplitN(atoken, "=", 2)
+		if len(kv) != 2 {
+			return nil, fmt.Errorf("[ERROR] token `%s` is an invalid key=pair (connection string %s)", atoken, connString)
+		}
+
 		key := kv[0]
 		val := kv[1]
+
 		if _, present := validKeys[key]; !present {
-			return nil, fmt.Errorf("[ERROR] Unknown Key: %s", key)
+			return nil, fmt.Errorf("[ERROR] Unknown Key `%s` in connection string %s", key, connString)
 		}
 		kvp[key] = val
 	}
