@@ -7,17 +7,33 @@ func TestParseStorageAccountConnectionString(t *testing.T) {
 		input               string
 		expectedAccountName string
 		expectedAccountKey  string
+		expectedError       bool
 	}{
 		{
 			"DefaultEndpointsProtocol=https;AccountName=azurermtestsa0;AccountKey=2vJrjEyL4re2nxCEg590wJUUC7PiqqrDHjAN5RU304FNUQieiEwS2bfp83O0v28iSfWjvYhkGmjYQAdd9x+6nw==;EndpointSuffix=core.windows.net",
 			"azurermtestsa0",
 			"2vJrjEyL4re2nxCEg590wJUUC7PiqqrDHjAN5RU304FNUQieiEwS2bfp83O0v28iSfWjvYhkGmjYQAdd9x+6nw==",
+			false,
+		},
+		{
+			"DefaultEndpointsProtocol=https;AccountName=azurermtestsa0;AccountKey=2vJrjEyL4re2nxCEg590wJUUC7PiqqrDHjAN5RU304FNUQieiEwS2bfp83O0v28iSfWjvYhkGmjYQAdd9x+6nw==;EndpointSuffix",
+			"",
+			"",
+			true,
 		},
 	}
 
 	for _, test := range testCases {
 		result, err := ParseAccountSASConnectionString(test.input)
-		if err != nil {
+
+		if test.expectedError {
+			if err == nil {
+				t.Fatalf("Expected error for %s: %q", test.input, err)
+			}
+			return
+		}
+
+		if ! test.expectedError && err != nil {
 			t.Fatalf("Failed to parse resource type string: %s, %q", test.input, result)
 		}
 
