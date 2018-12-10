@@ -83,7 +83,7 @@ func ParseAccountSASConnectionString(connString string) (map[string]string, erro
 		// The individual k-v are separated by an equals sign.
 		kv := strings.SplitN(atoken, "=", 2)
 		if len(kv) != 2 {
-			return nil, fmt.Errorf("[ERROR] token `%s` is an invlaid key=pair (connection string %s)", atoken, connString)
+			return nil, fmt.Errorf("[ERROR] token `%s` is an invalid key=pair (connection string %s)", atoken, connString)
 		}
 
 		key := kv[0]
