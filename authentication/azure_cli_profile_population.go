@@ -39,7 +39,7 @@ func (a *azureCLIProfile) populateClientId() error {
 		return fmt.Errorf("No Authorization Tokens were found - please ensure the Azure CLI is installed and then log-in with `az login`.")
 	}
 
-	validToken, err := findValidAccessTokenForTenant(tokens, a.tenantId, true)
+	validToken, err := findValidAccessTokenForTenant(tokens, a.tenantId)
 	if err != nil {
 		return fmt.Errorf("No Authorization Tokens were found - please re-authenticate using `az login`.")
 	}
