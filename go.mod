@@ -7,5 +7,6 @@ require (
 	github.com/dimchansky/utfbom v1.0.0 // indirect
 	github.com/hashicorp/go-multierror v1.0.0
 	github.com/mitchellh/go-homedir v1.0.0 // indirect
+	github.com/stretchr/testify v1.3.0 // indirect
 	golang.org/x/crypto v0.0.0-20181112202954-3d3f9f413869
 )
