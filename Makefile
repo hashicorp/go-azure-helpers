@@ -1,7 +1,9 @@
+GO111MODULE=on
+
 default: test
 
 dependencies:
-	GO111MODULE=on go mod download
+	go mod download
 
 test: dependencies
 	go vet ./...
