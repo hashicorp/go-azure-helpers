@@ -14,7 +14,7 @@ import (
 func DetermineResourceProvidersRequiringRegistration(availableResourceProviders []resources.Provider, requiredResourceProviders map[string]struct{}) map[string]struct{} {
 	providers := make(map[string]struct{})
 
-	// filter out any providers already registered
+	// filter out any providers already registered and not in the required list.
 	for _, p := range availableResourceProviders {
 		// Skip it if it's not in the required list.
 		if _, ok := requiredResourceProviders[*p.Namespace]; !ok {
