@@ -15,6 +15,7 @@ import (
 
 type azureCliTokenAuth struct {
 	profile *azureCLIProfile
+	servicePrincipalAuthDocsLink string
 }
 
 func (a azureCliTokenAuth) build(b Builder) (authMethod, error) {
@@ -25,6 +26,7 @@ func (a azureCliTokenAuth) build(b Builder) (authMethod, error) {
 			subscriptionId: b.SubscriptionID,
 			tenantId:       b.TenantID,
 		},
+		servicePrincipalAuthDocsLink: b.ClientSecretDocsLink,
 	}
 	profilePath, err := cli.ProfilePath()
 	if err != nil {
@@ -44,9 +46,9 @@ func (a azureCliTokenAuth) build(b Builder) (authMethod, error) {
 		return nil, fmt.Errorf(`Authenticating using the Azure CLI is only supported as a User (not a Service Principal).
 
 To authenticate to Azure using a Service Principal, you can use the separate 'Authenticate using a Service Principal'
-auth method - instructions for which can be found in the documentation.
+auth method - instructions for which can be found here: %s
 
-Alternatively you can authenticate using the Azure CLI by using a User Account.`)
+Alternatively you can authenticate using the Azure CLI by using a User Account.`, auth.servicePrincipalAuthDocsLink)
 	}
 
 	err = auth.profile.populateFields()
