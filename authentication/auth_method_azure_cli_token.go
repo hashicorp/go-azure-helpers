@@ -41,7 +41,12 @@ func (a azureCliTokenAuth) build(b Builder) (authMethod, error) {
 	// Authenticating as a Service Principal doesn't return all of the information we need for authentication purposes
 	// as such Service Principal authentication is supported using the specific auth method
 	if authenticatedAsAUser := auth.profile.verifyAuthenticatedAsAUser(); !authenticatedAsAUser {
-		return nil, fmt.Errorf("Authenticating using the Azure CLI is only supported as a User (not a Service Principal)")
+		return nil, fmt.Errorf(`Authenticating using the Azure CLI is only supported as a User (not a Service Principal).
+
+To authenticate to Azure using a Service Principal, you can use the separate 'Authenticate using a Service Principal'
+auth method - instructions for which can be found in the documentation.
+
+Alternatively you can authenticate using the Azure CLI by using a User Account.`)
 	}
 
 	err = auth.profile.populateFields()
