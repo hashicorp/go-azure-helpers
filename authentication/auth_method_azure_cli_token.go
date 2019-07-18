@@ -89,6 +89,11 @@ func (a azureCliTokenAuth) getAuthorizationToken(sender autorest.Sender, oauthCo
 	return auth, nil
 }
 
+func (a azureCliTokenAuth) getMultiTenantAuthorizationToken(sender autorest.Sender, oauthConfig *adal.MultiTenantOAuthConfig, endpoint string) (*autorest.MultiTenantServicePrincipalTokenAuthorizer, error) {
+	return nil, fmt.Errorf("Multi-Tenant Authorization is not supported whith %s", a.name())
+}
+
+
 func (a azureCliTokenAuth) name() string {
 	return "Obtaining a token from the Azure CLI"
 }

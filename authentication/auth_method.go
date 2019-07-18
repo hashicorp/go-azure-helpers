@@ -12,6 +12,8 @@ type authMethod interface {
 
 	getAuthorizationToken(sender autorest.Sender, oauthConfig *adal.OAuthConfig, endpoint string) (*autorest.BearerAuthorizer, error)
 
+	getMultiTenantAuthorizationToken(sender autorest.Sender, oauthConfig *adal.MultiTenantOAuthConfig, endpoint string) (*autorest.MultiTenantServicePrincipalTokenAuthorizer, error)
+
 	name() string
 
 	populateConfig(c *Config) error

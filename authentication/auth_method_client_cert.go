@@ -69,6 +69,10 @@ func (a servicePrincipalClientCertificateAuth) getAuthorizationToken(sender auto
 	return auth, nil
 }
 
+func (a servicePrincipalClientCertificateAuth) getMultiTenantAuthorizationToken(sender autorest.Sender, oauthConfig *adal.MultiTenantOAuthConfig, endpoint string) (*autorest.MultiTenantServicePrincipalTokenAuthorizer, error) {
+	return nil, fmt.Errorf("Multi-Tenant Authorization is not supported whith %s", a.name())
+}
+
 func (a servicePrincipalClientCertificateAuth) populateConfig(c *Config) error {
 	c.AuthenticatedAsAServicePrincipal = true
 	return nil

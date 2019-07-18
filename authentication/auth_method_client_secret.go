@@ -40,8 +40,22 @@ func (a servicePrincipalClientSecretAuth) getAuthorizationToken(sender autorest.
 	}
 	spt.SetSender(sender)
 
-	auth := autorest.NewBearerAuthorizer(spt)
-	return auth, nil
+	return autorest.NewBearerAuthorizer(spt), nil
+}
+
+func (a servicePrincipalClientSecretAuth) getMultiTenantAuthorizationToken(sender autorest.Sender, oauthConfig *adal.MultiTenantOAuthConfig, endpoint string) (*autorest.MultiTenantServicePrincipalTokenAuthorizer, error) {
+	spt, err := adal.NewMultiTenantServicePrincipalToken(*oauthConfig, a.clientId, a.clientSecret, endpoint)
+	if err != nil {
+		return nil, err
+	}
+
+	spt.PrimaryToken.SetSender(sender)
+	for _, t := range spt.AuxiliaryTokens {
+		t.SetSender(sender)
+	}
+
+	auth := autorest.NewMultiTenantServicePrincipalTokenAuthorizer(spt)
+	return &auth, nil
 }
 
 func (a servicePrincipalClientSecretAuth) populateConfig(c *Config) error {

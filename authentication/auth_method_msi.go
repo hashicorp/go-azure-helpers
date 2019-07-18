@@ -51,6 +51,10 @@ func (a managedServiceIdentityAuth) getAuthorizationToken(sender autorest.Sender
 	return auth, nil
 }
 
+func (a managedServiceIdentityAuth) getMultiTenantAuthorizationToken(sender autorest.Sender, oauthConfig *adal.MultiTenantOAuthConfig, endpoint string) (*autorest.MultiTenantServicePrincipalTokenAuthorizer, error) {
+	return nil, fmt.Errorf("Multi-Tenant Authorization is not supported whith %s", a.name())
+}
+
 func (a managedServiceIdentityAuth) populateConfig(c *Config) error {
 	// nothing to populate back
 	return nil
