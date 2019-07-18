@@ -2,7 +2,6 @@ package authentication
 
 import (
 	"github.com/Azure/go-autorest/autorest"
-	"github.com/Azure/go-autorest/autorest/adal"
 )
 
 type authMethod interface {
@@ -10,9 +9,7 @@ type authMethod interface {
 
 	isApplicable(b Builder) bool
 
-	getAuthorizationToken(sender autorest.Sender, oauthConfig *adal.OAuthConfig, endpoint string) (*autorest.BearerAuthorizer, error)
-
-	getMultiTenantAuthorizationToken(sender autorest.Sender, oauthConfig *adal.MultiTenantOAuthConfig, endpoint string) (*autorest.MultiTenantServicePrincipalTokenAuthorizer, error)
+	getAuthorizationToken(sender autorest.Sender, oauthConfig *MultiOAuth, endpoint string) (autorest.Authorizer, error)
 
 	name() string
 

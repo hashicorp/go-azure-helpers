@@ -55,6 +55,7 @@ func (b Builder) Build() (*Config, error) {
 	// since the Azure CLI Parsing should always be the last thing checked
 	supportedAuthenticationMethods := []authMethod{
 		servicePrincipalClientCertificateAuth{},
+		servicePrincipalClientSecretMultitenantAuth{},
 		servicePrincipalClientSecretAuth{},
 		managedServiceIdentityAuth{},
 		azureCliTokenAuth{},
@@ -82,8 +83,7 @@ func (b Builder) Build() (*Config, error) {
 
 			// todo why isn't this just auth.validate? extra function seems pointless as it is invalid until after we build irt
 			// and then its assured to be valid?
-			config.authMethod = auth
-			return config.validate()
+			return &config, config.authMethod.validate()
 		}
 	}
 

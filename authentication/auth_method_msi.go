@@ -39,7 +39,7 @@ func (a managedServiceIdentityAuth) name() string {
 	return "Managed Service Identity"
 }
 
-func (a managedServiceIdentityAuth) getAuthorizationToken(sender autorest.Sender, oauthConfig *adal.OAuthConfig, endpoint string) (*autorest.BearerAuthorizer, error) {
+func (a managedServiceIdentityAuth) getAuthorizationToken(sender autorest.Sender, oauth *MultiOAuth, endpoint string) (autorest.Authorizer, error) {
 	spt, err := adal.NewServicePrincipalTokenFromMSI(a.endpoint, endpoint)
 	if err != nil {
 		return nil, err
@@ -49,10 +49,6 @@ func (a managedServiceIdentityAuth) getAuthorizationToken(sender autorest.Sender
 
 	auth := autorest.NewBearerAuthorizer(spt)
 	return auth, nil
-}
-
-func (a managedServiceIdentityAuth) getMultiTenantAuthorizationToken(sender autorest.Sender, oauthConfig *adal.MultiTenantOAuthConfig, endpoint string) (*autorest.MultiTenantServicePrincipalTokenAuthorizer, error) {
-	return nil, fmt.Errorf("Multi-Tenant Authorization is not supported whith %s", a.name())
 }
 
 func (a managedServiceIdentityAuth) populateConfig(c *Config) error {

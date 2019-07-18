@@ -8,15 +8,15 @@ import (
 	"github.com/hashicorp/go-multierror"
 )
 
-type servicePrincipalClientSecretAuth struct {
+type servicePrincipalClientSecretMultitenantAuth struct {
 	clientId       string
 	clientSecret   string
 	subscriptionId string
 	tenantId       string
 }
 
-func (a servicePrincipalClientSecretAuth) build(b Builder) (authMethod, error) {
-	method := servicePrincipalClientSecretAuth{
+func (a servicePrincipalClientSecretMultitenantAuth) build(b Builder) (authMethod, error) {
+	method := servicePrincipalClientSecretMultitenantAuth{
 		clientId:       b.ClientID,
 		clientSecret:   b.ClientSecret,
 		subscriptionId: b.SubscriptionID,
@@ -25,34 +25,35 @@ func (a servicePrincipalClientSecretAuth) build(b Builder) (authMethod, error) {
 	return method, nil
 }
 
-func (a servicePrincipalClientSecretAuth) isApplicable(b Builder) bool {
+func (a servicePrincipalClientSecretMultitenantAuth) isApplicable(b Builder) bool {
 	return b.SupportsClientSecretAuth && b.ClientSecret != ""
 }
 
-func (a servicePrincipalClientSecretAuth) name() string {
+func (a servicePrincipalClientSecretMultitenantAuth) name() string {
 	return "Service Principal / Client Secret"
 }
 
-func (a servicePrincipalClientSecretAuth) getAuthorizationToken(sender autorest.Sender, oauth *MultiOAuth, endpoint string) (autorest.Authorizer, error) {
-	if oauth.OAuth == nil {
-		return nil, fmt.Errorf("Error MultiOAuth did not contain a regular oauth token")
-	}
-
-	spt, err := adal.NewServicePrincipalToken(*oauth.OAuth, a.clientId, a.clientSecret, endpoint)
+func (a servicePrincipalClientSecretMultitenantAuth) getAuthorizationToken(sender autorest.Sender, oauth *MultiOAuth, endpoint string) (autorest.Authorizer, error) {
+	spt, err := adal.NewMultiTenantServicePrincipalToken(*oauth.MultiTenantOauth, a.clientId, a.clientSecret, endpoint)
 	if err != nil {
 		return nil, err
 	}
-	spt.SetSender(sender)
 
-	return autorest.NewBearerAuthorizer(spt), nil
+	spt.PrimaryToken.SetSender(sender)
+	for _, t := range spt.AuxiliaryTokens {
+		t.SetSender(sender)
+	}
+
+	auth := autorest.NewMultiTenantServicePrincipalTokenAuthorizer(spt)
+	return auth, nil
 }
 
-func (a servicePrincipalClientSecretAuth) populateConfig(c *Config) error {
+func (a servicePrincipalClientSecretMultitenantAuth) populateConfig(c *Config) error {
 	c.AuthenticatedAsAServicePrincipal = true
 	return nil
 }
 
-func (a servicePrincipalClientSecretAuth) validate() error {
+func (a servicePrincipalClientSecretMultitenantAuth) validate() error {
 	var err *multierror.Error
 
 	fmtErrorMessage := "A %s must be configured when authenticating as a Service Principal using a Client Secret."

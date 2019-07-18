@@ -68,7 +68,11 @@ func (a azureCliTokenAuth) isApplicable(b Builder) bool {
 	return b.SupportsAzureCliToken
 }
 
-func (a azureCliTokenAuth) getAuthorizationToken(sender autorest.Sender, oauthConfig *adal.OAuthConfig, endpoint string) (*autorest.BearerAuthorizer, error) {
+func (a azureCliTokenAuth) getAuthorizationToken(sender autorest.Sender, oauth *MultiOAuth, endpoint string) (autorest.Authorizer, error) {
+	if oauth.OAuth == nil {
+		return nil, fmt.Errorf("Error MultiOAuth did not contain a regular oauth token")
+	}
+
 	// the Azure CLI appears to cache these, so to maintain compatibility with the interface this method is intentionally not on the pointer
 	token, err := obtainAuthorizationToken(endpoint, a.profile.subscriptionId)
 	if err != nil {
@@ -80,7 +84,7 @@ func (a azureCliTokenAuth) getAuthorizationToken(sender autorest.Sender, oauthCo
 		return nil, fmt.Errorf("Error converting Authorization Token to an ADAL Token: %s", err)
 	}
 
-	spt, err := adal.NewServicePrincipalTokenFromManualToken(*oauthConfig, a.profile.clientId, endpoint, adalToken)
+	spt, err := adal.NewServicePrincipalTokenFromManualToken(*oauth.OAuth, a.profile.clientId, endpoint, adalToken)
 	if err != nil {
 		return nil, err
 	}
@@ -88,11 +92,6 @@ func (a azureCliTokenAuth) getAuthorizationToken(sender autorest.Sender, oauthCo
 	auth := autorest.NewBearerAuthorizer(spt)
 	return auth, nil
 }
-
-func (a azureCliTokenAuth) getMultiTenantAuthorizationToken(sender autorest.Sender, oauthConfig *adal.MultiTenantOAuthConfig, endpoint string) (*autorest.MultiTenantServicePrincipalTokenAuthorizer, error) {
-	return nil, fmt.Errorf("Multi-Tenant Authorization is not supported whith %s", a.name())
-}
-
 
 func (a azureCliTokenAuth) name() string {
 	return "Obtaining a token from the Azure CLI"

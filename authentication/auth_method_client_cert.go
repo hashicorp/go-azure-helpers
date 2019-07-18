@@ -41,7 +41,11 @@ func (a servicePrincipalClientCertificateAuth) name() string {
 	return "Service Principal / Client Certificate"
 }
 
-func (a servicePrincipalClientCertificateAuth) getAuthorizationToken(sender autorest.Sender, oauthConfig *adal.OAuthConfig, endpoint string) (*autorest.BearerAuthorizer, error) {
+func (a servicePrincipalClientCertificateAuth) getAuthorizationToken(sender autorest.Sender, oauth *MultiOAuth, endpoint string) (autorest.Authorizer, error) {
+	if oauth.OAuth == nil {
+		return nil, fmt.Errorf("Error MultiOAuth did not contain a regular oauth token")
+	}
+
 	certificateData, err := ioutil.ReadFile(a.clientCertPath)
 	if err != nil {
 		return nil, fmt.Errorf("Error reading Client Certificate %q: %v", a.clientCertPath, err)
@@ -53,7 +57,7 @@ func (a servicePrincipalClientCertificateAuth) getAuthorizationToken(sender auto
 		return nil, fmt.Errorf("Error decoding pkcs12 certificate: %v", err)
 	}
 
-	spt, err := adal.NewServicePrincipalTokenFromCertificate(*oauthConfig, a.clientId, certificate, rsaPrivateKey, endpoint)
+	spt, err := adal.NewServicePrincipalTokenFromCertificate(*oauth.OAuth, a.clientId, certificate, rsaPrivateKey, endpoint)
 	if err != nil {
 		return nil, err
 	}
@@ -67,10 +71,6 @@ func (a servicePrincipalClientCertificateAuth) getAuthorizationToken(sender auto
 
 	auth := autorest.NewBearerAuthorizer(spt)
 	return auth, nil
-}
-
-func (a servicePrincipalClientCertificateAuth) getMultiTenantAuthorizationToken(sender autorest.Sender, oauthConfig *adal.MultiTenantOAuthConfig, endpoint string) (*autorest.MultiTenantServicePrincipalTokenAuthorizer, error) {
-	return nil, fmt.Errorf("Multi-Tenant Authorization is not supported whith %s", a.name())
 }
 
 func (a servicePrincipalClientCertificateAuth) populateConfig(c *Config) error {

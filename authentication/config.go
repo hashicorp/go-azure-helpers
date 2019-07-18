@@ -70,34 +70,6 @@ func (c Config) GetMultiOAuthConfig(activeDirectoryEndpoint string) (*MultiOAuth
 }
 
 // GetAuthorizationToken returns an authorization token for the authentication method defined in the Config
-func (c Config) GetAuthorizationToken(sender autorest.Sender, oauth *adal.OAuthConfig, endpoint string) (*autorest.BearerAuthorizer, error) {
+func (c Config) GetAuthorizationToken(sender autorest.Sender, oauth *MultiOAuth, endpoint string) (autorest.Authorizer, error) {
 	return c.authMethod.getAuthorizationToken(sender, oauth, endpoint)
-}
-
-// GetMultiTenantAuthorizationToken returns an authorization token for the authentication method defined in the Config
-func (c Config) GetMultiTenantAuthorizationToken(sender autorest.Sender, oauth *adal.MultiTenantOAuthConfig, endpoint string) (*autorest.MultiTenantServicePrincipalTokenAuthorizer, error) {
-	return c.authMethod.getMultiTenantAuthorizationToken(sender, oauth, endpoint)
-}
-
-
-func (c Config) GetAuthorizationTokenFromMultiOAuth(sender autorest.Sender, oauth *MultiOAuth, endpoint string) (autorest.Authorizer, error) {
-	if oauth.OAuth != nil {
-		auth, err := c.authMethod.getAuthorizationToken(sender, oauth.OAuth, endpoint)
-		return auth, err
-	} else if oauth.MultiTenantOauth != nil {
-		auth, err := c.authMethod.getMultiTenantAuthorizationToken(sender, oauth.MultiTenantOauth, endpoint)
-		return *auth, err
-	}
-
-	return nil, fmt.Errorf("Unable to get Authorization Token: no OAuth or MultiTenantOauth specified")
-}
-
-
-func (c Config) validate() (*Config, error) {
-	err := c.authMethod.validate()
-	if err != nil {
-		return nil, err
-	}
-
-	return &c, nil
 }
