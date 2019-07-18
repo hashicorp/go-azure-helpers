@@ -4,16 +4,17 @@ import "testing"
 
 func TestServicePrincipalClientSecretMultiTenantAuth_builder(t *testing.T) {
 	builder := Builder{
-		ClientID:       "some-client-id",
-		ClientSecret:   "some-client-secret",
-		SubscriptionID: "some-subscription-id",
-		TenantID:       "some-tenant-id",
+		ClientID:           "some-client-id",
+		ClientSecret:       "some-client-secret",
+		SubscriptionID:     "some-subscription-id",
+		TenantID:           "some-tenant-id",
+		AuxiliaryTenantIDs: []string{"aux-tenant-id1", "aux-tenant-id2"},
 	}
-	config, err := servicePrincipalClientSecretAuth{}.build(builder)
+	config, err := servicePrincipalClientSecretMultiTenantAuth{}.build(builder)
 	if err != nil {
 		t.Fatalf("Error building client secret auth: %s", err)
 	}
-	servicePrincipal := config.(servicePrincipalClientSecretAuth)
+	servicePrincipal := config.(servicePrincipalClientSecretMultiTenantAuth)
 
 	if builder.ClientID != servicePrincipal.clientId {
 		t.Fatalf("Expected Client ID to be %q but got %q", builder.ClientID, servicePrincipal.clientId)
@@ -29,6 +30,18 @@ func TestServicePrincipalClientSecretMultiTenantAuth_builder(t *testing.T) {
 
 	if builder.TenantID != servicePrincipal.tenantId {
 		t.Fatalf("Expected Tenant ID to be %q but got %q", builder.TenantID, servicePrincipal.tenantId)
+	}
+
+	if builder.AuxiliaryTenantIDs[0] != servicePrincipal.auxiliaryTenantIDs[0] {
+		t.Fatalf("Expected Auxiliary Tenant ID 1 to be %q but got %q", builder.TenantID[0], servicePrincipal.tenantId[0])
+	}
+
+	if builder.AuxiliaryTenantIDs[1] != servicePrincipal.auxiliaryTenantIDs[1] {
+		t.Fatalf("Expected Auxiliary Tenant ID 2 to be %q but got %q", builder.TenantID[1], servicePrincipal.tenantId[1])
+	}
+
+	if len(builder.AuxiliaryTenantIDs) != len(servicePrincipal.auxiliaryTenantIDs) {
+		t.Fatalf("Expected len(Auxiliary Tenant ID) to be %q but got %q", len(builder.TenantID), len(servicePrincipal.tenantId))
 	}
 }
 
@@ -65,9 +78,28 @@ func TestServicePrincipalClientSecretMultiTenantAuth_isApplicable(t *testing.T) 
 			Valid: false,
 		},
 		{
+			Description: "Multi Tenant not enabled",
+			Builder: Builder{
+				SupportsClientSecretAuth: true,
+				ClientSecret:             "I turned myself into a pickle morty!",
+			},
+			Valid: false,
+		},
+		{
+			Description: "Missing Auxiliary Tenants",
+			Builder: Builder{
+				SupportsClientSecretAuth: true,
+				SupportsAuxiliaryTenants: true,
+				ClientSecret:             "I turned myself into a pickle morty!",
+			},
+			Valid: false,
+		},
+		{
 			Description: "Valid configuration",
 			Builder: Builder{
 				SupportsClientSecretAuth: true,
+				SupportsAuxiliaryTenants: true,
+				AuxiliaryTenantIDs:       []string{"aux-tenant-id1", "aux-tenant-id2"},
 				ClientSecret:             "I turned myself into a pickle morty!",
 			},
 			Valid: true,
@@ -75,7 +107,7 @@ func TestServicePrincipalClientSecretMultiTenantAuth_isApplicable(t *testing.T) 
 	}
 
 	for _, v := range cases {
-		applicable := servicePrincipalClientSecretAuth{}.isApplicable(v.Builder)
+		applicable := servicePrincipalClientSecretMultiTenantAuth{}.isApplicable(v.Builder)
 		if v.Valid != applicable {
 			t.Fatalf("Expected %q to be %t but got %t", v.Description, v.Valid, applicable)
 		}
@@ -84,7 +116,7 @@ func TestServicePrincipalClientSecretMultiTenantAuth_isApplicable(t *testing.T) 
 
 func TestServicePrincipalClientSecretMultiTenantAuth_populateConfig(t *testing.T) {
 	config := &Config{}
-	err := servicePrincipalClientSecretAuth{}.populateConfig(config)
+	err := servicePrincipalClientSecretMultiTenantAuth{}.populateConfig(config)
 	if err != nil {
 		t.Fatalf("Error populating config: %s", err)
 	}
@@ -97,17 +129,17 @@ func TestServicePrincipalClientSecretMultiTenantAuth_populateConfig(t *testing.T
 func TestServicePrincipalClientSecretMultiTenantAuth_validate(t *testing.T) {
 	cases := []struct {
 		Description string
-		Config      servicePrincipalClientSecretAuth
+		Config      servicePrincipalClientSecretMultiTenantAuth
 		ExpectError bool
 	}{
 		{
 			Description: "Empty Configuration",
-			Config:      servicePrincipalClientSecretAuth{},
+			Config:      servicePrincipalClientSecretMultiTenantAuth{},
 			ExpectError: true,
 		},
 		{
 			Description: "Missing Client ID",
-			Config: servicePrincipalClientSecretAuth{
+			Config: servicePrincipalClientSecretMultiTenantAuth{
 				subscriptionId: "8e8b5e02-5c13-4822-b7dc-4232afb7e8c2",
 				clientSecret:   "Does Hammer Time have Daylight Savings Time?",
 				tenantId:       "9834f8d0-24b3-41b7-8b8d-c611c461a129",
@@ -116,7 +148,7 @@ func TestServicePrincipalClientSecretMultiTenantAuth_validate(t *testing.T) {
 		},
 		{
 			Description: "Missing Subscription ID",
-			Config: servicePrincipalClientSecretAuth{
+			Config: servicePrincipalClientSecretMultiTenantAuth{
 				clientId:     "62e73395-5017-43b6-8ebf-d6c30a514cf1",
 				clientSecret: "Does Hammer Time have Daylight Savings Time?",
 				tenantId:     "9834f8d0-24b3-41b7-8b8d-c611c461a129",
@@ -125,7 +157,7 @@ func TestServicePrincipalClientSecretMultiTenantAuth_validate(t *testing.T) {
 		},
 		{
 			Description: "Missing Client Secret",
-			Config: servicePrincipalClientSecretAuth{
+			Config: servicePrincipalClientSecretMultiTenantAuth{
 				clientId:       "62e73395-5017-43b6-8ebf-d6c30a514cf1",
 				subscriptionId: "8e8b5e02-5c13-4822-b7dc-4232afb7e8c2",
 				tenantId:       "9834f8d0-24b3-41b7-8b8d-c611c461a129",
@@ -134,7 +166,16 @@ func TestServicePrincipalClientSecretMultiTenantAuth_validate(t *testing.T) {
 		},
 		{
 			Description: "Missing Tenant ID",
-			Config: servicePrincipalClientSecretAuth{
+			Config: servicePrincipalClientSecretMultiTenantAuth{
+				clientId:       "62e73395-5017-43b6-8ebf-d6c30a514cf1",
+				subscriptionId: "8e8b5e02-5c13-4822-b7dc-4232afb7e8c2",
+				clientSecret:   "Does Hammer Time have Daylight Savings Time?",
+			},
+			ExpectError: true,
+		},
+		{
+			Description: "Missing Auxiliary Tenants ID",
+			Config: servicePrincipalClientSecretMultiTenantAuth{
 				clientId:       "62e73395-5017-43b6-8ebf-d6c30a514cf1",
 				subscriptionId: "8e8b5e02-5c13-4822-b7dc-4232afb7e8c2",
 				clientSecret:   "Does Hammer Time have Daylight Savings Time?",
@@ -143,11 +184,12 @@ func TestServicePrincipalClientSecretMultiTenantAuth_validate(t *testing.T) {
 		},
 		{
 			Description: "Valid Configuration",
-			Config: servicePrincipalClientSecretAuth{
-				clientId:       "62e73395-5017-43b6-8ebf-d6c30a514cf1",
-				subscriptionId: "8e8b5e02-5c13-4822-b7dc-4232afb7e8c2",
-				clientSecret:   "Does Hammer Time have Daylight Savings Time?",
-				tenantId:       "9834f8d0-24b3-41b7-8b8d-c611c461a129",
+			Config: servicePrincipalClientSecretMultiTenantAuth{
+				clientId:           "62e73395-5017-43b6-8ebf-d6c30a514cf1",
+				subscriptionId:     "8e8b5e02-5c13-4822-b7dc-4232afb7e8c2",
+				clientSecret:       "Does Hammer Time have Daylight Savings Time?",
+				tenantId:           "9834f8d0-24b3-41b7-8b8d-c611c461a129",
+				auxiliaryTenantIDs: []string{"9834f8d0-0707-1984-bd35-c611c461a129", "9834f8d0-1984-0707-bd35-c611c461a129"},
 			},
 			ExpectError: false,
 		},

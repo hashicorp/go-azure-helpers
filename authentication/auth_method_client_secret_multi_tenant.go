@@ -58,7 +58,7 @@ func (a servicePrincipalClientSecretMultiTenantAuth) populateConfig(c *Config) e
 func (a servicePrincipalClientSecretMultiTenantAuth) validate() error {
 	var err *multierror.Error
 
-	fmtErrorMessage := "A %s must be configured when authenticating as a Service Principal using a Client Secret."
+	fmtErrorMessage := "A %s must be configured when authenticating as a Service Principal using a Multi Tenant Client Secret."
 
 	if a.subscriptionId == "" {
 		err = multierror.Append(err, fmt.Errorf(fmtErrorMessage, "Subscription ID"))
