@@ -14,7 +14,7 @@ import (
 )
 
 type azureCliTokenAuth struct {
-	profile *azureCLIProfile
+	profile                      *azureCLIProfile
 	servicePrincipalAuthDocsLink string
 }
 

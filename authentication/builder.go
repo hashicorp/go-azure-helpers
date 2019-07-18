@@ -15,7 +15,8 @@ type Builder struct {
 	Environment    string
 
 	// Auxiliary tenant IDs used for multi tenant auth
-	AuxiliaryTenantIDs []string
+	SupportsAuxiliaryTenants bool
+	AuxiliaryTenantIDs       []string
 
 	// The custom Resource Manager Endpoint which should be used
 	// only applicable for Azure Stack at this time.
@@ -55,7 +56,7 @@ func (b Builder) Build() (*Config, error) {
 	// since the Azure CLI Parsing should always be the last thing checked
 	supportedAuthenticationMethods := []authMethod{
 		servicePrincipalClientCertificateAuth{},
-		servicePrincipalClientSecretMultitenantAuth{},
+		servicePrincipalClientSecretMultiTenantAuth{},
 		servicePrincipalClientSecretAuth{},
 		managedServiceIdentityAuth{},
 		azureCliTokenAuth{},
@@ -65,7 +66,6 @@ func (b Builder) Build() (*Config, error) {
 		name := method.name()
 		log.Printf("Testing if %s is applicable for Authentication..", name)
 
-		// todo if aux tenants check if there is support for multi tenant in the auth methold? or error if chosen one
 		// does not support it via validate?
 		if method.isApplicable(b) {
 			log.Printf("Using %s for Authentication", name)

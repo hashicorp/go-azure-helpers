@@ -8,32 +8,34 @@ import (
 	"github.com/hashicorp/go-multierror"
 )
 
-type servicePrincipalClientSecretMultitenantAuth struct {
-	clientId       string
-	clientSecret   string
-	subscriptionId string
-	tenantId       string
+type servicePrincipalClientSecretMultiTenantAuth struct {
+	clientId           string
+	clientSecret       string
+	subscriptionId     string
+	tenantId           string
+	auxiliaryTenantIDs []string
 }
 
-func (a servicePrincipalClientSecretMultitenantAuth) build(b Builder) (authMethod, error) {
-	method := servicePrincipalClientSecretMultitenantAuth{
-		clientId:       b.ClientID,
-		clientSecret:   b.ClientSecret,
-		subscriptionId: b.SubscriptionID,
-		tenantId:       b.TenantID,
+func (a servicePrincipalClientSecretMultiTenantAuth) build(b Builder) (authMethod, error) {
+	method := servicePrincipalClientSecretMultiTenantAuth{
+		clientId:           b.ClientID,
+		clientSecret:       b.ClientSecret,
+		subscriptionId:     b.SubscriptionID,
+		tenantId:           b.TenantID,
+		auxiliaryTenantIDs: b.AuxiliaryTenantIDs,
 	}
 	return method, nil
 }
 
-func (a servicePrincipalClientSecretMultitenantAuth) isApplicable(b Builder) bool {
-	return b.SupportsClientSecretAuth && b.ClientSecret != ""
+func (a servicePrincipalClientSecretMultiTenantAuth) isApplicable(b Builder) bool {
+	return b.SupportsClientSecretAuth && b.ClientSecret != "" && b.SupportsAuxiliaryTenants && (len(b.AuxiliaryTenantIDs) > 0)
 }
 
-func (a servicePrincipalClientSecretMultitenantAuth) name() string {
-	return "Service Principal / Client Secret"
+func (a servicePrincipalClientSecretMultiTenantAuth) name() string {
+	return "Multi Tenant Service Principal / Client Secret"
 }
 
-func (a servicePrincipalClientSecretMultitenantAuth) getAuthorizationToken(sender autorest.Sender, oauth *MultiOAuth, endpoint string) (autorest.Authorizer, error) {
+func (a servicePrincipalClientSecretMultiTenantAuth) getAuthorizationToken(sender autorest.Sender, oauth *MultiOAuth, endpoint string) (autorest.Authorizer, error) {
 	spt, err := adal.NewMultiTenantServicePrincipalToken(*oauth.MultiTenantOauth, a.clientId, a.clientSecret, endpoint)
 	if err != nil {
 		return nil, err
@@ -48,12 +50,12 @@ func (a servicePrincipalClientSecretMultitenantAuth) getAuthorizationToken(sende
 	return auth, nil
 }
 
-func (a servicePrincipalClientSecretMultitenantAuth) populateConfig(c *Config) error {
+func (a servicePrincipalClientSecretMultiTenantAuth) populateConfig(c *Config) error {
 	c.AuthenticatedAsAServicePrincipal = true
 	return nil
 }
 
-func (a servicePrincipalClientSecretMultitenantAuth) validate() error {
+func (a servicePrincipalClientSecretMultiTenantAuth) validate() error {
 	var err *multierror.Error
 
 	fmtErrorMessage := "A %s must be configured when authenticating as a Service Principal using a Client Secret."
@@ -70,6 +72,8 @@ func (a servicePrincipalClientSecretMultitenantAuth) validate() error {
 	if a.tenantId == "" {
 		err = multierror.Append(err, fmt.Errorf(fmtErrorMessage, "Tenant ID"))
 	}
-
+	if len(a.auxiliaryTenantIDs) == 0 {
+		err = multierror.Append(err, fmt.Errorf(fmtErrorMessage, "Auxiliary Tenant IDs"))
+	}
 	return err.ErrorOrNil()
 }

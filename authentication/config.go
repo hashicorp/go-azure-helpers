@@ -25,7 +25,7 @@ type Config struct {
 }
 
 type MultiOAuth struct {
-	OAuth *adal.OAuthConfig
+	OAuth            *adal.OAuthConfig
 	MultiTenantOauth *adal.MultiTenantOAuthConfig
 }
 
@@ -62,11 +62,11 @@ func (c Config) GetMultiTenantOAuthConfig(activeDirectoryEndpoint string) (*adal
 func (c Config) GetMultiOAuthConfig(activeDirectoryEndpoint string) (*MultiOAuth, error) {
 	if len(c.AuxiliaryTenantIDs) == 0 {
 		oauth, err := c.GetOAuthConfig(activeDirectoryEndpoint)
-		return &MultiOAuth{OAuth:oauth}, err
+		return &MultiOAuth{OAuth: oauth}, err
 	}
 
 	oauth, err := c.GetMultiTenantOAuthConfig(activeDirectoryEndpoint)
-	return &MultiOAuth{MultiTenantOauth:oauth}, err
+	return &MultiOAuth{MultiTenantOauth: oauth}, err
 }
 
 // GetAuthorizationToken returns an authorization token for the authentication method defined in the Config
