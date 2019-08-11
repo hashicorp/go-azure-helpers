@@ -40,6 +40,10 @@ func (a managedServiceIdentityAuth) name() string {
 }
 
 func (a managedServiceIdentityAuth) getAuthorizationToken(sender autorest.Sender, oauth *MultiOAuth, endpoint string) (autorest.Authorizer, error) {
+	if oauth.OAuth == nil {
+		return nil, fmt.Errorf("Error getting Authorization Token for MSI auth: an OAuth token wasn't configured correctly; please file a bug with more details")
+	}
+
 	spt, err := adal.NewServicePrincipalTokenFromMSI(a.endpoint, endpoint)
 	if err != nil {
 		return nil, err

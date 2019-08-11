@@ -70,7 +70,7 @@ func (a azureCliTokenAuth) isApplicable(b Builder) bool {
 
 func (a azureCliTokenAuth) getAuthorizationToken(sender autorest.Sender, oauth *MultiOAuth, endpoint string) (autorest.Authorizer, error) {
 	if oauth.OAuth == nil {
-		return nil, fmt.Errorf("Error MultiOAuth did not contain a regular oauth token")
+		return nil, fmt.Errorf("Error getting Authorization Token for cli auth: an OAuth token wasn't configured correctly; please file a bug with more details")
 	}
 
 	// the Azure CLI appears to cache these, so to maintain compatibility with the interface this method is intentionally not on the pointer

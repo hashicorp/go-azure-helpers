@@ -67,24 +67,26 @@ func (b Builder) Build() (*Config, error) {
 		log.Printf("Testing if %s is applicable for Authentication..", name)
 
 		// does not support it via validate?
-		if method.isApplicable(b) {
-			log.Printf("Using %s for Authentication", name)
-			auth, err := method.build(b)
-			if err != nil {
-				return nil, err
-			}
-
-			// populate authentication specific fields on the Config
-			// (e.g. is service principal, fields parsed from the azure cli)
-			err = auth.populateConfig(&config)
-			if err != nil {
-				return nil, err
-			}
-
-			// todo why isn't this just auth.validate? extra function seems pointless as it is invalid until after we build irt
-			// and then its assured to be valid?
-			return &config, config.authMethod.validate()
+		if !method.isApplicable(b) {
+			continue
 		}
+		
+		log.Printf("Using %s for Authentication", name)
+		auth, err := method.build(b)
+		if err != nil {
+			return nil, err
+		}
+	
+		// populate authentication specific fields on the Config
+		// (e.g. is service principal, fields parsed from the azure cli)
+		err = auth.populateConfig(&config)
+		if err != nil {
+			return nil, err
+		}
+		
+		config.authMethod = auth
+		return &config, config.authMethod.validate()
+		
 	}
 
 	return nil, fmt.Errorf("No supported authentication methods were found!")

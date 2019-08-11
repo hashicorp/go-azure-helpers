@@ -35,7 +35,7 @@ func (a servicePrincipalClientSecretAuth) name() string {
 
 func (a servicePrincipalClientSecretAuth) getAuthorizationToken(sender autorest.Sender, oauth *MultiOAuth, endpoint string) (autorest.Authorizer, error) {
 	if oauth.OAuth == nil {
-		return nil, fmt.Errorf("Error MultiOAuth did not contain a regular oauth token")
+		return nil, fmt.Errorf("Error getting Authorization Token for client secret auth: an OAuth token wasn't configured correctly; please file a bug with more details")
 	}
 
 	spt, err := adal.NewServicePrincipalToken(*oauth.OAuth, a.clientId, a.clientSecret, endpoint)

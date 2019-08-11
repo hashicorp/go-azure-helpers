@@ -2,6 +2,7 @@ package authentication
 
 import (
 	`fmt`
+	"log"
 
 	"github.com/Azure/go-autorest/autorest"
 	"github.com/Azure/go-autorest/autorest/adal"
@@ -31,6 +32,7 @@ type MultiOAuth struct {
 
 // GetAuthorizationToken returns an authorization token for the authentication method defined in the Config
 func (c Config) GetOAuthConfig(activeDirectoryEndpoint string) (*adal.OAuthConfig, error) {
+	log.Printf("Getting OAuth config for endpoint %s with  tenant %s", activeDirectoryEndpoint, c.TenantID)
 	oauth, err := adal.NewOAuthConfig(activeDirectoryEndpoint, c.TenantID)
 	if err != nil {
 		return nil, err
@@ -46,6 +48,7 @@ func (c Config) GetOAuthConfig(activeDirectoryEndpoint string) (*adal.OAuthConfi
 
 // GetMultiTenantOAuthConfig returns a multi-tenant authorization token for the authentication method defined in the Config
 func (c Config) GetMultiTenantOAuthConfig(activeDirectoryEndpoint string) (*adal.MultiTenantOAuthConfig, error) {
+	log.Printf("Getting multi OAuth config for endpoint %s with  tenant %s (aux tenants: %v)", activeDirectoryEndpoint, c.TenantID, c.AuxiliaryTenantIDs)
 	oauth, err := adal.NewMultiTenantOAuthConfig(activeDirectoryEndpoint, c.TenantID, c.AuxiliaryTenantIDs, adal.OAuthOptions{})
 	if err != nil {
 		return nil, err

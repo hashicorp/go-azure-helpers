@@ -36,6 +36,10 @@ func (a servicePrincipalClientSecretMultiTenantAuth) name() string {
 }
 
 func (a servicePrincipalClientSecretMultiTenantAuth) getAuthorizationToken(sender autorest.Sender, oauth *MultiOAuth, endpoint string) (autorest.Authorizer, error) {
+	if oauth.MultiTenantOauth == nil {
+		return nil, fmt.Errorf("Error getting Authorization Token for client cert: an MultiTenantOauth token wasn't configured correctly; please file a bug with more details")
+	}
+
 	spt, err := adal.NewMultiTenantServicePrincipalToken(*oauth.MultiTenantOauth, a.clientId, a.clientSecret, endpoint)
 	if err != nil {
 		return nil, err
