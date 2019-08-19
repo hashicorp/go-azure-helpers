@@ -97,8 +97,8 @@ func TestAzureCLITokenAuth_validate(t *testing.T) {
 			Description: "Missing Subscription ID",
 			Config: azureCliTokenAuth{
 				profile: &azureCLIProfile{
-					clientId:    "62e73395-5017-43b6-8ebf-d6c30a514cf1",
-					tenantId:    "9834f8d0-24b3-41b7-8b8d-c611c461a129",
+					clientId: "62e73395-5017-43b6-8ebf-d6c30a514cf1",
+					tenantId: "9834f8d0-24b3-41b7-8b8d-c611c461a129",
 				},
 			},
 			ExpectError: true,

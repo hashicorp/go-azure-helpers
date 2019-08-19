@@ -41,24 +41,29 @@ func (a managedServiceIdentityAuth) name() string {
 	return "Managed Service Identity"
 }
 
-func (a managedServiceIdentityAuth) getAuthorizationToken(sender autorest.Sender, oauthConfig *adal.OAuthConfig, resource string) (*autorest.BearerAuthorizer, error) {
+func (a managedServiceIdentityAuth) getAuthorizationToken(sender autorest.Sender, oauth *MultiOAuth, endpoint string) (autorest.Authorizer, error) {
 	log.Printf("[DEBUG] getAuthorizationToken using MSI endpoint %q", a.endpoint)
 	log.Printf("[DEBUG] getAuthorizationToken using client_id %q", a.clientID)
-	log.Printf("[DEBUG] Calling getAuthorizationToken for resource: %q", resource)
+	log.Printf("[DEBUG] Calling getAuthorizationToken for endpoint: %q", endpoint)
+
+	if oauth.OAuth == nil {
+		return nil, fmt.Errorf("Error getting Authorization Token for MSI auth: an OAuth token wasn't configured correctly; please file a bug with more details")
+	}
 
 	var spt *adal.ServicePrincipalToken
 	var err error
 	if a.clientID == "" {
-		spt, err = adal.NewServicePrincipalTokenFromMSI(a.endpoint, resource)
+		spt, err = adal.NewServicePrincipalTokenFromMSI(a.endpoint, endpoint)
 		if err != nil {
 			return nil, err
 		}
 	} else {
-		spt, err = adal.NewServicePrincipalTokenFromMSIWithUserAssignedID(a.endpoint, resource, a.clientID)
+		spt, err = adal.NewServicePrincipalTokenFromMSIWithUserAssignedID(a.endpoint, endpoint, a.clientID)
 		if err != nil {
 			return nil, fmt.Errorf("failed to get oauth token from MSI for user assigned identity: %v", err)
 		}
 	}
+
 
 	spt.SetSender(sender)
 	auth := autorest.NewBearerAuthorizer(spt)
