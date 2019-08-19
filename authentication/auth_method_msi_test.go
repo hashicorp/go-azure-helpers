@@ -5,6 +5,7 @@ import "testing"
 func TestManagedServiceIdentity_builder(t *testing.T) {
 	builder := Builder{
 		MsiEndpoint: "https://hello-world",
+		ClientID: "some-client-id",
 	}
 
 	method, err := managedServiceIdentityAuth{}.build(builder)
@@ -13,8 +14,11 @@ func TestManagedServiceIdentity_builder(t *testing.T) {
 	}
 
 	authMethod := method.(managedServiceIdentityAuth)
-	if builder.MsiEndpoint != authMethod.endpoint {
-		t.Fatalf("Expected MSI Endpoint to be %q but got %q", builder.MsiEndpoint, authMethod.endpoint)
+	if builder.MsiEndpoint != authMethod.msiEndpoint {
+		t.Fatalf("Expected MSI Endpoint to be %q but got %q", builder.MsiEndpoint, authMethod.msiEndpoint)
+	}
+	if builder.ClientID != authMethod.clientID {
+		t.Fatalf("Expected MSI Client ID to be %q but got %q", builder.ClientID, authMethod.clientID)
 	}
 }
 
@@ -77,7 +81,7 @@ func TestManagedServiceIdentity_validate(t *testing.T) {
 		{
 			Description: "Valid Configuration",
 			Config: managedServiceIdentityAuth{
-				endpoint: "https://some-location",
+				msiEndpoint: "https://some-location",
 			},
 			ExpectError: false,
 		},

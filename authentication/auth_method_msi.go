@@ -10,25 +10,25 @@ import (
 )
 
 type managedServiceIdentityAuth struct {
-	endpoint string
-	clientID string
+	msiEndpoint string
+	clientID    string
 }
 
 func (a managedServiceIdentityAuth) build(b Builder) (authMethod, error) {
-	endpoint := b.MsiEndpoint
-	if endpoint == "" {
-		msiEndpoint, err := adal.GetMSIVMEndpoint()
+	msiEndpoint := b.MsiEndpoint
+	if msiEndpoint == "" {
+		ep, err := adal.GetMSIVMEndpoint()
 		if err != nil {
 			return nil, fmt.Errorf("Error determining MSI Endpoint: ensure the VM has MSI enabled, or configure the MSI Endpoint. Error: %s", err)
 		}
-		endpoint = msiEndpoint
+		msiEndpoint = ep
 	}
 
-	log.Printf("[DEBUG] Using MSI endpoint %q", endpoint)
+	log.Printf("[DEBUG] Using MSI msiEndpoint %q", msiEndpoint)
 
 	auth := managedServiceIdentityAuth{
-		endpoint: endpoint,
-		clientID: b.ClientID,
+		msiEndpoint: msiEndpoint,
+		clientID:    b.ClientID,
 	}
 	return auth, nil
 }
@@ -42,9 +42,7 @@ func (a managedServiceIdentityAuth) name() string {
 }
 
 func (a managedServiceIdentityAuth) getAuthorizationToken(sender autorest.Sender, oauth *MultiOAuth, endpoint string) (autorest.Authorizer, error) {
-	log.Printf("[DEBUG] getAuthorizationToken using MSI endpoint %q", a.endpoint)
-	log.Printf("[DEBUG] getAuthorizationToken using client_id %q", a.clientID)
-	log.Printf("[DEBUG] Calling getAuthorizationToken for endpoint: %q", endpoint)
+	log.Printf("[DEBUG] getAuthorizationToken with MSI msiEndpoint %q, ClientID %q for msiEndpoint %q", a.msiEndpoint, a.clientID, endpoint)
 
 	if oauth.OAuth == nil {
 		return nil, fmt.Errorf("Error getting Authorization Token for MSI auth: an OAuth token wasn't configured correctly; please file a bug with more details")
@@ -53,12 +51,12 @@ func (a managedServiceIdentityAuth) getAuthorizationToken(sender autorest.Sender
 	var spt *adal.ServicePrincipalToken
 	var err error
 	if a.clientID == "" {
-		spt, err = adal.NewServicePrincipalTokenFromMSI(a.endpoint, endpoint)
+		spt, err = adal.NewServicePrincipalTokenFromMSI(a.msiEndpoint, endpoint)
 		if err != nil {
 			return nil, err
 		}
 	} else {
-		spt, err = adal.NewServicePrincipalTokenFromMSIWithUserAssignedID(a.endpoint, endpoint, a.clientID)
+		spt, err = adal.NewServicePrincipalTokenFromMSIWithUserAssignedID(a.msiEndpoint, endpoint, a.clientID)
 		if err != nil {
 			return nil, fmt.Errorf("failed to get oauth token from MSI for user assigned identity: %v", err)
 		}
@@ -78,7 +76,7 @@ func (a managedServiceIdentityAuth) populateConfig(c *Config) error {
 func (a managedServiceIdentityAuth) validate() error {
 	var err *multierror.Error
 
-	if a.endpoint == "" {
+	if a.msiEndpoint == "" {
 		err = multierror.Append(err, fmt.Errorf("An MSI Endpoint must be configured"))
 	}
 
