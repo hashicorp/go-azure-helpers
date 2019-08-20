@@ -41,10 +41,9 @@ func (a managedServiceIdentityAuth) name() string {
 	return "Managed Service Identity"
 }
 
-func (a managedServiceIdentityAuth) getAuthorizationToken(sender autorest.Sender, oauth *MultiOAuth, endpoint string) (autorest.Authorizer, error) {
+func (a managedServiceIdentityAuth) getAuthorizationToken(sender autorest.Sender, oauth *OAuthConfig, endpoint string) (autorest.Authorizer, error) {
 	log.Printf("[DEBUG] getAuthorizationToken with MSI msiEndpoint %q, ClientID %q for msiEndpoint %q", a.msiEndpoint, a.clientID, endpoint)
 
-func (a managedServiceIdentityAuth) getAuthorizationToken(sender autorest.Sender, oauth *OAuthConfig, endpoint string) (autorest.Authorizer, error) {
 	if oauth.OAuth == nil {
 		return nil, fmt.Errorf("Error getting Authorization Token for MSI auth: an OAuth token wasn't configured correctly; please file a bug with more details")
 	}
@@ -59,7 +58,7 @@ func (a managedServiceIdentityAuth) getAuthorizationToken(sender autorest.Sender
 	} else {
 		spt, err = adal.NewServicePrincipalTokenFromMSIWithUserAssignedID(a.msiEndpoint, endpoint, a.clientID)
 		if err != nil {
-			return nil, fmt.Errorf("failed to get oauth token from MSI for user assigned identity: %v", err)
+			return nil, fmt.Errorf("failed to get an oauth token from MSI for user assigned identity from MSI endpoint %q with client ID %q for endpoint %q: %v", a.msiEndpoint, a.clientID, endpoint, err)
 		}
 	}
 
