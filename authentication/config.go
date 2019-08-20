@@ -25,7 +25,7 @@ type Config struct {
 	authMethod authMethod
 }
 
-type AuthConfig struct {
+type OAuthConfig struct {
 	OAuth            *adal.OAuthConfig
 	MultiTenantOauth *adal.MultiTenantOAuthConfig
 }
@@ -63,8 +63,8 @@ func (c Config) GetMultiTenantOAuthConfig(activeDirectoryEndpoint string) (*adal
 }
 
 // BuildOAuthConfig builds the authorization configuration for the specified Active Directory Endpoint
-func (c Config) BuildOAuthConfig(activeDirectoryEndpoint string) (*AuthConfig, error) {
-	multiAuth := AuthConfig{}
+func (c Config) BuildOAuthConfig(activeDirectoryEndpoint string) (*OAuthConfig, error) {
+	multiAuth := OAuthConfig{}
 	var err error
 
 	multiAuth.OAuth, err = c.GetOAuthConfig(activeDirectoryEndpoint)
@@ -84,10 +84,10 @@ func (c Config) BuildOAuthConfig(activeDirectoryEndpoint string) (*AuthConfig, e
 
 // BearerAuthorizerCallback returns a BearerAuthorizer valid only for the Primary Tenant
 // this signs a request using the AccessToken returned from the primary Resource Manager authorizer
-func (c Config) BearerAuthorizerCallback(sender autorest.Sender, oauthConfig *AuthConfig) *autorest.BearerAuthorizerCallback {
+func (c Config) BearerAuthorizerCallback(sender autorest.Sender, oauthConfig *OAuthConfig) *autorest.BearerAuthorizerCallback {
 	return autorest.NewBearerAuthorizerCallback(sender, func(tenantID, resource string) (*autorest.BearerAuthorizer, error) {
 		// a BearerAuthorizer is only valid for the primary tenant
-		newAuthConfig := &AuthConfig{
+		newAuthConfig := &OAuthConfig{
 			OAuth: oauthConfig.OAuth,
 		}
 
@@ -106,6 +106,6 @@ func (c Config) BearerAuthorizerCallback(sender autorest.Sender, oauthConfig *Au
 }
 
 // GetAuthorizationToken returns an authorization token for the authentication method defined in the Config
-func (c Config) GetAuthorizationToken(sender autorest.Sender, oauth *AuthConfig, endpoint string) (autorest.Authorizer, error) {
+func (c Config) GetAuthorizationToken(sender autorest.Sender, oauth *OAuthConfig, endpoint string) (autorest.Authorizer, error) {
 	return c.authMethod.getAuthorizationToken(sender, oauth, endpoint)
 }
