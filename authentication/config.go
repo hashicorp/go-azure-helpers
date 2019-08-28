@@ -39,7 +39,7 @@ func (c Config) GetOAuthConfig(activeDirectoryEndpoint string) (*adal.OAuthConfi
 	// the login endpoint ends up residing in `ActiveDirectoryEndpoint`
 	oAuthTenant := c.TenantID
 	if strings.HasSuffix(activeDirectoryEndpoint, "/adfs") {
-		log.Printf("ADFS environment detedcted!")
+		log.Printf("[DEBUG] ADFS environment detected - overriding Tenant ID to `adfs`!")
 		oAuthTenant = "adfs"
 	}
 
