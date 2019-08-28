@@ -1,8 +1,9 @@
 package authentication
 
 import (
-	`fmt`
+	"fmt"
 	"log"
+	"strings"
 
 	"github.com/Azure/go-autorest/autorest"
 	"github.com/Azure/go-autorest/autorest/adal"
@@ -33,7 +34,16 @@ type OAuthConfig struct {
 // GetAuthorizationToken returns an authorization token for the authentication method defined in the Config
 func (c Config) GetOAuthConfig(activeDirectoryEndpoint string) (*adal.OAuthConfig, error) {
 	log.Printf("Getting OAuth config for endpoint %s with  tenant %s", activeDirectoryEndpoint, c.TenantID)
-	oauth, err := adal.NewOAuthConfig(activeDirectoryEndpoint, c.TenantID)
+
+	// fix for ADFS environments, if the login endpoint ends in `/adfs` it's an adfs environment
+	// the login endpoint ends up residing in `ActiveDirectoryEndpoint`
+	oAuthTenant := c.TenantID
+	if strings.HasSuffix(activeDirectoryEndpoint, "/adfs") {
+		log.Printf("ADFS environment detedcted!")
+		oAuthTenant = "adfs"
+	}
+
+	oauth, err := adal.NewOAuthConfig(activeDirectoryEndpoint, oAuthTenant)
 	if err != nil {
 		return nil, err
 	}
