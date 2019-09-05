@@ -5,13 +5,17 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 
 	"github.com/Azure/go-autorest/autorest"
 	"github.com/Azure/go-autorest/autorest/adal"
 	"github.com/Azure/go-autorest/autorest/azure/cli"
 	"github.com/hashicorp/go-multierror"
+	"github.com/mitchellh/go-homedir"
 )
 
 type azureCliTokenAuth struct {
@@ -161,6 +165,12 @@ func obtainAuthorizationToken(endpoint string, subscriptionId string) (*cli.Toke
 		return nil, fmt.Errorf("Error parsing json result from the Azure CLI: %v", err)
 	}
 
+	// Currently, Azure CLI does not return the refresh token. Try reading the refresh token from user's disk.
+	if token.RefreshToken == "" {
+		// Ignore any error here: we don't want to fail because of no access to the tokens file.
+		token.RefreshToken, _ = readRefreshTokenFromAccessTokensFile(token.AccessToken)
+	}
+
 	return &token, nil
 }
 
@@ -192,4 +202,40 @@ func jsonUnmarshalAzCmd(i interface{}, arg ...string) error {
 	}
 
 	return nil
+}
+
+func readRefreshTokenFromAccessTokensFile(accessToken string) (string, error) {
+	azureConfig := os.Getenv("AZURE_CONFIG_DIR")
+	if azureConfig == "" {
+		home, err := homedir.Dir()
+		if err != nil {
+			return "", err
+		}
+		azureConfig = filepath.Join(home, ".azure")
+	}
+	path := filepath.Join(azureConfig, "accessTokens.json")
+
+	jsonFile, err := os.Open(path)
+	if err != nil {
+		return "", err
+	}
+	defer jsonFile.Close()
+
+	bytes, err := ioutil.ReadAll(jsonFile)
+	if err != nil {
+		return "", err
+	}
+
+	var tokens []cli.Token
+	if err := json.Unmarshal(bytes, &tokens); err != nil {
+		return "", err
+	}
+
+	for _, value := range tokens {
+		if value.AccessToken == accessToken {
+			return value.RefreshToken, nil
+		}
+	}
+
+	return "", nil
 }
