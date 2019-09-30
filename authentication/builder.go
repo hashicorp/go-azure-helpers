@@ -70,23 +70,23 @@ func (b Builder) Build() (*Config, error) {
 		if !method.isApplicable(b) {
 			continue
 		}
-		
+
 		log.Printf("Using %s for Authentication", name)
 		auth, err := method.build(b)
 		if err != nil {
 			return nil, err
 		}
-	
+
 		// populate authentication specific fields on the Config
 		// (e.g. is service principal, fields parsed from the azure cli)
 		err = auth.populateConfig(&config)
 		if err != nil {
 			return nil, err
 		}
-		
+
 		config.authMethod = auth
 		return &config, config.authMethod.validate()
-		
+
 	}
 
 	return nil, fmt.Errorf("No supported authentication methods were found!")

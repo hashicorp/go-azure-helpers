@@ -5,7 +5,7 @@ import "testing"
 func TestManagedServiceIdentity_builder(t *testing.T) {
 	builder := Builder{
 		MsiEndpoint: "https://hello-world",
-		ClientID: "some-client-id",
+		ClientID:    "some-client-id",
 	}
 
 	method, err := managedServiceIdentityAuth{}.build(builder)
