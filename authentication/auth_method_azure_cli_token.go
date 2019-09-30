@@ -5,7 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log"
 	"os/exec"
 	"strings"
 
@@ -168,8 +167,6 @@ func obtainAuthorizationToken(endpoint string, subscriptionId string) (*cli.Toke
 func jsonUnmarshalAzCmd(i interface{}, arg ...string) error {
 	var stderr bytes.Buffer
 	var stdout bytes.Buffer
-
-	log.Printf("ktkt2: %v", arg)
 
 	cmd := exec.Command("az", arg...)
 
