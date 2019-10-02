@@ -1,6 +1,7 @@
 package authentication
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"strings"
@@ -12,11 +13,13 @@ import (
 // Config is the configuration structure used to instantiate a
 // new Azure management client.
 type Config struct {
-	ClientID                         string
-	SubscriptionID                   string
-	TenantID                         string
-	AuxiliaryTenantIDs               []string
-	Environment                      string
+	ClientID           string
+	SubscriptionID     string
+	TenantID           string
+	AuxiliaryTenantIDs []string
+	Environment        string
+
+	GetAuthenticatedObjectID         func(context.Context) (string, error)
 	AuthenticatedAsAServicePrincipal bool
 
 	// A Custom Resource Manager Endpoint

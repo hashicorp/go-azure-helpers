@@ -62,7 +62,6 @@ func (a managedServiceIdentityAuth) getAuthorizationToken(sender autorest.Sender
 		}
 	}
 
-
 	spt.SetSender(sender)
 	auth := autorest.NewBearerAuthorizer(spt)
 	return auth, nil
