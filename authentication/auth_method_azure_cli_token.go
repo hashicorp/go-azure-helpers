@@ -188,7 +188,7 @@ func jsonUnmarshalAzCmd(i interface{}, arg ...string) error {
 	}
 
 	if err := json.Unmarshal([]byte(stdOutStr), &i); err != nil {
-		return fmt.Errorf("Error unmarshaling the result of Azure CLI: vs", err)
+		return fmt.Errorf("Error unmarshaling the result of Azure CLI: %v", err)
 	}
 
 	return nil
