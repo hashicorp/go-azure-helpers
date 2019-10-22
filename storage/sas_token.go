@@ -4,6 +4,7 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/base64"
+	"errors"
 	"fmt"
 	"net/url"
 	"strings"
@@ -66,6 +67,29 @@ func ComputeAccountSASToken(accountName string,
 	sasToken += "&sig=" + url.QueryEscape(base64.StdEncoding.EncodeToString(signature))
 
 	return sasToken, nil
+}
+
+// ComputeAccountSASConnectionString computes the composed SAS Connection String for a Storage Account based on the
+// sas token
+func ComputeAccountSASConnectionString(accountName string, sasToken string) string {
+	connectionString := ""
+	connectionString += fmt.Sprintf("BlobEndpoint=https://%s.blob.core.windows.net/;", accountName)
+	connectionString += fmt.Sprintf("FileEndpoint=https://%s.file.core.windows.net/;", accountName)
+	connectionString += fmt.Sprintf("QueueEndpoint=https://%s.queue.core.windows.net/;", accountName)
+	connectionString += fmt.Sprintf("TableEndpoint=https://%s.table.core.windows.net/;", accountName)
+	connectionString += fmt.Sprintf("SharedAccessSignature=%s", sasToken[1:]) // need to cut the first character '?' from the sas token
+
+	return connectionString
+}
+
+// ComputeAccountSASConnectionUrlForType computes the SAS Connection String for a Storage Account based on the
+// sas token and the storage type
+func ComputeAccountSASConnectionUrlForType(accountName string, sasToken string, storageType string) (string, error) {
+	if storageType != "blob" && storageType != "file" && storageType != "queue" && storageType != "table" {
+		return "", errors.New("Unexpected storage type!")
+	}
+
+	return fmt.Sprintf("https://%s.%s.core.windows.net%s", accountName, storageType, sasToken), nil
 }
 
 func ComputeContainerSASToken(signedPermissions string,
