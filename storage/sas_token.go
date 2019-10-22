@@ -72,14 +72,12 @@ func ComputeAccountSASToken(accountName string,
 // ComputeAccountSASConnectionString computes the composed SAS Connection String for a Storage Account based on the
 // sas token
 func ComputeAccountSASConnectionString(accountName string, sasToken string) string {
-	connectionString := ""
-	connectionString += fmt.Sprintf("BlobEndpoint=https://%s.blob.core.windows.net/;", accountName)
-	connectionString += fmt.Sprintf("FileEndpoint=https://%s.file.core.windows.net/;", accountName)
-	connectionString += fmt.Sprintf("QueueEndpoint=https://%s.queue.core.windows.net/;", accountName)
-	connectionString += fmt.Sprintf("TableEndpoint=https://%s.table.core.windows.net/;", accountName)
-	connectionString += fmt.Sprintf("SharedAccessSignature=%s", sasToken[1:]) // need to cut the first character '?' from the sas token
-
-	return connectionString
+	return fmt.Sprintf(
+		"BlobEndpoint=https://%[1]s.blob.core.windows.net/;"+
+			"FileEndpoint=https://%[1]s.file.core.windows.net/;"+
+			"QueueEndpoint=https://%[1]s.queue.core.windows.net/;"+
+			"TableEndpoint=https://%[1]s.table.core.windows.net/;"+
+			"SharedAccessSignature=%[2]s", accountName, sasToken[1:]) // need to cut the first character '?' from the sas token
 }
 
 // ComputeAccountSASConnectionUrlForType computes the SAS Connection String for a Storage Account based on the
