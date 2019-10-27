@@ -4,6 +4,8 @@ import (
 	"net/url"
 	"strings"
 	"testing"
+
+	"github.com/Azure/go-autorest/autorest/azure"
 )
 
 func TestParseStorageAccountConnectionString(t *testing.T) {
@@ -203,19 +205,39 @@ func TestComputeContainerSASToken(t *testing.T) {
 
 func TestComputeAccountSASConnectionString(t *testing.T) {
 	testCases := []struct {
+		env                 azure.Environment
 		accountName         string
 		sasToken            string
 		sasConnectionString string
 	}{
 		{
+			azure.PublicCloud,
 			"testaccount",
 			"?st=2019-03-27&se=2019-09-21T09%3A21Z&sp=rwl&sip=93.23.223.54&spr=https&sv=2018-11-09&sr=c&rscc=no-cache&rscd=attachment&rsce=gzip&rscl=en-US&rsct=text/html%3B%20charset%3Dutf-8&sig=M2TaUVEGlRVJjNt/c7Eqt2zH6%2BA8dpiLmTXR0ZevEX8%3D",
 			"BlobEndpoint=https://testaccount.blob.core.windows.net/;FileEndpoint=https://testaccount.file.core.windows.net/;QueueEndpoint=https://testaccount.queue.core.windows.net/;TableEndpoint=https://testaccount.table.core.windows.net/;SharedAccessSignature=st=2019-03-27&se=2019-09-21T09%3A21Z&sp=rwl&sip=93.23.223.54&spr=https&sv=2018-11-09&sr=c&rscc=no-cache&rscd=attachment&rsce=gzip&rscl=en-US&rsct=text/html%3B%20charset%3Dutf-8&sig=M2TaUVEGlRVJjNt/c7Eqt2zH6%2BA8dpiLmTXR0ZevEX8%3D",
 		},
+		{
+			azure.ChinaCloud,
+			"testaccount",
+			"?st=2019-03-27&se=2019-09-21T09%3A21Z&sp=rwl&sip=93.23.223.54&spr=https&sv=2018-11-09&sr=c&rscc=no-cache&rscd=attachment&rsce=gzip&rscl=en-US&rsct=text/html%3B%20charset%3Dutf-8&sig=M2TaUVEGlRVJjNt/c7Eqt2zH6%2BA8dpiLmTXR0ZevEX8%3D",
+			"BlobEndpoint=https://testaccount.blob.core.chinacloudapi.cn/;FileEndpoint=https://testaccount.file.core.chinacloudapi.cn/;QueueEndpoint=https://testaccount.queue.core.chinacloudapi.cn/;TableEndpoint=https://testaccount.table.core.chinacloudapi.cn/;SharedAccessSignature=st=2019-03-27&se=2019-09-21T09%3A21Z&sp=rwl&sip=93.23.223.54&spr=https&sv=2018-11-09&sr=c&rscc=no-cache&rscd=attachment&rsce=gzip&rscl=en-US&rsct=text/html%3B%20charset%3Dutf-8&sig=M2TaUVEGlRVJjNt/c7Eqt2zH6%2BA8dpiLmTXR0ZevEX8%3D",
+		},
+		{
+			azure.GermanCloud,
+			"testaccount",
+			"?st=2019-03-27&se=2019-09-21T09%3A21Z&sp=rwl&sip=93.23.223.54&spr=https&sv=2018-11-09&sr=c&rscc=no-cache&rscd=attachment&rsce=gzip&rscl=en-US&rsct=text/html%3B%20charset%3Dutf-8&sig=M2TaUVEGlRVJjNt/c7Eqt2zH6%2BA8dpiLmTXR0ZevEX8%3D",
+			"BlobEndpoint=https://testaccount.blob.core.cloudapi.de/;FileEndpoint=https://testaccount.file.core.cloudapi.de/;QueueEndpoint=https://testaccount.queue.core.cloudapi.de/;TableEndpoint=https://testaccount.table.core.cloudapi.de/;SharedAccessSignature=st=2019-03-27&se=2019-09-21T09%3A21Z&sp=rwl&sip=93.23.223.54&spr=https&sv=2018-11-09&sr=c&rscc=no-cache&rscd=attachment&rsce=gzip&rscl=en-US&rsct=text/html%3B%20charset%3Dutf-8&sig=M2TaUVEGlRVJjNt/c7Eqt2zH6%2BA8dpiLmTXR0ZevEX8%3D",
+		},
+		{
+			azure.USGovernmentCloud,
+			"testaccount",
+			"?st=2019-03-27&se=2019-09-21T09%3A21Z&sp=rwl&sip=93.23.223.54&spr=https&sv=2018-11-09&sr=c&rscc=no-cache&rscd=attachment&rsce=gzip&rscl=en-US&rsct=text/html%3B%20charset%3Dutf-8&sig=M2TaUVEGlRVJjNt/c7Eqt2zH6%2BA8dpiLmTXR0ZevEX8%3D",
+			"BlobEndpoint=https://testaccount.blob.core.usgovcloudapi.net/;FileEndpoint=https://testaccount.file.core.usgovcloudapi.net/;QueueEndpoint=https://testaccount.queue.core.usgovcloudapi.net/;TableEndpoint=https://testaccount.table.core.usgovcloudapi.net/;SharedAccessSignature=st=2019-03-27&se=2019-09-21T09%3A21Z&sp=rwl&sip=93.23.223.54&spr=https&sv=2018-11-09&sr=c&rscc=no-cache&rscd=attachment&rsce=gzip&rscl=en-US&rsct=text/html%3B%20charset%3Dutf-8&sig=M2TaUVEGlRVJjNt/c7Eqt2zH6%2BA8dpiLmTXR0ZevEX8%3D",
+		},
 	}
 
 	for _, test := range testCases {
-		computedConnectionString := ComputeAccountSASConnectionString(test.accountName, test.sasToken)
+		computedConnectionString := ComputeAccountSASConnectionString(&test.env, test.accountName, test.sasToken)
 
 		if computedConnectionString != test.sasConnectionString {
 			t.Fatalf("Test failed: Expected SAS connection string is %s but was %s", computedConnectionString, test.sasConnectionString)
@@ -225,36 +247,42 @@ func TestComputeAccountSASConnectionString(t *testing.T) {
 
 func TestComputeAccountSASConnectionUrlForType(t *testing.T) {
 	testCases := []struct {
+		env                  azure.Environment
 		accountName          string
 		sasToken             string
 		storageType          string
 		storageConnectionUrl string
 	}{
 		{
+			azure.PublicCloud,
 			"testaccount",
 			"?st=2019-03-27&se=2019-09-21T09%3A21Z&sp=rwl&sip=93.23.223.54&spr=https&sv=2018-11-09&sr=c&rscc=no-cache&rscd=attachment&rsce=gzip&rscl=en-US&rsct=text/html%3B%20charset%3Dutf-8&sig=M2TaUVEGlRVJjNt/c7Eqt2zH6%2BA8dpiLmTXR0ZevEX8%3D",
 			"blob",
 			"https://testaccount.blob.core.windows.net?st=2019-03-27&se=2019-09-21T09%3A21Z&sp=rwl&sip=93.23.223.54&spr=https&sv=2018-11-09&sr=c&rscc=no-cache&rscd=attachment&rsce=gzip&rscl=en-US&rsct=text/html%3B%20charset%3Dutf-8&sig=M2TaUVEGlRVJjNt/c7Eqt2zH6%2BA8dpiLmTXR0ZevEX8%3D",
 		},
 		{
+			azure.ChinaCloud,
 			"testaccount",
 			"?st=2019-03-27&se=2019-09-21T09%3A21Z&sp=rwl&sip=93.23.223.54&spr=https&sv=2018-11-09&sr=c&rscc=no-cache&rscd=attachment&rsce=gzip&rscl=en-US&rsct=text/html%3B%20charset%3Dutf-8&sig=M2TaUVEGlRVJjNt/c7Eqt2zH6%2BA8dpiLmTXR0ZevEX8%3D",
 			"file",
-			"https://testaccount.file.core.windows.net?st=2019-03-27&se=2019-09-21T09%3A21Z&sp=rwl&sip=93.23.223.54&spr=https&sv=2018-11-09&sr=c&rscc=no-cache&rscd=attachment&rsce=gzip&rscl=en-US&rsct=text/html%3B%20charset%3Dutf-8&sig=M2TaUVEGlRVJjNt/c7Eqt2zH6%2BA8dpiLmTXR0ZevEX8%3D",
+			"https://testaccount.file.core.chinacloudapi.cn?st=2019-03-27&se=2019-09-21T09%3A21Z&sp=rwl&sip=93.23.223.54&spr=https&sv=2018-11-09&sr=c&rscc=no-cache&rscd=attachment&rsce=gzip&rscl=en-US&rsct=text/html%3B%20charset%3Dutf-8&sig=M2TaUVEGlRVJjNt/c7Eqt2zH6%2BA8dpiLmTXR0ZevEX8%3D",
 		},
 		{
+			azure.GermanCloud,
 			"testaccount",
 			"?st=2019-03-27&se=2019-09-21T09%3A21Z&sp=rwl&sip=93.23.223.54&spr=https&sv=2018-11-09&sr=c&rscc=no-cache&rscd=attachment&rsce=gzip&rscl=en-US&rsct=text/html%3B%20charset%3Dutf-8&sig=M2TaUVEGlRVJjNt/c7Eqt2zH6%2BA8dpiLmTXR0ZevEX8%3D",
 			"queue",
-			"https://testaccount.queue.core.windows.net?st=2019-03-27&se=2019-09-21T09%3A21Z&sp=rwl&sip=93.23.223.54&spr=https&sv=2018-11-09&sr=c&rscc=no-cache&rscd=attachment&rsce=gzip&rscl=en-US&rsct=text/html%3B%20charset%3Dutf-8&sig=M2TaUVEGlRVJjNt/c7Eqt2zH6%2BA8dpiLmTXR0ZevEX8%3D",
+			"https://testaccount.queue.core.cloudapi.de?st=2019-03-27&se=2019-09-21T09%3A21Z&sp=rwl&sip=93.23.223.54&spr=https&sv=2018-11-09&sr=c&rscc=no-cache&rscd=attachment&rsce=gzip&rscl=en-US&rsct=text/html%3B%20charset%3Dutf-8&sig=M2TaUVEGlRVJjNt/c7Eqt2zH6%2BA8dpiLmTXR0ZevEX8%3D",
 		},
 		{
+			azure.USGovernmentCloud,
 			"testaccount",
 			"?st=2019-03-27&se=2019-09-21T09%3A21Z&sp=rwl&sip=93.23.223.54&spr=https&sv=2018-11-09&sr=c&rscc=no-cache&rscd=attachment&rsce=gzip&rscl=en-US&rsct=text/html%3B%20charset%3Dutf-8&sig=M2TaUVEGlRVJjNt/c7Eqt2zH6%2BA8dpiLmTXR0ZevEX8%3D",
 			"table",
-			"https://testaccount.table.core.windows.net?st=2019-03-27&se=2019-09-21T09%3A21Z&sp=rwl&sip=93.23.223.54&spr=https&sv=2018-11-09&sr=c&rscc=no-cache&rscd=attachment&rsce=gzip&rscl=en-US&rsct=text/html%3B%20charset%3Dutf-8&sig=M2TaUVEGlRVJjNt/c7Eqt2zH6%2BA8dpiLmTXR0ZevEX8%3D",
+			"https://testaccount.table.core.usgovcloudapi.net?st=2019-03-27&se=2019-09-21T09%3A21Z&sp=rwl&sip=93.23.223.54&spr=https&sv=2018-11-09&sr=c&rscc=no-cache&rscd=attachment&rsce=gzip&rscl=en-US&rsct=text/html%3B%20charset%3Dutf-8&sig=M2TaUVEGlRVJjNt/c7Eqt2zH6%2BA8dpiLmTXR0ZevEX8%3D",
 		},
 		{
+			azure.PublicCloud,
 			"testaccount",
 			"?st=2019-03-27&se=2019-09-21T09%3A21Z&sp=rwl&sip=93.23.223.54&spr=https&sv=2018-11-09&sr=c&rscc=no-cache&rscd=attachment&rsce=gzip&rscl=en-US&rsct=text/html%3B%20charset%3Dutf-8&sig=M2TaUVEGlRVJjNt/c7Eqt2zH6%2BA8dpiLmTXR0ZevEX8%3D",
 			"unexpected",
@@ -263,12 +291,15 @@ func TestComputeAccountSASConnectionUrlForType(t *testing.T) {
 	}
 
 	for _, test := range testCases {
-		computedStorageConnectionUrl, err := ComputeAccountSASConnectionUrlForType(test.accountName, test.sasToken, test.storageType)
-
-		if test.storageType == "unexpected" && err == nil {
-			t.Fatalf("Test failed: `unexpected` type should not be used. This call should have thrown an error")
-		} else if computedStorageConnectionUrl != test.storageConnectionUrl {
-			t.Fatalf("Test failed: Expected connection url is %s but was %s", computedStorageConnectionUrl, test.storageConnectionUrl)
+		computedStorageConnectionUrl, err := ComputeAccountSASConnectionUrlForType(&test.env, test.accountName, test.sasToken, test.storageType)
+		if strings.Compare("unexpected", test.storageType) == 0 {
+			if err == nil {
+				t.Fatalf("Test failed: This call should have thrown an error because an unexpected storage type was specified.")
+			}
+		} else if err != nil {
+			t.Fatalf("Test failed: This call should not have thrown an error")
+		} else if strings.Compare(*computedStorageConnectionUrl, test.storageConnectionUrl) != 0 {
+			t.Fatalf("Test failed: Expected connection url is %s but was %s", *computedStorageConnectionUrl, test.storageConnectionUrl)
 		}
 	}
 }
