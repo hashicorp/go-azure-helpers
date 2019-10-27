@@ -4,10 +4,11 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/base64"
-	"errors"
 	"fmt"
 	"net/url"
 	"strings"
+
+	"github.com/Azure/go-autorest/autorest/azure"
 )
 
 const (
@@ -71,23 +72,24 @@ func ComputeAccountSASToken(accountName string,
 
 // ComputeAccountSASConnectionString computes the composed SAS Connection String for a Storage Account based on the
 // sas token
-func ComputeAccountSASConnectionString(accountName string, sasToken string) string {
+func ComputeAccountSASConnectionString(env *azure.Environment, accountName string, sasToken string) string {
 	return fmt.Sprintf(
-		"BlobEndpoint=https://%[1]s.blob.core.windows.net/;"+
-			"FileEndpoint=https://%[1]s.file.core.windows.net/;"+
-			"QueueEndpoint=https://%[1]s.queue.core.windows.net/;"+
-			"TableEndpoint=https://%[1]s.table.core.windows.net/;"+
-			"SharedAccessSignature=%[2]s", accountName, sasToken[1:]) // need to cut the first character '?' from the sas token
+		"BlobEndpoint=https://%[1]s.blob.%[2]s/;"+
+			"FileEndpoint=https://%[1]s.file.%[2]s/;"+
+			"QueueEndpoint=https://%[1]s.queue.%[2]s/;"+
+			"TableEndpoint=https://%[1]s.table.%[2]s/;"+
+			"SharedAccessSignature=%[3]s", accountName, env.StorageEndpointSuffix, sasToken[1:]) // need to cut the first character '?' from the sas token
 }
 
 // ComputeAccountSASConnectionUrlForType computes the SAS Connection String for a Storage Account based on the
 // sas token and the storage type
-func ComputeAccountSASConnectionUrlForType(accountName string, sasToken string, storageType string) (string, error) {
-	if storageType != "blob" && storageType != "file" && storageType != "queue" && storageType != "table" {
-		return "", errors.New("Unexpected storage type!")
+func ComputeAccountSASConnectionUrlForType(env *azure.Environment, accountName string, sasToken string, storageType string) (*string, error) {
+	if !strings.EqualFold(storageType, "blob") && !strings.EqualFold(storageType, "file") && !strings.EqualFold(storageType, "queue") && !strings.EqualFold(storageType, "table") {
+		return nil, fmt.Errorf("Unexpected storage type %s!", storageType)
 	}
 
-	return fmt.Sprintf("https://%s.%s.core.windows.net%s", accountName, storageType, sasToken), nil
+	url := fmt.Sprintf("https://%s.%s.%s%s", accountName, strings.ToLower(storageType), env.StorageEndpointSuffix, sasToken)
+	return &url, nil
 }
 
 func ComputeContainerSASToken(signedPermissions string,
