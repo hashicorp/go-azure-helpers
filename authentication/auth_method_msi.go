@@ -68,7 +68,8 @@ func (a managedServiceIdentityAuth) getAuthorizationToken(sender autorest.Sender
 }
 
 func (a managedServiceIdentityAuth) populateConfig(c *Config) error {
-	// nothing to populate back
+	c.AuthenticatedAsAServicePrincipal = true
+	c.GetAuthenticatedObjectID = buildServicePrincipalObjectIDFunc(c)
 	return nil
 }
 
