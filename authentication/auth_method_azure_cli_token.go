@@ -103,7 +103,7 @@ func (a azureCliTokenAuth) getAuthorizationToken(sender autorest.Sender, oauth *
 
 		return &adalToken, nil
 	}
-	spt.SetCustomRefreshFunc(&refreshFunc)
+	spt.SetCustomRefreshFunc(refreshFunc)
 
 	auth := autorest.NewBearerAuthorizer(spt)
 	return auth, nil
