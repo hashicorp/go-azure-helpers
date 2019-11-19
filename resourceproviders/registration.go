@@ -55,7 +55,10 @@ func RegisterForSubscription(ctx context.Context, client resources.ProvidersClie
 
 	wg.Wait()
 
-	return fmt.Errorf("Cannnot register providers: %s. Errors were: %w", strings.Join(failedProviders, ", "), err)
+	if len(failedProviders) > 0 {
+		err = fmt.Errorf("Cannnot register providers: %s. Errors were: %s", strings.Join(failedProviders, ", "), err)
+	}
+	return err
 }
 
 func registerWithSubscription(ctx context.Context, providerName string, client resources.ProvidersClient) error {
