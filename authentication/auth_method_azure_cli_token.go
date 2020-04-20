@@ -39,14 +39,14 @@ func (a azureCliTokenAuth) build(b Builder) (authMethod, error) {
 			// the token, however, as we are using custom function to refresh token (i.e. using az cli) instead, it is
 			// not necessary to pass in a valid client ID.
 			// Actually there is no formal way to get either the client ID or refresh token from Az CLI.
-			clientId:       "cli",
+			clientId: "cli",
 		},
 		servicePrincipalAuthDocsLink: b.ClientSecretDocsLink,
 	}
 
 	sub, err := obtainSubscription(b.SubscriptionID)
 	if err != nil {
-		return nil, fmt.Errorf("obtain subscription(%s) from Azure CLI: %w", b.SubscriptionID, err)
+		return nil, fmt.Errorf("obtain subscription(%s) from Azure CLI: %+v", b.SubscriptionID, err)
 	}
 	auth.profile.subscription = sub
 
