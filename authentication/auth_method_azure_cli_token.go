@@ -14,6 +14,15 @@ import (
 	"github.com/hashicorp/go-multierror"
 )
 
+type azureCLIProfile struct {
+	subscription *cli.Subscription
+
+	clientId       string
+	environment    string
+	subscriptionId string
+	tenantId       string
+}
+
 type azureCliTokenAuth struct {
 	profile                      *azureCLIProfile
 	servicePrincipalAuthDocsLink string
@@ -22,28 +31,28 @@ type azureCliTokenAuth struct {
 func (a azureCliTokenAuth) build(b Builder) (authMethod, error) {
 	auth := azureCliTokenAuth{
 		profile: &azureCLIProfile{
-			clientId:       b.ClientID,
-			environment:    b.Environment,
 			subscriptionId: b.SubscriptionID,
 			tenantId:       b.TenantID,
+			// Setting a non-empty string as client ID to make adal.NewServicePrincipalTokenFromManualToken() happy
+			// (See: https://github.com/Azure/go-autorest/blob/master/autorest/adal/token.go#L473)
+			// The returned ServicePrincipalToken will only use that client ID when using the default logic to refresh
+			// the token, however, as we are using custom function to refresh token (i.e. using az cli) instead, it is
+			// not necessary to pass in a valid client ID.
+			// Actually there is no formal way to get either the client ID or refresh token from Az CLI.
+			clientId:       "cli",
 		},
 		servicePrincipalAuthDocsLink: b.ClientSecretDocsLink,
 	}
-	profilePath, err := cli.ProfilePath()
-	if err != nil {
-		return nil, fmt.Errorf("Error loading the Profile Path from the Azure CLI: %+v", err)
-	}
 
-	profile, err := cli.LoadProfile(profilePath)
+	sub, err := obtainSubscription(b.SubscriptionID)
 	if err != nil {
-		return nil, fmt.Errorf("Azure CLI Authorization Profile was not found. Please ensure the Azure CLI is installed and then log-in with `az login`.")
+		return nil, fmt.Errorf("obtain subscription(%s) from Azure CLI: %w", b.SubscriptionID, err)
 	}
-
-	auth.profile.profile = profile
+	auth.profile.subscription = sub
 
 	// Authenticating as a Service Principal doesn't return all of the information we need for authentication purposes
 	// as such Service Principal authentication is supported using the specific auth method
-	if authenticatedAsAUser := auth.profile.verifyAuthenticatedAsAUser(); !authenticatedAsAUser {
+	if sub.User == nil || !strings.EqualFold(sub.User.Type, "user") {
 		return nil, fmt.Errorf(`Authenticating using the Azure CLI is only supported as a User (not a Service Principal).
 
 To authenticate to Azure using a Service Principal, you can use the separate 'Authenticate using a Service Principal'
@@ -52,15 +61,15 @@ auth method - instructions for which can be found here: %s
 Alternatively you can authenticate using the Azure CLI by using a User Account.`, auth.servicePrincipalAuthDocsLink)
 	}
 
-	err = auth.profile.populateFields()
-	if err != nil {
-		return nil, fmt.Errorf("Error retrieving the Profile from the Azure CLI: %s Please re-authenticate using `az login`.", err)
+	// Populate fields
+	if auth.profile.subscriptionId == "" {
+		auth.profile.subscriptionId = sub.ID
 	}
-
-	err = auth.profile.populateClientId()
-	if err != nil {
-		return nil, fmt.Errorf("Error populating Client ID from the Azure CLI: %+v", err)
+	if auth.profile.tenantId == "" {
+		auth.profile.tenantId = sub.TenantID
 	}
+	// always pull the environment from the Azure CLI, since the Access Token's associated with it
+	auth.profile.environment = normalizeEnvironmentName(sub.EnvironmentName)
 
 	return auth, nil
 }
@@ -177,6 +186,23 @@ func obtainAuthorizationToken(endpoint string, subscriptionId string) (*cli.Toke
 	}
 
 	return &token, nil
+}
+
+// obtainSubscription return a subscription object of the specified subscriptionId.
+// If the subscriptionId is empty, it returns the default subscription.
+func obtainSubscription(subscriptionId string) (*cli.Subscription, error) {
+	var sub cli.Subscription
+	cmd := make([]string, 2, 4)
+	cmd = []string{"account", "show"}
+	if subscriptionId != "" {
+		cmd = append(cmd, "-s", subscriptionId)
+	}
+	err := jsonUnmarshalAzCmd(&sub, cmd...)
+	if err != nil {
+		return nil, fmt.Errorf("Error parsing json result from the Azure CLI: %v", err)
+	}
+
+	return &sub, nil
 }
 
 func jsonUnmarshalAzCmd(i interface{}, arg ...string) error {
