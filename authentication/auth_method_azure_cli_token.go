@@ -33,13 +33,7 @@ func (a azureCliTokenAuth) build(b Builder) (authMethod, error) {
 		profile: &azureCLIProfile{
 			subscriptionId: b.SubscriptionID,
 			tenantId:       b.TenantID,
-			// Setting a non-empty string as client ID to make adal.NewServicePrincipalTokenFromManualToken() happy
-			// (See: https://github.com/Azure/go-autorest/blob/master/autorest/adal/token.go#L473)
-			// The returned ServicePrincipalToken will only use that client ID when using the default logic to refresh
-			// the token, however, as we are using custom function to refresh token (i.e. using az cli) instead, it is
-			// not necessary to pass in a valid client ID.
-			// Actually there is no formal way to get either the client ID or refresh token from Az CLI.
-			clientId: "cli",
+			clientId:       "04b07795-8ddb-461a-bbee-02f9e1bf7b46", // fixed first party client id for Az CLI
 		},
 		servicePrincipalAuthDocsLink: b.ClientSecretDocsLink,
 	}
