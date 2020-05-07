@@ -11,14 +11,23 @@ import (
 // the Azure SDK for Go and then returns the association environment, if it exists.
 func DetermineEnvironment(name string) (*azure.Environment, error) {
 	// detect cloud from environment
-	env, envErr := azure.EnvironmentFromName(name)
+	var env azure.Environment
+	var envErr error
 
-	if envErr != nil {
-		// try again with wrapped value to support readable values like german instead of AZUREGERMANCLOUD
-		wrapped := fmt.Sprintf("AZURE%sCLOUD", name)
-		env, envErr = azure.EnvironmentFromName(wrapped)
+	if strings.HasSuffix(name, ".json") {
+		env, envErr = azure.EnvironmentFromFile(name)
 		if envErr != nil {
-			return nil, fmt.Errorf("An Azure Environment with name %q was not found: %+v", name, envErr)
+			return nil, fmt.Errorf("Failed loading an Azure Environment from a file at: %q with error: %+v", name, envErr)
+		}
+	} else {
+		env, envErr = azure.EnvironmentFromName(name)
+		if envErr != nil {
+			// try again with wrapped value to support readable values like german instead of AZUREGERMANCLOUD
+			wrapped := fmt.Sprintf("AZURE%sCLOUD", name)
+			env, envErr = azure.EnvironmentFromName(wrapped)
+			if envErr != nil {
+				return nil, fmt.Errorf("An Azure Environment with name %q was not found: %+v", name, envErr)
+			}
 		}
 	}
 
