@@ -92,7 +92,7 @@ func normalizeEnvironmentName(input string) string {
 }
 
 // AzureEnvironmentByName returns a specific Azure Environment from the specified endpoint
-func AzureEnvironmentByName(ctx context.Context, endpoint string, environmentName string) (*azure.Environment, error) {
+func AzureEnvironmentByNameFromEndpoint(ctx context.Context, endpoint string, environmentName string) (*azure.Environment, error) {
 	var environmentTranslationMap = map[string]string{
 		"public": "AzureCloud",
 		"usgovernment": "AzureUSGovernment",
@@ -116,8 +116,7 @@ func AzureEnvironmentByName(ctx context.Context, endpoint string, environmentNam
 	}
 
 	dec := json.NewDecoder(resp.Body)
-	_, err = dec.Token()
-	if err != nil {
+	if _, err = dec.Token(); err != nil {
 		return nil, err
 	}
 

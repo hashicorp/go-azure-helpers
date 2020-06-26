@@ -15,7 +15,7 @@ func buildServicePrincipalObjectIDFunc(c *Config) func(ctx context.Context) (str
 		var err error
 
 		if c.MetadataURL != "" {
-			env, err = AzureEnvironmentByName(ctx, c.MetadataURL, c.Environment)
+			env, err = AzureEnvironmentByNameFromEndpoint(ctx, c.MetadataURL, c.Environment)
 			if err != nil {
 				return "", err
 			}
