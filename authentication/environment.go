@@ -127,7 +127,7 @@ func AzureEnvironmentByName(ctx context.Context, endpoint string, environmentNam
 		// decode an array value (Message)
 		err := dec.Decode(&env)
 		if err != nil {
-			return nil, fmt.Errorf("unable to decode environment from metadata_url response: %+v", err)
+			return nil, fmt.Errorf("unable to decode environment from %q response: %+v", uri, err)
 		}
 		if strings.EqualFold(env.Name, environmentName) || strings.EqualFold(env.Name, environmentTranslationMap[environmentName]) {
 			aEnv := &azure.Environment{
@@ -140,9 +140,8 @@ func AzureEnvironmentByName(ctx context.Context, endpoint string, environmentNam
 					Storage: "https://storage.azure.com/",
 				},
 			}
-			if len(env.Authentication.Audiences) > 1 {
-				// aEnv.ServiceManagementEndpoint = env.Authentication.Audiences[0]
-				aEnv.TokenAudience = env.Authentication.Audiences[1]
+			if len(env.Authentication.Audiences) > 0 {
+				aEnv.TokenAudience = env.Authentication.Audiences[0]
 			} else {
 				return nil, fmt.Errorf("unable to find token audience for environment %q from endpoint %q", environmentName, endpoint)
 			}
