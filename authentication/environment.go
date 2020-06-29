@@ -100,7 +100,7 @@ func AzureEnvironmentByNameFromEndpoint(ctx context.Context, endpoint string, en
 		"china": "AzureChinaCloud",
 	}
 
-	uri := fmt.Sprintf("https://%s//metadata/endpoints?api-version=2019-05-01", endpoint)
+	uri := fmt.Sprintf("https://%s/metadata/endpoints?api-version=2019-05-01", endpoint)
 	client := http.Client{
 		Transport: &http.Transport{
 			Proxy: http.ProxyFromEnvironment,
