@@ -129,6 +129,10 @@ func AzureEnvironmentByNameFromEndpoint(ctx context.Context, endpoint string, en
 			return nil, fmt.Errorf("unable to decode environment from %q response: %+v", uri, err)
 		}
 		if strings.EqualFold(env.Name, environmentName) || strings.EqualFold(env.Name, environmentTranslationMap[environmentName]) {
+			if env.Authentication.Tenant != "common" && env.Authentication.IdentityProvider != "AAD" {
+				return nil, fmt.Errorf("environment %q from metadata_url %q is not supported", environmentName, endpoint)
+			}
+
 			aEnv := &azure.Environment{
 				ResourceManagerEndpoint: env.ResourceManager,
 				StorageEndpointSuffix:   env.Suffixes.Storage,
@@ -139,11 +143,13 @@ func AzureEnvironmentByNameFromEndpoint(ctx context.Context, endpoint string, en
 					Storage: "https://storage.azure.com/",
 				},
 			}
+
 			if len(env.Authentication.Audiences) > 0 {
 				aEnv.TokenAudience = env.Authentication.Audiences[0]
 			} else {
 				return nil, fmt.Errorf("unable to find token audience for environment %q from endpoint %q", environmentName, endpoint)
 			}
+
 			return aEnv, nil
 		}
 	}

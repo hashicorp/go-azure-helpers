@@ -3,27 +3,16 @@ package authentication
 import (
 	"context"
 	"fmt"
-	"github.com/Azure/go-autorest/autorest/azure"
-
 	"github.com/Azure/azure-sdk-for-go/services/graphrbac/1.6/graphrbac"
 	"github.com/hashicorp/go-azure-helpers/sender"
 )
 
 func buildServicePrincipalObjectIDFunc(c *Config) func(ctx context.Context) (string, error) {
 	return func(ctx context.Context) (string, error) {
-		env := &azure.Environment{}
-		var err error
 
-		if c.MetadataURL != "" {
-			env, err = AzureEnvironmentByNameFromEndpoint(ctx, c.MetadataURL, c.Environment)
-			if err != nil {
-				return "", err
-			}
-		} else {
-			env, err = DetermineEnvironment(c.Environment)
-			if err != nil {
-				return "", err
-			}
+		env, err := AzureEnvironmentByNameFromEndpoint(ctx, c.MetadataURL, c.Environment)
+		if err != nil {
+			return "", err
 		}
 
 		s := sender.BuildSender("GoAzureHelpers")
