@@ -129,6 +129,7 @@ func AzureEnvironmentByNameFromEndpoint(ctx context.Context, endpoint string, en
 			return nil, fmt.Errorf("unable to decode environment from %q response: %+v", uri, err)
 		}
 		if strings.EqualFold(env.Name, environmentName) || strings.EqualFold(env.Name, environmentTranslationMap[environmentName]) {
+			// This check is to prevent azure stack users from getting their environment this way
 			if env.Authentication.Tenant != "common" && env.Authentication.IdentityProvider != "AAD" {
 				return nil, fmt.Errorf("environment %q from metadata_url %q is not supported", environmentName, endpoint)
 			}
