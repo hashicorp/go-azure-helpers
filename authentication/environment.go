@@ -93,11 +93,16 @@ func normalizeEnvironmentName(input string) string {
 
 // AzureEnvironmentByName returns a specific Azure Environment from the specified endpoint
 func AzureEnvironmentByNameFromEndpoint(ctx context.Context, endpoint string, environmentName string) (*azure.Environment, error) {
-	var environmentTranslationMap = map[string]string{
-		"public": "AzureCloud",
-		"usgovernment": "AzureUSGovernment",
-		"german": "AzureGermanCloud",
-		"china": "AzureChinaCloud",
+	// Swap this to a map[string]*azure.Environment
+	var environmentTranslationMap = map[string]azure.Environment{
+		"public": azure.PublicCloud,
+		"usgovernment": azure.USGovernmentCloud,
+		"german": azure.GermanCloud,
+		"china": azure.ChinaCloud,
+	}
+
+	if env, ok := environmentTranslationMap[environmentName]; ok {
+		return &env, nil
 	}
 
 	uri := fmt.Sprintf("https://%s/metadata/endpoints?api-version=2019-05-01", endpoint)
@@ -128,12 +133,7 @@ func AzureEnvironmentByNameFromEndpoint(ctx context.Context, endpoint string, en
 		if err != nil {
 			return nil, fmt.Errorf("unable to decode environment from %q response: %+v", uri, err)
 		}
-		if strings.EqualFold(env.Name, environmentName) || strings.EqualFold(env.Name, environmentTranslationMap[environmentName]) {
-			// This check is to prevent azure stack users from getting their environment this way
-			if env.Authentication.Tenant != "common" && env.Authentication.IdentityProvider != "AAD" {
-				return nil, fmt.Errorf("environment %q from metadata_url %q is not supported", environmentName, endpoint)
-			}
-
+		if strings.EqualFold(env.Name, environmentName) {
 			aEnv := &azure.Environment{
 				ResourceManagerEndpoint: env.ResourceManager,
 				StorageEndpointSuffix:   env.Suffixes.Storage,

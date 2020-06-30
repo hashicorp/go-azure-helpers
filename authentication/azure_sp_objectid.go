@@ -14,16 +14,9 @@ func buildServicePrincipalObjectIDFunc(c *Config) func(ctx context.Context) (str
 		env := &azure.Environment{}
 		var err error
 
-		if c.MetadataURL != "" {
-			env, err = AzureEnvironmentByNameFromEndpoint(ctx, c.MetadataURL, c.Environment)
-			if err != nil {
-				return "", err
-			}
-		} else {
-			env, err = DetermineEnvironment(c.Environment)
-			if err != nil {
-				return "", err
-			}
+		env, err = AzureEnvironmentByNameFromEndpoint(ctx, c.MetadataURL, c.Environment)
+		if err != nil {
+			return "", err
 		}
 
 		s := sender.BuildSender("GoAzureHelpers")
