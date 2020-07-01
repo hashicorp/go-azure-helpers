@@ -2,8 +2,9 @@ package authentication
 
 import (
 	"context"
-	"github.com/hashicorp/go-azure-helpers/testhelpers"
 	"testing"
+
+	"github.com/hashicorp/go-azure-helpers/testhelpers"
 )
 
 func TestAzureEnvironmentNames(t *testing.T) {
