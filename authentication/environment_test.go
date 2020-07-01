@@ -3,8 +3,6 @@ package authentication
 import (
 	"context"
 	"testing"
-
-	"github.com/hashicorp/go-azure-helpers/testhelpers"
 )
 
 func TestAzureEnvironmentNames(t *testing.T) {
@@ -26,7 +24,7 @@ func TestAzureEnvironmentNames(t *testing.T) {
 }
 
 func TestAccAzureEnvironmentByNameFromEndpoint(t *testing.T) {
-	c, err := testhelpers.BuildAuthClient()
+	c, err := BuildAuthClient()
 	if err != nil {
 		t.Fatalf("Error building client: %s", err)
 	}
@@ -38,7 +36,7 @@ func TestAccAzureEnvironmentByNameFromEndpoint(t *testing.T) {
 }
 
 func TestAccIsEnvironmentAzureStack(t *testing.T) {
-	c, err := testhelpers.BuildAuthClient()
+	c, err := BuildAuthClient()
 	if err != nil {
 		t.Fatalf("Error building client: %s", err)
 	}

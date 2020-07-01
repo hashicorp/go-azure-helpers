@@ -1,14 +1,12 @@
-package testhelpers
+package authentication
 
 import (
 	"fmt"
 	"os"
-
-	"github.com/hashicorp/go-azure-helpers/authentication"
 )
 
-func BuildAuthClient() (*authentication.Config, error) {
-	builder := &authentication.Builder{
+func BuildAuthClient() (*Config, error) {
+	builder := &Builder{
 		SubscriptionID: os.Getenv("ARM_SUBSCRIPTION_ID"),
 		ClientID:       os.Getenv("ARM_CLIENT_ID"),
 		ClientSecret:   os.Getenv("ARM_CLIENT_SECRET"),
