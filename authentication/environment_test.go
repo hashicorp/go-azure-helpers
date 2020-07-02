@@ -2,6 +2,7 @@ package authentication
 
 import (
 	"context"
+	"strings"
 	"testing"
 )
 
@@ -23,16 +24,68 @@ func TestAzureEnvironmentNames(t *testing.T) {
 	}
 }
 
+func TestAccAzureEnvironmentByName(t *testing.T) {
+	env, err := AzureEnvironmentByNameFromEndpoint(context.TODO(), "management.azure.com", "public")
+	if err != nil {
+		t.Fatalf("Error getting Endpoint: %s", err)
+	}
+	if !strings.EqualFold(env.Name, "AzurePublicCloud") {
+		t.Fatalf("Incorrect environment name returned. Expected: %q. Received: %q", "AzurePublicCloud", env.Name)
+	}
+	env, err = AzureEnvironmentByNameFromEndpoint(context.TODO(), "management.azure.com", "usgovernment")
+	if err != nil {
+		t.Fatalf("Error getting Endpoint: %s", err)
+	}
+	if !strings.EqualFold(env.Name, "AzureUSGovernmentCloud") {
+		t.Fatalf("Incorrect environment name returned. Expected: %q. Received: %q", "AzureUSGovernmentCloud", env.Name)
+	}
+	env, err = AzureEnvironmentByNameFromEndpoint(context.TODO(), "management.azure.com", "german")
+	if err != nil {
+		t.Fatalf("Error getting Endpoint: %s", err)
+	}
+	if !strings.EqualFold(env.Name, "AzureGermanCloud") {
+		t.Fatalf("Incorrect environment name returned. Expected: %q. Received: %q", "AzureGermanCloud", env.Name)
+	}
+	env, err = AzureEnvironmentByNameFromEndpoint(context.TODO(), "management.azure.com", "china")
+	if err != nil {
+		t.Fatalf("Error getting Endpoint: %s", err)
+	}
+	if !strings.EqualFold(env.Name, "AzureChinaCloud") {
+		t.Fatalf("Incorrect environment name returned. Expected: %q. Received: %q", "AzureChinaCloud", env.Name)
+	}
+
+}
+
 func TestAccAzureEnvironmentByNameFromEndpoint(t *testing.T) {
-	_, err := AzureEnvironmentByNameFromEndpoint(context.TODO(), "management.azure.com", "public")
+	env, err := AzureEnvironmentByNameFromEndpoint(context.TODO(), "management.azure.com", "AzureCloud")
 	if err != nil {
 		t.Fatalf("Error getting Endpoint: %s", err)
 	}
-	_, err = AzureEnvironmentByNameFromEndpoint(context.TODO(), "management.azure.com", "AzureCloud")
+	if !strings.EqualFold(env.Name, "AzureCloud") {
+		t.Fatalf("Incorrect environment name returned. Expected: %q. Received: %q", "AzureCloud", env.Name)
+	}
+	env, err = AzureEnvironmentByNameFromEndpoint(context.TODO(), "management.azure.com", "AzureChinaCloud")
 	if err != nil {
 		t.Fatalf("Error getting Endpoint: %s", err)
 	}
-	_, err = AzureEnvironmentByNameFromEndpoint(context.TODO(), "badurl", "AzureCloud")
+	if !strings.EqualFold(env.Name, "AzureChinaCloud") {
+		t.Fatalf("Incorrect environment name returned. Expected: %q. Received: %q", "AzureChinaCloud", env.Name)
+	}
+	env, err = AzureEnvironmentByNameFromEndpoint(context.TODO(), "management.azure.com", "AzureUSGovernment")
+	if err != nil {
+		t.Fatalf("Error getting Endpoint: %s", err)
+	}
+	if !strings.EqualFold(env.Name, "AzureUSGovernment") {
+		t.Fatalf("Incorrect environment name returned. Expected: %q. Received: %q", "AzureUSGovernment", env.Name)
+	}
+	env, err = AzureEnvironmentByNameFromEndpoint(context.TODO(), "management.azure.com", "AzureGermanCloud")
+	if err != nil {
+		t.Fatalf("Error getting Endpoint: %s", err)
+	}
+	if !strings.EqualFold(env.Name, "AzureGermanCloud") {
+		t.Fatalf("Incorrect environment name returned. Expected: %q. Received: %q", "AzureGermanCloud", env.Name)
+	}
+	_, err = AzureEnvironmentByNameFromEndpoint(context.TODO(), "badurl", "AzureGermanCloud")
 	if err == nil {
 		t.Fatal("Expected error from bad endpoint")
 	}
@@ -43,7 +96,7 @@ func TestAccAzureEnvironmentByNameFromEndpoint(t *testing.T) {
 }
 
 func TestAccIsEnvironmentAzureStack(t *testing.T) {
-	ok, err := IsEnvironmentAzureStack(context.TODO(),"management.azure.com", "public")
+	ok, err := IsEnvironmentAzureStack(context.TODO(), "management.azure.com", "public")
 	if err != nil {
 		t.Fatalf("Error getting Endpoint: %s", err)
 	}

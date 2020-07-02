@@ -10,6 +10,13 @@ import (
 	"github.com/Azure/go-autorest/autorest/azure"
 )
 
+var environmentTranslationMap = map[string]azure.Environment{
+	"public":       azure.PublicCloud,
+	"usgovernment": azure.USGovernmentCloud,
+	"german":       azure.GermanCloud,
+	"china":        azure.ChinaCloud,
+}
+
 type Environment struct {
 	Portal                  string         `json:"portal"`
 	Authentication          Authentication `json:"authentication"`
@@ -42,7 +49,6 @@ type Suffixes struct {
 	Storage                             string `json:"storage"`
 	AzureFrontDoorEndpointSuffix        string `json:"azureFrontDoorEndpointSuffix"`
 }
-
 
 // DetermineEnvironment determines what the Environment name is within
 // the Azure SDK for Go and then returns the association environment, if it exists.
@@ -93,17 +99,57 @@ func normalizeEnvironmentName(input string) string {
 
 // AzureEnvironmentByName returns a specific Azure Environment from the specified endpoint
 func AzureEnvironmentByNameFromEndpoint(ctx context.Context, endpoint string, environmentName string) (*azure.Environment, error) {
-	var environmentTranslationMap = map[string]azure.Environment{
-		"public": azure.PublicCloud,
-		"usgovernment": azure.USGovernmentCloud,
-		"german": azure.GermanCloud,
-		"china": azure.ChinaCloud,
-	}
-
 	if env, ok := environmentTranslationMap[environmentName]; ok {
 		return &env, nil
 	}
 
+	environments, err := getSupportedEnvironments(ctx, endpoint)
+	if err != nil {
+		return nil, err
+	}
+
+	// while the array contains values
+	for _, env := range environments {
+		if strings.EqualFold(env.Name, environmentName) {
+			aEnv, err := buildAzureEnvironment(env)
+			if err != nil {
+				return nil, err
+			}
+			return aEnv, nil
+		}
+	}
+
+	return nil, fmt.Errorf("unable to find environment %q from endpoint %q", environmentName, endpoint)
+}
+
+// IsEnvironmentAzureStack returns whether a specific Azure Environment is an Azure Stack environment
+func IsEnvironmentAzureStack(ctx context.Context, endpoint string, environmentName string) (bool, error) {
+	if _, ok := environmentTranslationMap[environmentName]; ok {
+		return false, nil
+	}
+
+	environments, err := getSupportedEnvironments(ctx, endpoint)
+	if err != nil {
+		return false, err
+	}
+
+	// while the array contains values
+	for _, env := range environments {
+		if err != nil {
+			return false, fmt.Errorf("unable to decode environment from %q response: %+v", endpoint, err)
+		}
+		if strings.EqualFold(env.Name, environmentName) {
+			if strings.EqualFold(env.Authentication.IdentityProvider, "AAD") || strings.EqualFold(env.Authentication.Tenant, "common") {
+				return true, nil
+			}
+			return false, nil
+		}
+	}
+
+	return false, fmt.Errorf("unable to find environment %q from endpoint %q", environmentName, endpoint)
+}
+
+func getSupportedEnvironments(ctx context.Context, endpoint string) ([]Environment, error) {
 	uri := fmt.Sprintf("https://%s/metadata/endpoints?api-version=2019-05-01", endpoint)
 	client := http.Client{
 		Transport: &http.Transport{
@@ -119,103 +165,42 @@ func AzureEnvironmentByNameFromEndpoint(ctx context.Context, endpoint string, en
 		return nil, fmt.Errorf("retrieving environments from Azure MetaData service: %+v", err)
 	}
 
-	dec := json.NewDecoder(resp.Body)
-	if _, err = dec.Token(); err != nil {
+	var environments []Environment
+	if err := json.NewDecoder(resp.Body).Decode(&environments); err != nil {
 		return nil, err
 	}
 
-	// while the array contains values
-	for dec.More() {
-		var env Environment
-		// decode an array value (Message)
-		err := dec.Decode(&env)
-		if err != nil {
-			return nil, fmt.Errorf("unable to decode environment from %q response: %+v", uri, err)
-		}
-		if strings.EqualFold(env.Name, environmentName) {
-			aEnv := &azure.Environment{
-				Name:                    env.Name,
-				ResourceManagerEndpoint: env.ResourceManager,
-				StorageEndpointSuffix:   env.Suffixes.Storage,
-				ActiveDirectoryEndpoint: env.Authentication.LoginEndpoint,
-				GraphEndpoint:           env.Graph,
-				KeyVaultEndpoint: env.Suffixes.KeyVaultDns,
-				GalleryEndpoint: env.Gallery,
-				BatchManagementEndpoint: env.Batch,
-				SQLDatabaseDNSSuffix: env.Suffixes.SqlServerHostname,
-				KeyVaultDNSSuffix: env.Suffixes.KeyVaultDns,
-				ContainerRegistryDNSSuffix: env.Suffixes.AcrLoginServer,
-				ResourceIdentifiers: azure.ResourceIdentifier{
-					// This isn't returned from the metadata url and is universal across all environments
-					Storage: "https://storage.azure.com/",
-					Graph: env.Graph,
-					KeyVault: env.Suffixes.KeyVaultDns,
-					Datalake: env.ActiveDirectoryDataLake,
-					Batch: env.Batch,
-				},
-			}
-
-			if len(env.Authentication.Audiences) > 0 {
-				aEnv.TokenAudience = env.Authentication.Audiences[0]
-				aEnv.ServiceManagementEndpoint = env.Authentication.Audiences[0]
-			} else {
-				return nil, fmt.Errorf("unable to find token audience for environment %q from endpoint %q", environmentName, endpoint)
-			}
-
-			return aEnv, nil
-		}
-	}
-
-	return nil, fmt.Errorf("unable to find environment %q from endpoint %q", environmentName, endpoint)
+	return environments, nil
 }
 
-// IsEnvironmentAzureStack returns whether a specific Azure Environment is an Azure Stack environment
-func IsEnvironmentAzureStack(ctx context.Context, endpoint string, environmentName string) (bool, error) {
-	var environmentTranslationMap = map[string]azure.Environment{
-		"public": azure.PublicCloud,
-		"usgovernment": azure.USGovernmentCloud,
-		"german": azure.GermanCloud,
-		"china": azure.ChinaCloud,
-	}
-
-	if _, ok := environmentTranslationMap[environmentName]; ok {
-		return false, nil
-	}
-
-	uri := fmt.Sprintf("https://%s/metadata/endpoints?api-version=2019-05-01", endpoint)
-	client := http.Client{
-		Transport: &http.Transport{
-			Proxy: http.ProxyFromEnvironment,
+func buildAzureEnvironment(env Environment) (*azure.Environment, error) {
+	aEnv := &azure.Environment{
+		Name:                       env.Name,
+		ResourceManagerEndpoint:    env.ResourceManager,
+		StorageEndpointSuffix:      env.Suffixes.Storage,
+		ActiveDirectoryEndpoint:    env.Authentication.LoginEndpoint,
+		GraphEndpoint:              env.Graph,
+		KeyVaultEndpoint:           env.Suffixes.KeyVaultDns,
+		GalleryEndpoint:            env.Gallery,
+		BatchManagementEndpoint:    env.Batch,
+		SQLDatabaseDNSSuffix:       env.Suffixes.SqlServerHostname,
+		KeyVaultDNSSuffix:          fmt.Sprintf("https://%s/", env.Suffixes.KeyVaultDns),
+		ContainerRegistryDNSSuffix: env.Suffixes.AcrLoginServer,
+		ResourceIdentifiers: azure.ResourceIdentifier{
+			// This isn't returned from the metadata url and is universal across all environments
+			Storage:  "https://storage.azure.com/",
+			Graph:    env.Graph,
+			KeyVault: fmt.Sprintf("https://%s/", env.Suffixes.KeyVaultDns),
+			Datalake: env.ActiveDirectoryDataLake,
+			Batch:    env.Batch,
 		},
 	}
-	req, err := http.NewRequestWithContext(ctx, "GET", uri, nil)
-	if err != nil {
-		return false, err
-	}
-	resp, err := client.Do(req)
-	if err != nil {
-		return false, fmt.Errorf("retrieving environments from Azure MetaData service: %+v", err)
+
+	if len(env.Authentication.Audiences) > 0 {
+		aEnv.TokenAudience = env.Authentication.Audiences[0]
+	} else {
+		return nil, fmt.Errorf("unable to find token audience for environment %q", env.Name)
 	}
 
-	dec := json.NewDecoder(resp.Body)
-	if _, err = dec.Token(); err != nil {
-		return false, err
-	}
-
-	// while the array contains values
-	for dec.More() {
-		var env Environment
-		// decode an array value (Message)
-		err := dec.Decode(&env)
-		if err != nil {
-			return false, fmt.Errorf("unable to decode environment from %q response: %+v", uri, err)
-		}
-		if strings.EqualFold(env.Name, environmentName) {
-			if env.Authentication.IdentityProvider != "AAD" || env.Authentication.Tenant != "common" {
-				return true, nil
-			}
-		}
-	}
-
-	return false, nil
+	return aEnv, nil
 }
