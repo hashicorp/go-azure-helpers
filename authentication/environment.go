@@ -99,7 +99,7 @@ func normalizeEnvironmentName(input string) string {
 
 // AzureEnvironmentByName returns a specific Azure Environment from the specified endpoint
 func AzureEnvironmentByNameFromEndpoint(ctx context.Context, endpoint string, environmentName string) (*azure.Environment, error) {
-	if env, ok := environmentTranslationMap[environmentName]; ok {
+	if env, ok := environmentTranslationMap[strings.ToLower(environmentName)]; ok {
 		return &env, nil
 	}
 
@@ -124,7 +124,7 @@ func AzureEnvironmentByNameFromEndpoint(ctx context.Context, endpoint string, en
 
 // IsEnvironmentAzureStack returns whether a specific Azure Environment is an Azure Stack environment
 func IsEnvironmentAzureStack(ctx context.Context, endpoint string, environmentName string) (bool, error) {
-	if _, ok := environmentTranslationMap[environmentName]; ok {
+	if _, ok := environmentTranslationMap[strings.ToLower(environmentName)]; ok {
 		return false, nil
 	}
 
@@ -180,11 +180,11 @@ func buildAzureEnvironment(env Environment) (*azure.Environment, error) {
 		StorageEndpointSuffix:      env.Suffixes.Storage,
 		ActiveDirectoryEndpoint:    env.Authentication.LoginEndpoint,
 		GraphEndpoint:              env.Graph,
-		KeyVaultEndpoint:           env.Suffixes.KeyVaultDns,
+		KeyVaultEndpoint:           fmt.Sprintf("https://%s/", env.Suffixes.KeyVaultDns),
 		GalleryEndpoint:            env.Gallery,
 		BatchManagementEndpoint:    env.Batch,
 		SQLDatabaseDNSSuffix:       env.Suffixes.SqlServerHostname,
-		KeyVaultDNSSuffix:          fmt.Sprintf("https://%s/", env.Suffixes.KeyVaultDns),
+		KeyVaultDNSSuffix:          env.Suffixes.KeyVaultDns,
 		ContainerRegistryDNSSuffix: env.Suffixes.AcrLoginServer,
 		ResourceIdentifiers: azure.ResourceIdentifier{
 			// This isn't returned from the metadata url and is universal across all environments
