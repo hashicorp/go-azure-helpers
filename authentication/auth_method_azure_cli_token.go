@@ -187,7 +187,7 @@ func obtainAuthorizationToken(endpoint string, subscriptionId string) (*cli.Toke
 func obtainSubscription(subscriptionId string) (*cli.Subscription, error) {
 	var sub cli.Subscription
 	cmd := make([]string, 2, 4)
-	cmd = []string{"account", "show"}
+	cmd = []string{"account", "show", "-o=json"}
 	if subscriptionId != "" {
 		cmd = append(cmd, "-s", subscriptionId)
 	}
