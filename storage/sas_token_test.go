@@ -203,6 +203,82 @@ func TestComputeContainerSASToken(t *testing.T) {
 	}
 }
 
+func TestComputeTableSASToken(t *testing.T) {
+	testCases := []struct {
+		signedPermissions    string
+		signedStart          string
+		signedExpiry         string
+		accountName          string
+		accountKey           string
+		tableName            string
+		signedIdentifier     string
+		signedIp             string
+		signedProtocol       string
+		startingPartitionKey string
+		startingRowKey       string
+		endingPartitionKey   string
+		endingRowKey         string
+		knownSasToken        string
+	}{
+		{
+			"r",
+			"2020-07-15T18:11:54Z",
+			"2020-07-16T18:11:54Z",
+			"azurermtabletest",
+			"jWiwSanZyE4+1+PT4np5v88aLNjxGIVT8G1sBA83/Mx1BeUJVc7HADRZmEv2PryM/iGXuVKiEkOp0Qh4GCdJlg==",
+			"MyTable",
+			"",
+			"",
+			"https",
+			"Coho Winery",
+			"Auburn",
+			"Coho Winery",
+			"Seattle",
+			"?sv=2017-07-29&tn=MyTable&st=2020-07-15T18%3A11%3A54Z&se=2020-07-16T18%3A11%3A54Z&sp=r&spr=https&spk=Coho%20Winery&srk=Auburn&epk=Coho%20Winery&erk=Seattle&sig=r0IzGEHWGpbF4ocuMdYoj7RepR9hiHyMH8gE%2FqiW%2FYw%3D",
+		},
+		{
+			"raud",
+			"2020-07-15T18:11:54Z",
+			"2020-07-16T18:11:54Z",
+			"azurermtabletest",
+			"jWiwSanZyE4+1+PT4np5v88aLNjxGIVT8G1sBA83/Mx1BeUJVc7HADRZmEv2PryM/iGXuVKiEkOp0Qh4GCdJlg==",
+			"MyTable",
+			"",
+			"93.23.223.54",
+			"https",
+			"",
+			"",
+			"",
+			"",
+			"?sv=2017-07-29&tn=MyTable&st=2020-07-15T18%3A11%3A54Z&se=2020-07-16T18%3A11%3A54Z&sp=raud&sip=93.23.223.54&spr=https&sig=UTSc0OgQPLlFBQd4v4O3SUyy8w1lXOsYtNz%2FmhGbkOg%3D",
+		},
+	}
+
+	for _, test := range testCases {
+		computedToken, err := ComputeTableSASToken(test.signedPermissions,
+			test.signedStart,
+			test.signedExpiry,
+			test.accountName,
+			test.accountKey,
+			test.tableName,
+			test.signedIdentifier,
+			test.signedIp,
+			test.signedProtocol,
+			test.startingPartitionKey,
+			test.startingRowKey,
+			test.endingPartitionKey,
+			test.endingRowKey)
+
+		if err != nil {
+			t.Fatalf("Test Failed: Error computing blob container Sas: %q", err)
+		}
+
+		if !compareSASTokens(computedToken, test.knownSasToken) {
+			t.Fatalf("Test failed: Expected Azure SAS %s but was %s", test.knownSasToken, computedToken)
+		}
+	}
+}
+
 func TestComputeAccountSASConnectionString(t *testing.T) {
 	testCases := []struct {
 		env                 azure.Environment
