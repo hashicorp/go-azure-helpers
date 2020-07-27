@@ -123,7 +123,7 @@ func AzureEnvironmentByNameFromEndpoint(ctx context.Context, endpoint string, en
 		}
 	}
 
-	return nil, fmt.Errorf("unable to locate metadata from environment %q and custom metadata host %q", environmentName, endpoint)
+	return nil, fmt.Errorf("unable to locate metadata for environment %q from custom metadata host %q", environmentName, endpoint)
 }
 
 // IsEnvironmentAzureStack returns whether a specific Azure Environment is an Azure Stack environment
