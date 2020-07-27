@@ -104,7 +104,7 @@ func AzureEnvironmentByNameFromEndpoint(ctx context.Context, endpoint string, en
 	}
 
 	if endpoint == "" {
-		return nil, fmt.Errorf("unable to locate metadata for environment %q from the built in ones `public`, `usgoverment`, `china` and no custom metadata host has been specified", environmentName)
+		return nil, fmt.Errorf("unable to locate metadata for environment %q from the built in `public`, `usgoverment`, `china` and no custom metadata host has been specified", environmentName)
 	}
 
 	environments, err := getSupportedEnvironments(ctx, endpoint)
