@@ -30,6 +30,7 @@ type Builder struct {
 
 	// Azure CLI Tokens Auth
 	SupportsAzureCliToken bool
+	AzureCliTenantOnly    bool
 
 	// Managed Service Identity Auth
 	SupportsManagedServiceIdentity bool
