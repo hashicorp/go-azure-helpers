@@ -17,6 +17,7 @@ type Builder struct {
 	ClientID       string
 	SubscriptionID string
 	TenantID       string
+	TenantOnly     bool
 	Environment    string
 	MetadataURL    string
 
@@ -30,7 +31,6 @@ type Builder struct {
 
 	// Azure CLI Tokens Auth
 	SupportsAzureCliToken bool
-	AzureCliTenantOnly    bool
 
 	// Managed Service Identity Auth
 	SupportsManagedServiceIdentity bool
