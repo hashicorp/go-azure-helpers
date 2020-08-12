@@ -18,7 +18,7 @@ type Builder struct {
 	SubscriptionID string
 	TenantID       string
 	Environment    string
-	MetadataURL    string
+	MetadataHost   string
 
 	// Auxiliary tenant IDs used for multi tenant auth
 	SupportsAuxiliaryTenants bool
@@ -55,7 +55,7 @@ func (b Builder) Build() (*Config, error) {
 		TenantID:                      b.TenantID,
 		AuxiliaryTenantIDs:            b.AuxiliaryTenantIDs,
 		Environment:                   b.Environment,
-		MetadataURL:                   b.MetadataURL,
+		MetadataHost:                  b.MetadataHost,
 		CustomResourceManagerEndpoint: b.CustomResourceManagerEndpoint,
 	}
 
