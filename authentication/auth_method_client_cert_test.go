@@ -1,8 +1,6 @@
 package authentication
 
 import (
-	"io/ioutil"
-	"os"
 	"testing"
 )
 
@@ -106,13 +104,9 @@ func TestServicePrincipalClientCertAuth_populateConfig(t *testing.T) {
 }
 
 func TestServicePrincipalClientCertAuth_validate(t *testing.T) {
-	data := []byte("client-cert-auth")
-	filePath := "./example.pfx"
-	err := ioutil.WriteFile(filePath, data, 0600)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer os.Remove(filePath)
+	filePath := "./testdata/sp.pfx"
+	emptyPath := "./testdata/empty"
+	aliasFilePath := "./testdata/sp.pfx.alias"
 
 	cases := []struct {
 		Description string
@@ -161,11 +155,11 @@ func TestServicePrincipalClientCertAuth_validate(t *testing.T) {
 			ExpectError: true,
 		},
 		{
-			Description: "File isn't a pfx",
+			Description: "File isn't an valid pfx",
 			Config: servicePrincipalClientCertificateAuth{
 				clientId:       "62e73395-5017-43b6-8ebf-d6c30a514cf1",
 				subscriptionId: "8e8b5e02-5c13-4822-b7dc-4232afb7e8c2",
-				clientCertPath: "not-valid.txt",
+				clientCertPath: emptyPath,
 				tenantId:       "9834f8d0-24b3-41b7-8b8d-c611c461a129",
 			},
 			ExpectError: true,
@@ -181,22 +175,33 @@ func TestServicePrincipalClientCertAuth_validate(t *testing.T) {
 			ExpectError: true,
 		},
 		{
-			Description: "Valid Configuration (Basic)",
+			Description: "Valid Configuration but incorrect password",
 			Config: servicePrincipalClientCertificateAuth{
 				clientId:       "62e73395-5017-43b6-8ebf-d6c30a514cf1",
 				subscriptionId: "8e8b5e02-5c13-4822-b7dc-4232afb7e8c2",
 				clientCertPath: filePath,
 				tenantId:       "9834f8d0-24b3-41b7-8b8d-c611c461a129",
 			},
-			ExpectError: false,
+			ExpectError: true,
 		},
 		{
-			Description: "Valid Configuration (Complete)",
+			Description: "Valid Configuration",
 			Config: servicePrincipalClientCertificateAuth{
 				clientId:           "62e73395-5017-43b6-8ebf-d6c30a514cf1",
 				subscriptionId:     "8e8b5e02-5c13-4822-b7dc-4232afb7e8c2",
 				clientCertPath:     filePath,
-				clientCertPassword: "Password1234!",
+				clientCertPassword: "123",
+				tenantId:           "9834f8d0-24b3-41b7-8b8d-c611c461a129",
+			},
+			ExpectError: false,
+		},
+		{
+			Description: "Valid Configuration with file not end with .pfx",
+			Config: servicePrincipalClientCertificateAuth{
+				clientId:           "62e73395-5017-43b6-8ebf-d6c30a514cf1",
+				subscriptionId:     "8e8b5e02-5c13-4822-b7dc-4232afb7e8c2",
+				clientCertPath:     aliasFilePath,
+				clientCertPassword: "123",
 				tenantId:           "9834f8d0-24b3-41b7-8b8d-c611c461a129",
 			},
 			ExpectError: false,
