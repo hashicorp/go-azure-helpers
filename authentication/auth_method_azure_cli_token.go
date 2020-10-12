@@ -209,11 +209,19 @@ func jsonUnmarshalAzCmd(i interface{}, arg ...string) error {
 	cmd.Stdout = &stdout
 
 	if err := cmd.Start(); err != nil {
-		return fmt.Errorf("Error launching Azure CLI: %+v", err)
+		err := fmt.Errorf("Error launching Azure CLI: %+v", err)
+		if stdErrStr := stderr.String(); stdErrStr != "" {
+			err = fmt.Errorf("%s: %s", err, strings.TrimSpace(stdErrStr))
+		}
+		return err
 	}
 
 	if err := cmd.Wait(); err != nil {
-		return fmt.Errorf("Error waiting for the Azure CLI: %+v", err)
+		err := fmt.Errorf("Error waiting for the Azure CLI: %+v", err)
+		if stdErrStr := stderr.String(); stdErrStr != "" {
+			err = fmt.Errorf("%s: %s", err, strings.TrimSpace(stdErrStr))
+		}
+		return err
 	}
 
 	stdOutStr := stdout.String()
