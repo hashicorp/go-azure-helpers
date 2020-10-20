@@ -193,6 +193,27 @@ func TestServicePrincipalClientSecretMultiTenantAuth_validate(t *testing.T) {
 			},
 			ExpectError: false,
 		},
+		{
+			Description: "Invalid TenantOnly Configuration",
+			Config: servicePrincipalClientSecretMultiTenantAuth{
+				clientId:           "62e73395-5017-43b6-8ebf-d6c30a514cf1",
+				clientSecret:       "Does Hammer Time have Daylight Savings Time?",
+				tenantOnly:         true,
+				auxiliaryTenantIDs: []string{"9834f8d0-0707-1984-bd35-c611c461a129", "9834f8d0-1984-0707-bd35-c611c461a129"},
+			},
+			ExpectError: true,
+		},
+		{
+			Description: "Valid TenantOnly Configuration",
+			Config: servicePrincipalClientSecretMultiTenantAuth{
+				clientId:           "62e73395-5017-43b6-8ebf-d6c30a514cf1",
+				clientSecret:       "Does Hammer Time have Daylight Savings Time?",
+				tenantId:           "9834f8d0-24b3-41b7-8b8d-c611c461a129",
+				tenantOnly:         true,
+				auxiliaryTenantIDs: []string{"9834f8d0-0707-1984-bd35-c611c461a129", "9834f8d0-1984-0707-bd35-c611c461a129"},
+			},
+			ExpectError: false,
+		},
 	}
 
 	for _, v := range cases {

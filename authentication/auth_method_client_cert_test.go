@@ -206,6 +206,25 @@ func TestServicePrincipalClientCertAuth_validate(t *testing.T) {
 			},
 			ExpectError: false,
 		},
+		{
+			Description: "Invalid TenantOnly Configuration",
+			Config: servicePrincipalClientCertificateAuth{
+				clientId:       "62e73395-5017-43b6-8ebf-d6c30a514cf1",
+				clientCertPath: filePath,
+				tenantOnly:     true,
+			},
+			ExpectError: true,
+		},
+		{
+			Description: "Valid TenantOnly Configuration",
+			Config: servicePrincipalClientCertificateAuth{
+				clientId:       "62e73395-5017-43b6-8ebf-d6c30a514cf1",
+				clientCertPath: filePath,
+				tenantId:       "9834f8d0-24b3-41b7-8b8d-c611c461a129",
+				tenantOnly:     true,
+			},
+			ExpectError: false,
+		},
 	}
 
 	for _, v := range cases {
