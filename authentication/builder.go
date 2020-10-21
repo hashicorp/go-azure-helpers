@@ -66,6 +66,7 @@ func (b Builder) Build() (*Config, error) {
 		servicePrincipalClientSecretMultiTenantAuth{},
 		servicePrincipalClientSecretAuth{},
 		managedServiceIdentityAuth{},
+		azureCliTokenMultiTenantAuth{},
 		azureCliTokenAuth{},
 	}
 
