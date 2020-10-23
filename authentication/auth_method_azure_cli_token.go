@@ -5,7 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log"
 	"os/exec"
 	"strings"
 
@@ -210,14 +209,19 @@ func jsonUnmarshalAzCmd(i interface{}, arg ...string) error {
 	cmd.Stdout = &stdout
 
 	if err := cmd.Start(); err != nil {
-		return fmt.Errorf("Error launching Azure CLI: %+v", err)
+		err := fmt.Errorf("Error launching Azure CLI: %+v", err)
+		if stdErrStr := stderr.String(); stdErrStr != "" {
+			err = fmt.Errorf("%s: %s", err, strings.TrimSpace(stdErrStr))
+		}
+		return err
 	}
 
 	if err := cmd.Wait(); err != nil {
-		if errmsg := stderr.String(); errmsg != "" {
-			log.Printf("[ERROR] Error waiting for the Azure CLI: %s", stderr.String())
+		err := fmt.Errorf("Error waiting for the Azure CLI: %+v", err)
+		if stdErrStr := stderr.String(); stdErrStr != "" {
+			err = fmt.Errorf("%s: %s", err, strings.TrimSpace(stdErrStr))
 		}
-		return fmt.Errorf("Error waiting for the Azure CLI: %+v", err)
+		return err
 	}
 
 	if err := json.Unmarshal([]byte(stdout.String()), &i); err != nil {
