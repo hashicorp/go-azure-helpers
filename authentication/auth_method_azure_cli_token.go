@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"os/exec"
 	"strings"
 
@@ -224,13 +225,7 @@ func jsonUnmarshalAzCmd(i interface{}, arg ...string) error {
 		return err
 	}
 
-	stdOutStr := stdout.String()
-	stdErrStr := stderr.String()
-	if stdErrStr != "" {
-		return fmt.Errorf("Error retrieving running Azure CLI: %s", strings.TrimSpace(stdErrStr))
-	}
-
-	if err := json.Unmarshal([]byte(stdOutStr), &i); err != nil {
+	if err := json.Unmarshal([]byte(stdout.String()), &i); err != nil {
 		return fmt.Errorf("Error unmarshaling the result of Azure CLI: %v", err)
 	}
 
