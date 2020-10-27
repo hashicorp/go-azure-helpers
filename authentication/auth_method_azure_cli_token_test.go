@@ -124,6 +124,27 @@ func TestAzureCLITokenAuth_validate(t *testing.T) {
 			},
 			ExpectError: false,
 		},
+		{
+			Description: "Valid TenantOnly Configuration",
+			Config: azureCliTokenAuth{
+				profile: &azureCLIProfile{
+					clientId:   "62e73395-5017-43b6-8ebf-d6c30a514cf1",
+					tenantId:   "9834f8d0-24b3-41b7-8b8d-c611c461a129",
+					tenantOnly: true,
+				},
+			},
+			ExpectError: false,
+		},
+		{
+			Description: "Invalid TenantOnly Configuration",
+			Config: azureCliTokenAuth{
+				profile: &azureCLIProfile{
+					clientId:   "62e73395-5017-43b6-8ebf-d6c30a514cf1",
+					tenantOnly: true,
+				},
+			},
+			ExpectError: true,
+		},
 	}
 
 	for _, v := range cases {
