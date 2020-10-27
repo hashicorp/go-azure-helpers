@@ -240,6 +240,10 @@ func obtainTenant(tenantId string) (*cli.Subscription, error) {
 				break
 			}
 		}
+
+		if acc.TenantID == "" {
+			return nil, fmt.Errorf("Tenant %q was not found", tenantId)
+		}
 	}
 
 	return &acc, nil
