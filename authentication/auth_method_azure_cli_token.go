@@ -92,7 +92,13 @@ func (a azureCliTokenAuth) getAuthorizationToken(sender autorest.Sender, oauth *
 	}
 
 	// the Azure CLI appears to cache these, so to maintain compatibility with the interface this method is intentionally not on the pointer
-	token, err := obtainAuthorizationToken(endpoint, a.profile.subscriptionId)
+	var token *cli.Token
+	var err error
+	if a.profile.tenantOnly {
+		token, err = obtainAuthorizationToken(endpoint, "", a.profile.tenantId)
+	} else {
+		token, err = obtainAuthorizationToken(endpoint, a.profile.subscriptionId, "")
+	}
 	if err != nil {
 		return nil, fmt.Errorf("Error obtaining Authorization Token from the Azure CLI: %s", err)
 	}
@@ -108,7 +114,13 @@ func (a azureCliTokenAuth) getAuthorizationToken(sender autorest.Sender, oauth *
 	}
 
 	var refreshFunc adal.TokenRefresh = func(ctx context.Context, resource string) (*adal.Token, error) {
-		token, err := obtainAuthorizationToken(resource, a.profile.subscriptionId)
+		var token *cli.Token
+		var err error
+		if a.profile.tenantOnly {
+			token, err = obtainAuthorizationToken(resource, "", a.profile.tenantId)
+		} else {
+			token, err = obtainAuthorizationToken(resource, a.profile.subscriptionId, "")
+		}
 		if err != nil {
 			return nil, err
 		}
@@ -186,9 +198,14 @@ func obtainAuthenticatedObjectID() (string, error) {
 	return json.ObjectId, nil
 }
 
-func obtainAuthorizationToken(endpoint string, subscriptionId string) (*cli.Token, error) {
+func obtainAuthorizationToken(endpoint string, subscriptionId string, tenantId string) (*cli.Token, error) {
 	var token cli.Token
-	err := jsonUnmarshalAzCmd(&token, "account", "get-access-token", "--resource", endpoint, "--subscription", subscriptionId, "-o=json")
+	var err error
+	if tenantId != "" {
+		err = jsonUnmarshalAzCmd(&token, "account", "get-access-token", "--resource", endpoint, "--tenant", tenantId, "-o=json")
+	} else {
+		err = jsonUnmarshalAzCmd(&token, "account", "get-access-token", "--resource", endpoint, "--subscription", subscriptionId, "-o=json")
+	}
 	if err != nil {
 		return nil, fmt.Errorf("Error parsing json result from the Azure CLI: %v", err)
 	}
