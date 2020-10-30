@@ -191,8 +191,10 @@ func (a azureCliTokenAuth) validate() error {
 }
 
 func (a azureCliTokenAuth) checkAzVersion() error {
+	// Azure CLI v2.0.79 is the earliest version to have a `version` command
 	var minimumVersion string
 	if a.profile.tenantOnly {
+		// v2.0.81 introduced the `--tenant` option to the `account get-access-token` subcommand
 		minimumVersion = "2.0.81"
 	} else {
 		minimumVersion = "2.0.79"
