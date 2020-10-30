@@ -9,6 +9,7 @@ require (
 	github.com/Azure/go-autorest/autorest/validation v0.3.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/hashicorp/go-multierror v1.0.0
+	github.com/hashicorp/go-version v1.2.1
 	golang.org/x/crypto v0.0.0-20201016220609-9e8e0b390897
 )
 

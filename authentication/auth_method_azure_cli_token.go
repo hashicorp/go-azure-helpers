@@ -12,6 +12,7 @@ import (
 	"github.com/Azure/go-autorest/autorest/adal"
 	"github.com/Azure/go-autorest/autorest/azure/cli"
 	"github.com/hashicorp/go-multierror"
+	"github.com/hashicorp/go-version"
 )
 
 type azureCLIProfile struct {
@@ -32,6 +33,7 @@ type azureCliTokenAuth struct {
 
 func (a azureCliTokenAuth) build(b Builder) (authMethod, error) {
 	auth := azureCliTokenAuth{
+
 		profile: &azureCLIProfile{
 			subscriptionId: b.SubscriptionID,
 			tenantId:       b.TenantID,
@@ -39,6 +41,10 @@ func (a azureCliTokenAuth) build(b Builder) (authMethod, error) {
 			clientId:       "04b07795-8ddb-461a-bbee-02f9e1bf7b46", // fixed first party client id for Az CLI
 		},
 		servicePrincipalAuthDocsLink: b.ClientSecretDocsLink,
+	}
+
+	if err := auth.checkAzVersion(); err != nil {
+		return nil, err
 	}
 
 	var acc *cli.Subscription
@@ -182,6 +188,48 @@ func (a azureCliTokenAuth) validate() error {
 	}
 
 	return err.ErrorOrNil()
+}
+
+func (a azureCliTokenAuth) checkAzVersion() error {
+	var minimumVersion string
+	if a.profile.tenantOnly {
+		minimumVersion = "2.0.81"
+	} else {
+		minimumVersion = "2.0.79"
+	}
+
+	var cliVersion *struct {
+		AzureCli          *string      `json:"azure-cli"`
+		AzureCliCore      *string      `json:"azure-cli-core"`
+		AzureCliTelemetry *string      `json:"azure-cli-telemetry"`
+		Extensions        *interface{} `json:"extensions"`
+	}
+	err := jsonUnmarshalAzCmd(&cliVersion, "version", "-o=json")
+	if err != nil {
+		return fmt.Errorf("Please ensure you have installed Azure CLI version %s or newer. Error parsing json result from the Azure CLI: %v.", minimumVersion, err)
+	}
+
+	if cliVersion.AzureCli == nil {
+		return fmt.Errorf("Could not detect Azure CLI version. Please ensure you have installed Azure CLI version %s or newer.", minimumVersion)
+	}
+
+	actual, err := version.NewVersion(*cliVersion.AzureCli)
+	if err != nil {
+		return fmt.Errorf("Could not parse detected Azure CLI version: %+v", err)
+	}
+
+	supported, err := version.NewVersion(minimumVersion)
+	if err != nil {
+		return fmt.Errorf("Could not parse supported Azure CLI version: %+v", err)
+	}
+
+	if supported.LessThanOrEqual(actual) {
+		return nil
+	}
+
+	return fmt.Errorf(`Authenticating using the Azure CLI requires version %[1]s but Terraform detected version %[2]s.
+
+Please install v%[1]s or greater and ensure the correct version is in your path.`, supported.String(), actual.String())
 }
 
 func obtainAuthenticatedObjectID() (string, error) {
