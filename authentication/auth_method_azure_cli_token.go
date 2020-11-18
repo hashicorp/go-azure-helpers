@@ -201,10 +201,10 @@ func (a azureCliTokenAuth) checkAzVersion() error {
 	}
 
 	var cliVersion *struct {
-		AzureCli          *string      `json:"azure-cli"`
-		AzureCliCore      *string      `json:"azure-cli-core"`
-		AzureCliTelemetry *string      `json:"azure-cli-telemetry"`
-		Extensions        *interface{} `json:"extensions"`
+		AzureCli          *string      `json:"azure-cli,omitempty"`
+		AzureCliCore      *string      `json:"azure-cli-core,omitempty"`
+		AzureCliTelemetry *string      `json:"azure-cli-telemetry,omitempty"`
+		Extensions        *interface{} `json:"extensions,omitempty"`
 	}
 	err := jsonUnmarshalAzCmd(&cliVersion, "version", "-o=json")
 	if err != nil {
@@ -217,7 +217,7 @@ func (a azureCliTokenAuth) checkAzVersion() error {
 
 	actual, err := version.NewVersion(*cliVersion.AzureCli)
 	if err != nil {
-		return fmt.Errorf("Could not parse detected Azure CLI version: %+v", err)
+		return fmt.Errorf("Could not parse detected Azure CLI version %q: %+v", *cliVersion.AzureCli, err)
 	}
 
 	supported, err := version.NewVersion(minimumVersion)
@@ -225,13 +225,24 @@ func (a azureCliTokenAuth) checkAzVersion() error {
 		return fmt.Errorf("Could not parse supported Azure CLI version: %+v", err)
 	}
 
-	if supported.LessThanOrEqual(actual) {
-		return nil
+	nextMajor, err := version.NewVersion("3.0.0")
+	if err != nil {
+		return fmt.Errorf("Could not parse next major Azure CLI version: %+v", err)
 	}
 
-	return fmt.Errorf(`Authenticating using the Azure CLI requires version %[1]s but Terraform detected version %[2]s.
+	if nextMajor.LessThanOrEqual(actual) {
+		return fmt.Errorf(`Authenticating using the Azure CLI requires a version older than %[1]s but Terraform detected version %[3]s.
+
+Please install v%[2]s or newer (but also older than %[1]s) and ensure the correct version is in your path.`, nextMajor.String(), supported.String(), actual.String())
+	}
+
+	if actual.LessThan(supported) {
+		return fmt.Errorf(`Authenticating using the Azure CLI requires version %[1]s but Terraform detected version %[2]s.
 
 Please install v%[1]s or greater and ensure the correct version is in your path.`, supported.String(), actual.String())
+	}
+
+	return nil
 }
 
 func obtainAuthenticatedObjectID() (string, error) {
