@@ -28,6 +28,7 @@ func NewLongRunningPollerFromResponse(ctx context.Context, resp *http.Response, 
 	return poller, nil
 }
 
+// PollUntilDone polls until this Long Running Poller is completed
 func (fw *LongRunningPoller) PollUntilDone() error {
 	return fw.future.WaitForCompletionRef(fw.ctx, fw.client)
 }
