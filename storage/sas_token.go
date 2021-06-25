@@ -15,6 +15,7 @@ const (
 	connStringAccountKeyKey    = "AccountKey"
 	connStringAccountNameKey   = "AccountName"
 	blobContainerSignedVersion = "2018-11-09"
+	tableStorageSignedVersion  = "2017-07-29"
 )
 
 // ComputeAccountSASToken computes the SAS Token for a Storage Account based on the
@@ -90,6 +91,90 @@ func ComputeAccountSASConnectionUrlForType(env *azure.Environment, accountName s
 
 	url := fmt.Sprintf("https://%s.%s.%s%s", accountName, strings.ToLower(storageType), env.StorageEndpointSuffix, sasToken)
 	return &url, nil
+}
+
+func ComputeTableSASToken(signedPermissions string,
+	signedStart string,
+	signedExpiry string,
+	accountName string,
+	accountKey string,
+	tableName string,
+	signedIdentifier string,
+	signedIp string,
+	signedProtocol string,
+	startingPartitionKey string,
+	startingRowKey string,
+	endingPartitionKey string,
+	endingRowKey string,
+) (string, error) {
+
+	canonicalizedResource := "/table/" + accountName + "/" + strings.ToLower(tableName)
+	signedVersion := tableStorageSignedVersion
+
+	// UTF-8 by default...
+	stringToSign := signedPermissions + "\n"
+	stringToSign += signedStart + "\n"
+	stringToSign += signedExpiry + "\n"
+	stringToSign += canonicalizedResource + "\n"
+	stringToSign += signedIdentifier + "\n"
+	stringToSign += signedIp + "\n"
+	stringToSign += signedProtocol + "\n"
+	stringToSign += signedVersion + "\n"
+	stringToSign += startingPartitionKey + "\n"
+	stringToSign += startingRowKey + "\n"
+	stringToSign += endingPartitionKey + "\n"
+	stringToSign += endingRowKey
+
+	binaryKey, err := base64.StdEncoding.DecodeString(accountKey)
+	if err != nil {
+		return "", err
+	}
+	hasher := hmac.New(sha256.New, binaryKey)
+	hasher.Write([]byte(stringToSign))
+	signature := hasher.Sum(nil)
+
+	sasToken := "?sv=" + signedVersion
+	sasToken += "&tn=" + url.QueryEscape(tableName)
+	sasToken += "&st=" + url.QueryEscape(signedStart)
+	sasToken += "&se=" + url.QueryEscape(signedExpiry)
+	sasToken += "&sp=" + signedPermissions
+
+	if len(signedIp) > 0 {
+		sasToken += "&sip=" + signedIp
+	}
+
+	if len(signedProtocol) > 0 {
+		sasToken += "&spr=" + signedProtocol
+	}
+
+	if len(signedIdentifier) > 0 {
+		sasToken += "&si=" + signedIdentifier
+	}
+
+	if len(startingPartitionKey) > 0 {
+		spk := url.URL{Path: startingPartitionKey}
+		sasToken += "&spk=" + spk.String()
+	}
+
+	if len(startingRowKey) > 0 {
+		srk := url.URL{Path: startingRowKey}
+		sasToken += "&srk=" + srk.String()
+	}
+
+	if len(endingPartitionKey) > 0 {
+		epk := url.URL{Path: endingPartitionKey}
+		sasToken += "&epk=" + epk.String()
+	}
+
+	if len(endingRowKey) > 0 {
+		erk := url.URL{Path: endingRowKey}
+		sasToken += "&erk=" + erk.String()
+	}
+
+	sasToken += "&sig=" + url.QueryEscape(base64.StdEncoding.EncodeToString(signature))
+
+	return sasToken, nil
+
 }
 
 func ComputeContainerSASToken(signedPermissions string,
