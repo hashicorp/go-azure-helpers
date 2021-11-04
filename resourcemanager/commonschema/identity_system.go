@@ -1,17 +1,11 @@
 package commonschema
 
 import (
-	"strings"
+	"github.com/hashicorp/go-azure-helpers/resourcemanager/identity"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
-
-type SystemAssignedIdentity struct {
-	Type        IdentityType `tfschema:"type"`
-	PrincipalId string       `tfschema:"principal_id"`
-	TenantId    string       `tfschema:"tenant_id"`
-}
 
 func SystemAssignedIdentitySchema() *schema.Schema {
 	return &schema.Schema{
@@ -24,7 +18,7 @@ func SystemAssignedIdentitySchema() *schema.Schema {
 					Type:     schema.TypeString,
 					Required: true,
 					ValidateFunc: validation.StringInSlice([]string{
-						string(systemAssigned),
+						string(identity.TypeSystemAssigned),
 					}, false),
 				},
 				"principal_id": {
@@ -59,32 +53,6 @@ func SystemAssignedIdentitySchemaDataSource() *schema.Schema {
 					Computed: true,
 				},
 			},
-		},
-	}
-}
-
-func ExpandSystemAssignedIdentity(input []interface{}) (*SystemAssignedIdentity, error) {
-	if len(input) == 0 || input[0] == nil {
-		return &SystemAssignedIdentity{
-			Type: none,
-		}, nil
-	}
-
-	return &SystemAssignedIdentity{
-		Type: systemAssigned,
-	}, nil
-}
-
-func FlattenSystemAssignedIdentity(input *SystemAssignedIdentity) []interface{} {
-	if input == nil || strings.EqualFold(string(input.Type), string(none)) {
-		return []interface{}{}
-	}
-
-	return []interface{}{
-		map[string]interface{}{
-			"type":         input.Type,
-			"principal_id": input.PrincipalId,
-			"tenant_id":    input.TenantId,
 		},
 	}
 }
