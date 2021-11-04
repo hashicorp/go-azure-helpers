@@ -10,8 +10,9 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dimchansky/utfbom v1.1.1 // indirect
 	github.com/hashicorp/go-multierror v1.0.0
-	github.com/hashicorp/go-version v1.2.1
-	golang.org/x/crypto v0.0.0-20210220033148-5ea612d1eb83
+	github.com/hashicorp/go-version v1.3.0
+	github.com/hashicorp/terraform-plugin-sdk/v2 v2.8.0
+	golang.org/x/crypto v0.0.0-20210421170649-83a5a9bb288b
 )
 
 go 1.16
