@@ -1,4 +1,4 @@
-package commonschema
+package tags
 
 import (
 	"fmt"
@@ -12,8 +12,7 @@ func TestValidateMaximumNumberOfTags(t *testing.T) {
 		tagsMap[fmt.Sprintf("key%d", i)] = fmt.Sprintf("value%d", i)
 	}
 
-	_, es := ValidateTags(tagsMap, "tags")
-
+	_, es := Validate(tagsMap, "tags")
 	if len(es) != 1 {
 		t.Fatal("Expected one validation error for too many tags")
 	}
@@ -28,7 +27,7 @@ func TestValidateTagMaxKeyLength(t *testing.T) {
 	tagsMap := make(map[string]interface{})
 	tagsMap[tooLongKey] = "value"
 
-	_, es := ValidateTags(tagsMap, "tags")
+	_, es := Validate(tagsMap, "tags")
 	if len(es) != 1 {
 		t.Fatal("Expected one validation error for a key which is > 512 chars")
 	}
@@ -50,7 +49,7 @@ func TestValidateTagMaxValueLength(t *testing.T) {
 	tagsMap := make(map[string]interface{})
 	tagsMap["toolong"] = strings.Repeat("long", 64) + "a"
 
-	_, es := ValidateTags(tagsMap, "tags")
+	_, es := Validate(tagsMap, "tags")
 	if len(es) != 1 {
 		t.Fatal("Expected one validation error for a value which is > 256 chars")
 	}
