@@ -56,7 +56,7 @@ func FromNilableSliceOfStrings(input *[]string) []string {
 	return []string{}
 }
 
-func FromNilableStringPtr(input *string) string {
+func FromNilableString(input *string) string {
 	if input != nil {
 		return *input
 	}

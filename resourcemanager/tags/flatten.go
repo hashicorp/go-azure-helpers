@@ -11,7 +11,7 @@ func Flatten(input *map[string]string) map[string]*string {
 	}
 
 	for k, v := range *input {
-		output[k] = pointer.ToStringPointer(v)
+		output[k] = pointer.ToString(v)
 	}
 
 	return output
