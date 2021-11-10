@@ -64,8 +64,8 @@ func TestAzureCLITokenMultiTenantAuth_isApplicable(t *testing.T) {
 func TestAzureCLITokenMultiTenantAuth_populateConfig(t *testing.T) {
 	config := &Config{}
 	auth := azureCliTokenMultiTenantAuth{
+		clientId: "some-subscription-id",
 		profile: &azureCLIProfileMultiTenant{
-			clientId:           "some-subscription-id",
 			environment:        "dimension-c137",
 			subscriptionId:     "some-subscription-id",
 			tenantId:           "some-tenant-id",
@@ -78,7 +78,7 @@ func TestAzureCLITokenMultiTenantAuth_populateConfig(t *testing.T) {
 		t.Fatalf("Error populating config: %s", err)
 	}
 
-	if auth.profile.clientId != config.ClientID {
+	if auth.clientId != config.ClientID {
 		t.Fatalf("Expected Client ID to be %q but got %q", auth.profile.tenantId, config.TenantID)
 	}
 
@@ -107,21 +107,10 @@ func TestAzureCLITokenMultiTenantAuth_validate(t *testing.T) {
 			ExpectError: true,
 		},
 		{
-			Description: "Missing Client ID",
-			Config: azureCliTokenMultiTenantAuth{
-				profile: &azureCLIProfileMultiTenant{
-					subscriptionId:     "8e8b5e02-5c13-4822-b7dc-4232afb7e8c2",
-					tenantId:           "9834f8d0-24b3-41b7-8b8d-c611c461a129",
-					auxiliaryTenantIDs: []string{"9834f8d0-24b3-41b7-8b8d-000000000000"},
-				},
-			},
-			ExpectError: true,
-		},
-		{
 			Description: "Missing Subscription ID",
 			Config: azureCliTokenMultiTenantAuth{
+				clientId: "62e73395-5017-43b6-8ebf-d6c30a514cf1",
 				profile: &azureCLIProfileMultiTenant{
-					clientId:           "62e73395-5017-43b6-8ebf-d6c30a514cf1",
 					tenantId:           "9834f8d0-24b3-41b7-8b8d-c611c461a129",
 					auxiliaryTenantIDs: []string{"9834f8d0-24b3-41b7-8b8d-000000000000"},
 				},
@@ -131,8 +120,8 @@ func TestAzureCLITokenMultiTenantAuth_validate(t *testing.T) {
 		{
 			Description: "Missing Tenant ID",
 			Config: azureCliTokenMultiTenantAuth{
+				clientId: "62e73395-5017-43b6-8ebf-d6c30a514cf1",
 				profile: &azureCLIProfileMultiTenant{
-					clientId:           "62e73395-5017-43b6-8ebf-d6c30a514cf1",
 					subscriptionId:     "8e8b5e02-5c13-4822-b7dc-4232afb7e8c2",
 					auxiliaryTenantIDs: []string{"9834f8d0-24b3-41b7-8b8d-000000000000"},
 				},
@@ -142,8 +131,8 @@ func TestAzureCLITokenMultiTenantAuth_validate(t *testing.T) {
 		{
 			Description: "Missing aux tenant IDs",
 			Config: azureCliTokenMultiTenantAuth{
+				clientId: "62e73395-5017-43b6-8ebf-d6c30a514cf1",
 				profile: &azureCLIProfileMultiTenant{
-					clientId:       "62e73395-5017-43b6-8ebf-d6c30a514cf1",
 					subscriptionId: "8e8b5e02-5c13-4822-b7dc-4232afb7e8c2",
 					tenantId:       "9834f8d0-24b3-41b7-8b8d-c611c461a129",
 				},
@@ -153,8 +142,8 @@ func TestAzureCLITokenMultiTenantAuth_validate(t *testing.T) {
 		{
 			Description: "Valid Configuration",
 			Config: azureCliTokenMultiTenantAuth{
+				clientId: "62e73395-5017-43b6-8ebf-d6c30a514cf1",
 				profile: &azureCLIProfileMultiTenant{
-					clientId:           "62e73395-5017-43b6-8ebf-d6c30a514cf1",
 					subscriptionId:     "8e8b5e02-5c13-4822-b7dc-4232afb7e8c2",
 					tenantId:           "9834f8d0-24b3-41b7-8b8d-c611c461a129",
 					auxiliaryTenantIDs: []string{"9834f8d0-24b3-41b7-8b8d-000000000000"},
