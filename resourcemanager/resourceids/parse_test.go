@@ -152,6 +152,16 @@ func TestParseResourceGroupId(t *testing.T) {
 			insensitive: true,
 		},
 		{
+			name:        "resource groups id - empty name - sensitive",
+			input:       "/subscriptions/11112222-3333-4444-555566667777/resourceGroups/",
+			insensitive: false,
+		},
+		{
+			name:        "resource groups id - empty name - insensitive",
+			input:       "/subscriptions/11112222-3333-4444-555566667777/resourcegroups/",
+			insensitive: true,
+		},
+		{
 			name:        "resource group id - sensitive",
 			input:       "/subscriptions/11112222-3333-4444-555566667777/resourceGroups/BoB",
 			insensitive: false,
@@ -241,6 +251,16 @@ func TestParseVirtualMachineId(t *testing.T) {
 		{
 			name:        "virtual machine list - insensitive",
 			input:       "/subscRiptions/11112222-3333-4444-555566667777/resourcegroups/BoB/proViders/Microsoft.compute/virtualmachines",
+			insensitive: true,
+		},
+		{
+			name:        "virtual machine id - empty name - sensitive",
+			input:       "/subscriptions/11112222-3333-4444-555566667777/resourceGroups/BoB/providers/Microsoft.Compute/virtualMachines/",
+			insensitive: false,
+		},
+		{
+			name:        "virtual machine id - empty name - insensitive",
+			input:       "/subscRiptions/11112222-3333-4444-555566667777/resourcegroups/BoB/proViders/Microsoft.compute/virtualmachines/",
 			insensitive: true,
 		},
 		{
@@ -335,7 +355,16 @@ func TestParseVirtualMachineExtensionId(t *testing.T) {
 			input:       "/subScriptions/11112222-3333-4444-555566667777/resourcegroups/BoB/pRoviders/microsoft.Compute/virtualmachines/machine1/extensions",
 			insensitive: true,
 		},
-
+		{
+			name:        "virtual machine extensions id - empty name - sensitive",
+			input:       "/subscriptions/11112222-3333-4444-555566667777/resourceGroups/BoB/providers/Microsoft.Compute/virtualMachines/machine1/extensions/",
+			insensitive: false,
+		},
+		{
+			name:        "virtual machine extensions id - empty name - insensitive",
+			input:       "/subScriptions/11112222-3333-4444-555566667777/resourcegroups/BoB/pRoviders/microsoft.Compute/virtualmachines/machine1/extensions/",
+			insensitive: true,
+		},
 		{
 			name:        "virtual machine extension id - sensitive",
 			input:       "/subscriptions/11112222-3333-4444-555566667777/resourceGroups/BoB/providers/Microsoft.Compute/virtualMachines/machine1/extensions/extension1",
