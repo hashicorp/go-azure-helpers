@@ -92,8 +92,8 @@ func (a azureCliTokenAuth) isApplicable(b Builder) bool {
 	return b.SupportsAzureCliToken
 }
 
-func (a azureCliTokenAuth) getAuthorizationToken(sender autorest.Sender, oauth *OAuthConfig, endpoint string) (autorest.Authorizer, error) {
-	if oauth.OAuth == nil {
+func (a azureCliTokenAuth) getADALToken(_ context.Context, _ autorest.Sender, oauthConfig *OAuthConfig, endpoint string) (autorest.Authorizer, error) {
+	if oauthConfig.OAuth == nil {
 		return nil, fmt.Errorf("Error getting Authorization Token for cli auth: an OAuth token wasn't configured correctly; please file a bug with more details")
 	}
 
@@ -114,7 +114,7 @@ func (a azureCliTokenAuth) getAuthorizationToken(sender autorest.Sender, oauth *
 		return nil, fmt.Errorf("Error converting Authorization Token to an ADAL Token: %s", err)
 	}
 
-	spt, err := adal.NewServicePrincipalTokenFromManualToken(*oauth.OAuth, a.profile.clientId, endpoint, adalToken)
+	spt, err := adal.NewServicePrincipalTokenFromManualToken(*oauthConfig.OAuth, a.profile.clientId, endpoint, adalToken)
 	if err != nil {
 		return nil, err
 	}
@@ -142,6 +142,11 @@ func (a azureCliTokenAuth) getAuthorizationToken(sender autorest.Sender, oauth *
 
 	auth := autorest.NewBearerAuthorizer(spt)
 	return auth, nil
+}
+
+func (a azureCliTokenAuth) getMSALToken(ctx context.Context, sender autorest.Sender, oauthConfig *OAuthConfig, endpoint string) (autorest.Authorizer, error) {
+	// token version is the decision of az-cli, so we'll pass through to the existing method for continuity
+	return a.getADALToken(ctx, sender, oauthConfig, endpoint)
 }
 
 func (a azureCliTokenAuth) name() string {

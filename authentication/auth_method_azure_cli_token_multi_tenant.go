@@ -62,8 +62,8 @@ func (a azureCliTokenMultiTenantAuth) isApplicable(b Builder) bool {
 	return b.SupportsAzureCliToken && b.SupportsAuxiliaryTenants && (len(b.AuxiliaryTenantIDs) > 0)
 }
 
-func (a azureCliTokenMultiTenantAuth) getAuthorizationToken(sender autorest.Sender, oauth *OAuthConfig, endpoint string) (autorest.Authorizer, error) {
-	if oauth.MultiTenantOauth == nil {
+func (a azureCliTokenMultiTenantAuth) getADALToken(_ context.Context, _ autorest.Sender, oauthConfig *OAuthConfig, endpoint string) (autorest.Authorizer, error) {
+	if oauthConfig.MultiTenantOauth == nil {
 		return nil, fmt.Errorf("Error getting Authorization Token for cli auth: an MultiTenantOauth token wasn't configured correctly; please file a bug with more details")
 	}
 
@@ -82,7 +82,7 @@ func (a azureCliTokenMultiTenantAuth) getAuthorizationToken(sender autorest.Send
 		return nil, fmt.Errorf("Error converting Authorization Token to an ADAL Token: %s", err)
 	}
 
-	spt, err := adal.NewServicePrincipalTokenFromManualToken(*oauth.OAuth, a.clientId, endpoint, adalToken)
+	spt, err := adal.NewServicePrincipalTokenFromManualToken(*oauthConfig.OAuth, a.clientId, endpoint, adalToken)
 	if err != nil {
 		return nil, err
 	}
@@ -107,12 +107,12 @@ func (a azureCliTokenMultiTenantAuth) getAuthorizationToken(sender autorest.Send
 	for t := range a.profile.auxiliaryTenantIDs {
 		token, err := obtainAuthorizationTokenByTenant(endpoint, a.profile.auxiliaryTenantIDs[t])
 		if err != nil {
-			return nil, fmt.Errorf("Error obtaining Authorization Token from the Azure CLI: %s", err)
+			return nil, fmt.Errorf("obtaining Authorization Token from the Azure CLI: %s", err)
 		}
 
 		adalToken, err := token.ToADALToken()
 		if err != nil {
-			return nil, fmt.Errorf("Error converting Authorization Token to an ADAL Token: %s", err)
+			return nil, fmt.Errorf("converting Authorization Token to an ADAL Token: %s", err)
 		}
 
 		aux, err := adal.NewServicePrincipalTokenFromManualToken(*oauthConfig.OAuth, a.clientId, endpoint, adalToken)
@@ -127,6 +127,11 @@ func (a azureCliTokenMultiTenantAuth) getAuthorizationToken(sender autorest.Send
 
 	auth := autorest.NewMultiTenantServicePrincipalTokenAuthorizer(&m)
 	return auth, nil
+}
+
+func (a azureCliTokenMultiTenantAuth) getMSALToken(ctx context.Context, sender autorest.Sender, oauthConfig *OAuthConfig, endpoint string) (autorest.Authorizer, error) {
+	// token version is the decision of az-cli, so we'll pass through to the existing method for continuity
+	return a.getADALToken(ctx, sender, oauthConfig, endpoint)
 }
 
 func (a azureCliTokenMultiTenantAuth) name() string {
