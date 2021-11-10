@@ -20,12 +20,15 @@ type Config struct {
 	Environment        string
 	MetadataHost       string
 
-	GetAuthenticatedObjectID         func(context.Context) (string, error)
+	GetAuthenticatedObjectID         func(context.Context) (*string, error)
 	AuthenticatedAsAServicePrincipal bool
 
 	// A Custom Resource Manager Endpoint
 	// at this time this should only be applicable for Azure Stack.
 	CustomResourceManagerEndpoint string
+
+	// Beta opt-in for Microsoft Graph
+	UseMicrosoftGraph bool
 
 	authMethod authMethod
 }
@@ -54,7 +57,7 @@ func (c Config) GetOAuthConfig(activeDirectoryEndpoint string) (*adal.OAuthConfi
 
 	// OAuthConfigForTenant returns a pointer, which can be nil.
 	if oauth == nil {
-		return nil, fmt.Errorf("Unable to configure OAuthConfig for tenant %s", c.TenantID)
+		return nil, fmt.Errorf("unable to configure OAuthConfig for tenant %s", c.TenantID)
 	}
 
 	return oauth, nil
@@ -70,7 +73,7 @@ func (c Config) GetMultiTenantOAuthConfig(activeDirectoryEndpoint string) (*adal
 
 	// OAuthConfigForTenant returns a pointer, which can be nil.
 	if oauth == nil {
-		return nil, fmt.Errorf("Unable to configure OAuthConfig for tenant %s (auxiliary tenants %v)", c.TenantID, c.AuxiliaryTenantIDs)
+		return nil, fmt.Errorf("unable to configure OAuthConfig for tenant %s (auxiliary tenants %v)", c.TenantID, c.AuxiliaryTenantIDs)
 	}
 
 	return &oauth, nil

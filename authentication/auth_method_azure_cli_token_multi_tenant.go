@@ -29,12 +29,12 @@ func (a azureCliTokenMultiTenantAuth) build(b Builder) (authMethod, error) {
 	}
 	profilePath, err := cli.ProfilePath()
 	if err != nil {
-		return nil, fmt.Errorf("Error loading the Profile Path from the Azure CLI: %+v", err)
+		return nil, fmt.Errorf("loading the Profile Path from the Azure CLI: %+v", err)
 	}
 
 	profile, err := cli.LoadProfile(profilePath)
 	if err != nil {
-		return nil, fmt.Errorf("Azure CLI Authorization Profile was not found. Please ensure the Azure CLI is installed and then log-in with `az login`.")
+		return nil, fmt.Errorf("Azure CLI Authorization Profile was not found. Please ensure the Azure CLI is installed and then log-in with `az login`")
 	}
 
 	auth.profile.profile = profile
@@ -52,7 +52,7 @@ Alternatively you can authenticate using the Azure CLI by using a User Account.`
 
 	err = auth.profile.populateFields()
 	if err != nil {
-		return nil, fmt.Errorf("Error retrieving the Profile from the Azure CLI: %s Please re-authenticate using `az login`.", err)
+		return nil, fmt.Errorf("retrieving the Profile from the Azure CLI: %s Please re-authenticate using `az login`", err)
 	}
 
 	return auth, nil
@@ -64,7 +64,7 @@ func (a azureCliTokenMultiTenantAuth) isApplicable(b Builder) bool {
 
 func (a azureCliTokenMultiTenantAuth) getADALToken(_ context.Context, _ autorest.Sender, oauthConfig *OAuthConfig, endpoint string) (autorest.Authorizer, error) {
 	if oauthConfig.MultiTenantOauth == nil {
-		return nil, fmt.Errorf("Error getting Authorization Token for cli auth: an MultiTenantOauth token wasn't configured correctly; please file a bug with more details")
+		return nil, fmt.Errorf("getting Authorization Token for cli auth: an MultiTenantOauth token wasn't configured correctly; please file a bug with more details")
 	}
 
 	m := adal.MultiTenantServicePrincipalToken{
@@ -74,12 +74,12 @@ func (a azureCliTokenMultiTenantAuth) getADALToken(_ context.Context, _ autorest
 	// the Azure CLI appears to cache these, so to maintain compatibility with the interface this method is intentionally not on the pointer
 	primaryToken, err := obtainAuthorizationTokenByTenant(endpoint, a.profile.tenantId)
 	if err != nil {
-		return nil, fmt.Errorf("Error obtaining Authorization Token from the Azure CLI: %s", err)
+		return nil, fmt.Errorf("obtaining Authorization Token from the Azure CLI: %s", err)
 	}
 
 	adalToken, err := primaryToken.ToADALToken()
 	if err != nil {
-		return nil, fmt.Errorf("Error converting Authorization Token to an ADAL Token: %s", err)
+		return nil, fmt.Errorf("converting Authorization Token to an ADAL Token: %s", err)
 	}
 
 	spt, err := adal.NewServicePrincipalTokenFromManualToken(*oauthConfig.OAuth, a.clientId, endpoint, adalToken)
@@ -144,10 +144,10 @@ func (a azureCliTokenMultiTenantAuth) populateConfig(c *Config) error {
 	c.Environment = a.profile.environment
 	c.SubscriptionID = a.profile.subscriptionId
 
-	c.GetAuthenticatedObjectID = func(ctx context.Context) (string, error) {
+	c.GetAuthenticatedObjectID = func(ctx context.Context) (*string, error) {
 		objectId, err := obtainAuthenticatedObjectID()
 		if err != nil {
-			return "", err
+			return nil, err
 		}
 
 		return objectId, nil
@@ -184,7 +184,7 @@ func obtainAuthorizationTokenByTenant(endpoint string, tenantId string) (*cli.To
 	var token cli.Token
 	err := jsonUnmarshalAzCmd(&token, "account", "get-access-token", "--resource", endpoint, "--tenant", tenantId, "--only-show-errors", "-o=json")
 	if err != nil {
-		return nil, fmt.Errorf("Error parsing json result from the Azure CLI: %v", err)
+		return nil, fmt.Errorf("parsing json result from the Azure CLI: %v", err)
 	}
 
 	return &token, nil
