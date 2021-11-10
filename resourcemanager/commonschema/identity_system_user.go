@@ -13,7 +13,7 @@ import (
 // from a users perspective however, these should both be represented using the same schema
 // so we have a single schema and separate Expand/Flatten functions
 
-func SystemAssignedUserAssignedIdentitySchema() *schema.Schema {
+func SystemAssignedUserAssignedIdentity() *schema.Schema {
 	return &schema.Schema{
 		Type:     schema.TypeList,
 		Optional: true,
@@ -50,7 +50,7 @@ func SystemAssignedUserAssignedIdentitySchema() *schema.Schema {
 	}
 }
 
-func SystemAssignedUserAssignedIdentitySchemaDataSource() *schema.Schema {
+func SystemAssignedUserAssignedIdentityDataSource() *schema.Schema {
 	return &schema.Schema{
 		Type:     schema.TypeList,
 		Computed: true,
