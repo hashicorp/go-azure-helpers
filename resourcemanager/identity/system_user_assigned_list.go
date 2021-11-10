@@ -5,15 +5,16 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/commonids"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 var _ json.Marshaler = &SystemUserAssignedList{}
 
 type SystemUserAssignedList struct {
-	Type        Type     `tfschema:"type" json:"type"`
-	PrincipalId string   `tfschema:"principal_id" json:"principalId"`
-	TenantId    string   `tfschema:"tenant_id" json:"tenantId"`
-	IdentityIds []string `tfschema:"identity_ids" json:"userAssignedIdentities"`
+	Type        Type     `json:"type"`
+	PrincipalId string   `json:"principalId"`
+	TenantId    string   `json:"tenantId"`
+	IdentityIds []string `json:"userAssignedIdentities"`
 }
 
 func (s *SystemUserAssignedList) MarshalJSON() ([]byte, error) {
@@ -62,17 +63,14 @@ func ExpandSystemAssignedUserAssignedList(input []interface{}) (*SystemUserAssig
 			identityType = TypeUserAssigned
 		}
 
-		identityIdsRaw := raw["identity_ids"].([]interface{})
+		identityIdsRaw := raw["identity_ids"].(*schema.Set).List()
 		for _, v := range identityIdsRaw {
 			identityIds = append(identityIds, v.(string))
 		}
 	}
 
-	if identityType == TypeNone {
-		return &SystemUserAssignedList{
-			Type:        TypeNone,
-			IdentityIds: []string{},
-		}, nil
+	if len(identityIds) > 0 && (identityType != TypeSystemAssignedUserAssigned && identityType != TypeUserAssigned) {
+		return nil, fmt.Errorf("`identity_ids` can only be specified when `type` is set to %q or %q", string(TypeSystemAssignedUserAssigned), string(TypeUserAssigned))
 	}
 
 	return &SystemUserAssignedList{

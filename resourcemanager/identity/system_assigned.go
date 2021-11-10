@@ -8,9 +8,9 @@ import (
 var _ json.Marshaler = &SystemAssigned{}
 
 type SystemAssigned struct {
-	Type        Type   `tfschema:"type" json:"type"`
-	PrincipalId string `tfschema:"principal_id" json:"principalId"`
-	TenantId    string `tfschema:"tenant_id" json:"tenantId"`
+	Type        Type   `json:"type"`
+	PrincipalId string `json:"principalId"`
+	TenantId    string `json:"tenantId"`
 }
 
 func (s *SystemAssigned) MarshalJSON() ([]byte, error) {
