@@ -8,11 +8,11 @@ import (
 func TestConflict_DroppedConnection(t *testing.T) {
 	resp := http.Response{}
 	if WasConflict(&resp) {
-		t.Fatalf("wasConflict should return `false` for a dropped connection")
+		t.Fatalf("WasConflict should return `false` for a dropped connection")
 	}
 }
 
-func TestConflcit_StatusCodes(t *testing.T) {
+func TestConflict_StatusCodes(t *testing.T) {
 	testCases := []struct {
 		statusCode     int
 		expectedResult bool

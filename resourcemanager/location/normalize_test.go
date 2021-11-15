@@ -39,15 +39,15 @@ func TestNormalizeNilableLocation(t *testing.T) {
 		expected string
 	}{
 		{
-			input:    pointer.ToString("West US"),
+			input:    pointer.FromString("West US"),
 			expected: "westus",
 		},
 		{
-			input:    pointer.ToString("South East Asia"),
+			input:    pointer.FromString("South East Asia"),
 			expected: "southeastasia",
 		},
 		{
-			input:    pointer.ToString("southeastasia"),
+			input:    pointer.FromString("southeastasia"),
 			expected: "southeastasia",
 		},
 		{
