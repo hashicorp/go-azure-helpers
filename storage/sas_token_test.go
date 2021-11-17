@@ -223,12 +223,6 @@ func TestComputeAccountSASConnectionString(t *testing.T) {
 			"BlobEndpoint=https://testaccount.blob.core.chinacloudapi.cn/;FileEndpoint=https://testaccount.file.core.chinacloudapi.cn/;QueueEndpoint=https://testaccount.queue.core.chinacloudapi.cn/;TableEndpoint=https://testaccount.table.core.chinacloudapi.cn/;SharedAccessSignature=st=2019-03-27&se=2019-09-21T09%3A21Z&sp=rwl&sip=93.23.223.54&spr=https&sv=2018-11-09&sr=c&rscc=no-cache&rscd=attachment&rsce=gzip&rscl=en-US&rsct=text/html%3B%20charset%3Dutf-8&sig=M2TaUVEGlRVJjNt/c7Eqt2zH6%2BA8dpiLmTXR0ZevEX8%3D",
 		},
 		{
-			azure.GermanCloud,
-			"testaccount",
-			"?st=2019-03-27&se=2019-09-21T09%3A21Z&sp=rwl&sip=93.23.223.54&spr=https&sv=2018-11-09&sr=c&rscc=no-cache&rscd=attachment&rsce=gzip&rscl=en-US&rsct=text/html%3B%20charset%3Dutf-8&sig=M2TaUVEGlRVJjNt/c7Eqt2zH6%2BA8dpiLmTXR0ZevEX8%3D",
-			"BlobEndpoint=https://testaccount.blob.core.cloudapi.de/;FileEndpoint=https://testaccount.file.core.cloudapi.de/;QueueEndpoint=https://testaccount.queue.core.cloudapi.de/;TableEndpoint=https://testaccount.table.core.cloudapi.de/;SharedAccessSignature=st=2019-03-27&se=2019-09-21T09%3A21Z&sp=rwl&sip=93.23.223.54&spr=https&sv=2018-11-09&sr=c&rscc=no-cache&rscd=attachment&rsce=gzip&rscl=en-US&rsct=text/html%3B%20charset%3Dutf-8&sig=M2TaUVEGlRVJjNt/c7Eqt2zH6%2BA8dpiLmTXR0ZevEX8%3D",
-		},
-		{
 			azure.USGovernmentCloud,
 			"testaccount",
 			"?st=2019-03-27&se=2019-09-21T09%3A21Z&sp=rwl&sip=93.23.223.54&spr=https&sv=2018-11-09&sr=c&rscc=no-cache&rscd=attachment&rsce=gzip&rscl=en-US&rsct=text/html%3B%20charset%3Dutf-8&sig=M2TaUVEGlRVJjNt/c7Eqt2zH6%2BA8dpiLmTXR0ZevEX8%3D",
@@ -266,13 +260,6 @@ func TestComputeAccountSASConnectionUrlForType(t *testing.T) {
 			"?st=2019-03-27&se=2019-09-21T09%3A21Z&sp=rwl&sip=93.23.223.54&spr=https&sv=2018-11-09&sr=c&rscc=no-cache&rscd=attachment&rsce=gzip&rscl=en-US&rsct=text/html%3B%20charset%3Dutf-8&sig=M2TaUVEGlRVJjNt/c7Eqt2zH6%2BA8dpiLmTXR0ZevEX8%3D",
 			"file",
 			"https://testaccount.file.core.chinacloudapi.cn?st=2019-03-27&se=2019-09-21T09%3A21Z&sp=rwl&sip=93.23.223.54&spr=https&sv=2018-11-09&sr=c&rscc=no-cache&rscd=attachment&rsce=gzip&rscl=en-US&rsct=text/html%3B%20charset%3Dutf-8&sig=M2TaUVEGlRVJjNt/c7Eqt2zH6%2BA8dpiLmTXR0ZevEX8%3D",
-		},
-		{
-			azure.GermanCloud,
-			"testaccount",
-			"?st=2019-03-27&se=2019-09-21T09%3A21Z&sp=rwl&sip=93.23.223.54&spr=https&sv=2018-11-09&sr=c&rscc=no-cache&rscd=attachment&rsce=gzip&rscl=en-US&rsct=text/html%3B%20charset%3Dutf-8&sig=M2TaUVEGlRVJjNt/c7Eqt2zH6%2BA8dpiLmTXR0ZevEX8%3D",
-			"queue",
-			"https://testaccount.queue.core.cloudapi.de?st=2019-03-27&se=2019-09-21T09%3A21Z&sp=rwl&sip=93.23.223.54&spr=https&sv=2018-11-09&sr=c&rscc=no-cache&rscd=attachment&rsce=gzip&rscl=en-US&rsct=text/html%3B%20charset%3Dutf-8&sig=M2TaUVEGlRVJjNt/c7Eqt2zH6%2BA8dpiLmTXR0ZevEX8%3D",
 		},
 		{
 			azure.USGovernmentCloud,
