@@ -6,7 +6,6 @@ import (
 	"crypto/x509"
 	"fmt"
 	"io/ioutil"
-	"strings"
 
 	"github.com/Azure/go-autorest/autorest"
 	"github.com/Azure/go-autorest/autorest/adal"
@@ -76,7 +75,7 @@ func (a servicePrincipalClientCertificateAuth) getADALToken(_ context.Context, s
 	return auth, nil
 }
 
-func (a servicePrincipalClientCertificateAuth) getMSALToken(ctx context.Context, _ autorest.Sender, _ *OAuthConfig, endpoint string) (autorest.Authorizer, error) {
+func (a servicePrincipalClientCertificateAuth) getMSALToken(ctx context.Context, api environments.Api, _ autorest.Sender, _ *OAuthConfig, _ string) (autorest.Authorizer, error) {
 	certificate, rsaPrivateKey, err := decodePkcs12File(a.clientCertPath, a.clientCertPassword)
 	if err != nil {
 		return nil, fmt.Errorf("decoding pkcs12 certificate: %v", err)
@@ -94,7 +93,7 @@ func (a servicePrincipalClientCertificateAuth) getMSALToken(ctx context.Context,
 		ClientID:           a.clientId,
 		PrivateKey:         x509.MarshalPKCS1PrivateKey(rsaPrivateKey),
 		Certificate:        certificate.Raw,
-		Scopes:             []string{fmt.Sprintf("%s/.default", strings.TrimRight(endpoint, "/"))},
+		Scopes:             []string{api.DefaultScope()},
 		TokenVersion:       auth.TokenVersion2,
 	}
 

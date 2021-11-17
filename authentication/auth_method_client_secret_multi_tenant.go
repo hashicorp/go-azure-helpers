@@ -3,7 +3,6 @@ package authentication
 import (
 	"context"
 	"fmt"
-	"strings"
 
 	"github.com/Azure/go-autorest/autorest"
 	"github.com/Azure/go-autorest/autorest/adal"
@@ -62,7 +61,7 @@ func (a servicePrincipalClientSecretMultiTenantAuth) getADALToken(_ context.Cont
 	return auth, nil
 }
 
-func (a servicePrincipalClientSecretMultiTenantAuth) getMSALToken(ctx context.Context, _ autorest.Sender, _ *OAuthConfig, endpoint string) (autorest.Authorizer, error) {
+func (a servicePrincipalClientSecretMultiTenantAuth) getMSALToken(ctx context.Context, api environments.Api, _ autorest.Sender, _ *OAuthConfig, _ string) (autorest.Authorizer, error) {
 	environment, err := environments.EnvironmentFromString(a.environment)
 	if err != nil {
 		return nil, fmt.Errorf("environment config error: %v", err)
@@ -74,7 +73,7 @@ func (a servicePrincipalClientSecretMultiTenantAuth) getMSALToken(ctx context.Co
 		AuxiliaryTenantIDs: a.auxiliaryTenantIDs,
 		ClientID:           a.clientId,
 		ClientSecret:       a.clientSecret,
-		Scopes:             []string{fmt.Sprintf("%s/.default", strings.TrimRight(endpoint, "/"))},
+		Scopes:             []string{api.DefaultScope()},
 		TokenVersion:       auth.TokenVersion2,
 	}
 

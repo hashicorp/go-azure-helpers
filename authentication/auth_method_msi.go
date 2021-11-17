@@ -9,6 +9,7 @@ import (
 	"github.com/Azure/go-autorest/autorest"
 	"github.com/Azure/go-autorest/autorest/adal"
 	"github.com/hashicorp/go-multierror"
+	"github.com/manicminer/hamilton/environments"
 )
 
 type managedServiceIdentityAuth struct {
@@ -75,8 +76,8 @@ func (a managedServiceIdentityAuth) getADALToken(_ context.Context, sender autor
 	return auth, nil
 }
 
-func (a managedServiceIdentityAuth) getMSALToken(ctx context.Context, sender autorest.Sender, oauthConfig *OAuthConfig, endpoint string) (autorest.Authorizer, error) {
-	// v2 tokens not supported, so we'll pass through to the existing method for continuity
+func (a managedServiceIdentityAuth) getMSALToken(ctx context.Context, _ environments.Api, sender autorest.Sender, oauthConfig *OAuthConfig, endpoint string) (autorest.Authorizer, error) {
+	// auth tokens come directly from the MSI endpoint, so we'll pass through to the existing method for continuity
 	return a.getADALToken(ctx, sender, oauthConfig, endpoint)
 }
 

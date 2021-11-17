@@ -8,6 +8,7 @@ import (
 	"github.com/Azure/go-autorest/autorest/adal"
 	"github.com/Azure/go-autorest/autorest/azure/cli"
 	"github.com/hashicorp/go-multierror"
+	"github.com/manicminer/hamilton/environments"
 )
 
 type azureCliTokenMultiTenantAuth struct {
@@ -129,7 +130,7 @@ func (a azureCliTokenMultiTenantAuth) getADALToken(_ context.Context, _ autorest
 	return auth, nil
 }
 
-func (a azureCliTokenMultiTenantAuth) getMSALToken(ctx context.Context, sender autorest.Sender, oauthConfig *OAuthConfig, endpoint string) (autorest.Authorizer, error) {
+func (a azureCliTokenMultiTenantAuth) getMSALToken(ctx context.Context, _ environments.Api, sender autorest.Sender, oauthConfig *OAuthConfig, endpoint string) (autorest.Authorizer, error) {
 	// token version is the decision of az-cli, so we'll pass through to the existing method for continuity
 	return a.getADALToken(ctx, sender, oauthConfig, endpoint)
 }

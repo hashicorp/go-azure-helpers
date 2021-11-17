@@ -39,7 +39,7 @@ func objectIdFromAadGraph(ctx context.Context, c *Config) (*string, error) {
 		return nil, fmt.Errorf("building oauthConfig: %v", err)
 	}
 
-	graphAuth, err := c.GetAuthorizationToken(ctx, s, oauthConfig, env.GraphEndpoint)
+	graphAuth, err := c.GetADALToken(ctx, s, oauthConfig, env.GraphEndpoint)
 	if err != nil {
 		return nil, fmt.Errorf("configuring Authorizer: %v", err)
 	}
@@ -73,7 +73,7 @@ func objectIdFromMsGraph(ctx context.Context, c *Config) (*string, error) {
 		return nil, fmt.Errorf("building oauthConfig: %v", err)
 	}
 
-	msGraphAuth, err := c.GetAuthorizationTokenV2(ctx, sender.BuildSender("GoAzureHelpers"), oauthConfig, string(env.MsGraph.Endpoint))
+	msGraphAuth, err := c.GetMSALToken(ctx, env.MsGraph, sender.BuildSender("GoAzureHelpers"), oauthConfig, string(env.MsGraph.Endpoint))
 	if err != nil {
 		return nil, fmt.Errorf("configuring Authorizer: %v", err)
 	}

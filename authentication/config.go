@@ -8,6 +8,7 @@ import (
 
 	"github.com/Azure/go-autorest/autorest"
 	"github.com/Azure/go-autorest/autorest/adal"
+	"github.com/manicminer/hamilton/environments"
 )
 
 // Config is the configuration structure used to instantiate a
@@ -108,7 +109,7 @@ func (c Config) BearerAuthorizerCallback(ctx context.Context, sender autorest.Se
 			OAuth: oauthConfig.OAuth,
 		}
 
-		storageSpt, err := c.GetAuthorizationToken(ctx, sender, newAuthConfig, resource)
+		storageSpt, err := c.GetADALToken(ctx, sender, newAuthConfig, resource)
 		if err != nil {
 			return nil, err
 		}
@@ -122,12 +123,12 @@ func (c Config) BearerAuthorizerCallback(ctx context.Context, sender autorest.Se
 	})
 }
 
-// GetAuthorizationToken returns an autorest.Authorizer for the authentication method defined in the Config
-func (c Config) GetAuthorizationToken(ctx context.Context, sender autorest.Sender, oauth *OAuthConfig, endpoint string) (autorest.Authorizer, error) {
+// GetADALToken returns an autorest.Authorizer using an ADAL token via the authentication method defined in the Config
+func (c Config) GetADALToken(ctx context.Context, sender autorest.Sender, oauth *OAuthConfig, endpoint string) (autorest.Authorizer, error) {
 	return c.authMethod.getADALToken(ctx, sender, oauth, endpoint)
 }
 
-// GetAuthorizationTokenV2 returns an autorest.Authorizer sourced from hamilton/auth
-func (c Config) GetAuthorizationTokenV2(ctx context.Context, sender autorest.Sender, oauth *OAuthConfig, endpoint string) (autorest.Authorizer, error) {
-	return c.authMethod.getMSALToken(ctx, sender, oauth, endpoint)
+// GetMSALToken returns an autorest.Authorizer using an MSAL token via the authentication method defined in the Config
+func (c Config) GetMSALToken(ctx context.Context, api environments.Api, sender autorest.Sender, oauth *OAuthConfig, endpoint string) (autorest.Authorizer, error) {
+	return c.authMethod.getMSALToken(ctx, api, sender, oauth, endpoint)
 }
