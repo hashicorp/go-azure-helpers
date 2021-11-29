@@ -8,7 +8,7 @@ require (
 	github.com/hashicorp/go-multierror v1.0.0
 	github.com/hashicorp/go-version v1.3.0
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.8.0
-	github.com/manicminer/hamilton v0.35.0
+	github.com/manicminer/hamilton v0.37.0
 	golang.org/x/crypto v0.0.0-20211108221036-ceb1ce70b4fa
 )
 
