@@ -8,16 +8,16 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-var _ json.Marshaler = &SystemUserAssignedList{}
+var _ json.Marshaler = &SystemAndUserAssignedList{}
 
-type SystemUserAssignedList struct {
+type SystemAndUserAssignedList struct {
 	Type        Type     `json:"type"`
 	PrincipalId string   `json:"principalId"`
 	TenantId    string   `json:"tenantId"`
 	IdentityIds []string `json:"userAssignedIdentities"`
 }
 
-func (s *SystemUserAssignedList) MarshalJSON() ([]byte, error) {
+func (s *SystemAndUserAssignedList) MarshalJSON() ([]byte, error) {
 	// we use a custom marshal function here since we can only send the Type / UserAssignedIdentities field
 	identityType := TypeNone
 	userAssignedIdentityIds := []string{}
@@ -45,8 +45,8 @@ func (s *SystemUserAssignedList) MarshalJSON() ([]byte, error) {
 	return json.Marshal(out)
 }
 
-// ExpandSystemAssignedUserAssignedList expands the schema input into a SystemUserAssignedList struct
-func ExpandSystemAssignedUserAssignedList(input []interface{}) (*SystemUserAssignedList, error) {
+// ExpandSystemAndUserAssignedList expands the schema input into a SystemAndUserAssignedList struct
+func ExpandSystemAndUserAssignedList(input []interface{}) (*SystemAndUserAssignedList, error) {
 	identityType := TypeNone
 	identityIds := make([]string, 0)
 
@@ -73,14 +73,14 @@ func ExpandSystemAssignedUserAssignedList(input []interface{}) (*SystemUserAssig
 		return nil, fmt.Errorf("`identity_ids` can only be specified when `type` is set to %q or %q", string(TypeSystemAssignedUserAssigned), string(TypeUserAssigned))
 	}
 
-	return &SystemUserAssignedList{
+	return &SystemAndUserAssignedList{
 		Type:        identityType,
 		IdentityIds: identityIds,
 	}, nil
 }
 
-// FlattenSystemAssignedUserAssignedList turns a SystemUserAssignedList into a []interface{}
-func FlattenSystemAssignedUserAssignedList(input *SystemUserAssignedList) (*[]interface{}, error) {
+// FlattenSystemAndUserAssignedList turns a SystemAndUserAssignedList into a []interface{}
+func FlattenSystemAndUserAssignedList(input *SystemAndUserAssignedList) (*[]interface{}, error) {
 	if input == nil || (input.Type != TypeSystemAssigned && input.Type != TypeSystemAssignedUserAssigned && input.Type != TypeUserAssigned) {
 		return &[]interface{}{}, nil
 	}

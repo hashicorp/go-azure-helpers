@@ -7,16 +7,16 @@ import (
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/commonids"
 )
 
-var _ json.Marshaler = &SystemUserAssignedMap{}
+var _ json.Marshaler = &SystemAndUserAssignedMap{}
 
-type SystemUserAssignedMap struct {
+type SystemAndUserAssignedMap struct {
 	Type        Type                                   `json:"type"`
 	PrincipalId string                                 `json:"principalId"`
 	TenantId    string                                 `json:"tenantId"`
 	IdentityIds map[string]UserAssignedIdentityDetails `json:"userAssignedIdentities"`
 }
 
-func (s *SystemUserAssignedMap) MarshalJSON() ([]byte, error) {
+func (s *SystemAndUserAssignedMap) MarshalJSON() ([]byte, error) {
 	// we use a custom marshal function here since we can only send the Type / UserAssignedIdentities field
 	identityType := TypeNone
 	userAssignedIdentityIds := map[string]UserAssignedIdentityDetails{}
@@ -44,8 +44,8 @@ func (s *SystemUserAssignedMap) MarshalJSON() ([]byte, error) {
 	return json.Marshal(out)
 }
 
-// ExpandSystemAssignedUserAssignedMap expands the schema input into a SystemUserAssignedMap struct
-func ExpandSystemAssignedUserAssignedMap(input []interface{}) (*SystemUserAssignedMap, error) {
+// ExpandSystemAndUserAssignedMap expands the schema input into a SystemAndUserAssignedMap struct
+func ExpandSystemAndUserAssignedMap(input []interface{}) (*SystemAndUserAssignedMap, error) {
 	identityType := TypeNone
 	identityIds := make(map[string]UserAssignedIdentityDetails, 0)
 
@@ -74,14 +74,14 @@ func ExpandSystemAssignedUserAssignedMap(input []interface{}) (*SystemUserAssign
 		return nil, fmt.Errorf("`identity_ids` can only be specified when `type` is set to %q or %q", string(TypeSystemAssignedUserAssigned), string(TypeUserAssigned))
 	}
 
-	return &SystemUserAssignedMap{
+	return &SystemAndUserAssignedMap{
 		Type:        identityType,
 		IdentityIds: identityIds,
 	}, nil
 }
 
-// FlattenSystemAssignedUserAssignedMap turns a SystemUserAssignedMap into a []interface{}
-func FlattenSystemAssignedUserAssignedMap(input *SystemUserAssignedMap) (*[]interface{}, error) {
+// FlattenSystemAndUserAssignedMap turns a SystemAndUserAssignedMap into a []interface{}
+func FlattenSystemAndUserAssignedMap(input *SystemAndUserAssignedMap) (*[]interface{}, error) {
 	if input == nil || (input.Type != TypeSystemAssigned && input.Type != TypeSystemAssignedUserAssigned && input.Type != TypeUserAssigned) {
 		return &[]interface{}{}, nil
 	}

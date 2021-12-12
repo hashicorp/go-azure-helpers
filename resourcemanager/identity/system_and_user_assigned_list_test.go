@@ -9,7 +9,7 @@ import (
 
 func TestSystemUserAssignedListMarshal(t *testing.T) {
 	testData := []struct {
-		input                           *SystemUserAssignedList
+		input                           *SystemAndUserAssignedList
 		expectedIdentityType            string
 		expectedUserAssignedIdentityIds []string
 	}{
@@ -19,19 +19,19 @@ func TestSystemUserAssignedListMarshal(t *testing.T) {
 			expectedUserAssignedIdentityIds: []string{},
 		},
 		{
-			input:                           &SystemUserAssignedList{},
+			input:                           &SystemAndUserAssignedList{},
 			expectedIdentityType:            "None",
 			expectedUserAssignedIdentityIds: []string{},
 		},
 		{
-			input: &SystemUserAssignedList{
+			input: &SystemAndUserAssignedList{
 				Type: TypeNone,
 			},
 			expectedIdentityType:            "None",
 			expectedUserAssignedIdentityIds: []string{},
 		},
 		{
-			input: &SystemUserAssignedList{
+			input: &SystemAndUserAssignedList{
 				Type: TypeNone,
 				IdentityIds: []string{
 					"first",
@@ -43,7 +43,7 @@ func TestSystemUserAssignedListMarshal(t *testing.T) {
 			},
 		},
 		{
-			input: &SystemUserAssignedList{
+			input: &SystemAndUserAssignedList{
 				Type:        TypeSystemAssigned,
 				IdentityIds: []string{},
 			},
@@ -51,7 +51,7 @@ func TestSystemUserAssignedListMarshal(t *testing.T) {
 			expectedUserAssignedIdentityIds: []string{},
 		},
 		{
-			input: &SystemUserAssignedList{
+			input: &SystemAndUserAssignedList{
 				Type:        TypeSystemAssignedUserAssigned,
 				IdentityIds: []string{},
 			},
@@ -59,7 +59,7 @@ func TestSystemUserAssignedListMarshal(t *testing.T) {
 			expectedUserAssignedIdentityIds: []string{},
 		},
 		{
-			input: &SystemUserAssignedList{
+			input: &SystemAndUserAssignedList{
 				Type:        TypeUserAssigned,
 				IdentityIds: []string{},
 			},
@@ -68,7 +68,7 @@ func TestSystemUserAssignedListMarshal(t *testing.T) {
 		},
 
 		{
-			input: &SystemUserAssignedList{
+			input: &SystemAndUserAssignedList{
 				Type: TypeSystemAssignedUserAssigned,
 				IdentityIds: []string{
 					"first",
@@ -82,7 +82,7 @@ func TestSystemUserAssignedListMarshal(t *testing.T) {
 			},
 		},
 		{
-			input: &SystemUserAssignedList{
+			input: &SystemAndUserAssignedList{
 				Type: TypeUserAssigned,
 				IdentityIds: []string{
 					"first",

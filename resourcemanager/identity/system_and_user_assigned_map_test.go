@@ -10,7 +10,7 @@ import (
 
 func TestSystemUserAssignedMapMarshal(t *testing.T) {
 	testData := []struct {
-		input                           *SystemUserAssignedMap
+		input                           *SystemAndUserAssignedMap
 		expectedIdentityType            string
 		expectedUserAssignedIdentityIds []string
 	}{
@@ -20,19 +20,19 @@ func TestSystemUserAssignedMapMarshal(t *testing.T) {
 			expectedUserAssignedIdentityIds: []string{},
 		},
 		{
-			input:                           &SystemUserAssignedMap{},
+			input:                           &SystemAndUserAssignedMap{},
 			expectedIdentityType:            "None",
 			expectedUserAssignedIdentityIds: []string{},
 		},
 		{
-			input: &SystemUserAssignedMap{
+			input: &SystemAndUserAssignedMap{
 				Type: TypeNone,
 			},
 			expectedIdentityType:            "None",
 			expectedUserAssignedIdentityIds: []string{},
 		},
 		{
-			input: &SystemUserAssignedMap{
+			input: &SystemAndUserAssignedMap{
 				Type: TypeNone,
 				IdentityIds: map[string]UserAssignedIdentityDetails{
 					"first": {},
@@ -44,7 +44,7 @@ func TestSystemUserAssignedMapMarshal(t *testing.T) {
 			},
 		},
 		{
-			input: &SystemUserAssignedMap{
+			input: &SystemAndUserAssignedMap{
 				Type:        TypeSystemAssigned,
 				IdentityIds: map[string]UserAssignedIdentityDetails{},
 			},
@@ -52,7 +52,7 @@ func TestSystemUserAssignedMapMarshal(t *testing.T) {
 			expectedUserAssignedIdentityIds: []string{},
 		},
 		{
-			input: &SystemUserAssignedMap{
+			input: &SystemAndUserAssignedMap{
 				Type:        TypeSystemAssignedUserAssigned,
 				IdentityIds: map[string]UserAssignedIdentityDetails{},
 			},
@@ -60,7 +60,7 @@ func TestSystemUserAssignedMapMarshal(t *testing.T) {
 			expectedUserAssignedIdentityIds: []string{},
 		},
 		{
-			input: &SystemUserAssignedMap{
+			input: &SystemAndUserAssignedMap{
 				Type:        TypeUserAssigned,
 				IdentityIds: map[string]UserAssignedIdentityDetails{},
 			},
@@ -69,7 +69,7 @@ func TestSystemUserAssignedMapMarshal(t *testing.T) {
 		},
 
 		{
-			input: &SystemUserAssignedMap{
+			input: &SystemAndUserAssignedMap{
 				Type: TypeSystemAssignedUserAssigned,
 				IdentityIds: map[string]UserAssignedIdentityDetails{
 					"first":  {},
@@ -83,7 +83,7 @@ func TestSystemUserAssignedMapMarshal(t *testing.T) {
 			},
 		},
 		{
-			input: &SystemUserAssignedMap{
+			input: &SystemAndUserAssignedMap{
 				Type: TypeUserAssigned,
 				IdentityIds: map[string]UserAssignedIdentityDetails{
 					"first":  {},
