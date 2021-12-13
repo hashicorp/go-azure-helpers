@@ -43,7 +43,7 @@ func (s *SystemOrUserAssignedList) MarshalJSON() ([]byte, error) {
 }
 
 // ExpandSystemOrAssignedUserAssignedList expands the schema input into a SystemOrUserAssignedList struct
-func ExpandSystemOrAssignedUserAssignedList(input []interface{}) (*SystemOrUserAssignedList, error) {
+func ExpandSystemOrUserAssignedList(input []interface{}) (*SystemOrUserAssignedList, error) {
 	identityType := TypeNone
 	identityIds := make([]string, 0)
 
