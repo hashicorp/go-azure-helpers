@@ -129,12 +129,16 @@ func (c Config) ADALBearerAuthorizerCallback(ctx context.Context, sender autores
 func (c Config) MSALBearerAuthorizerCallback(ctx context.Context, api environments.Api, sender autorest.Sender, oauthConfig *OAuthConfig, endpoint string) *autorest.BearerAuthorizerCallback {
 	authorizer, err := c.GetMSALToken(ctx, api, sender, oauthConfig, endpoint)
 	if err != nil {
-		return nil // BOOM
+		return autorest.NewBearerAuthorizerCallback(nil, func(_, _ string) (*autorest.BearerAuthorizer, error) {
+			return nil, fmt.Errorf("failed to acquire MSAL token for %s", api.Endpoint)
+		})
 	}
 
 	cast, ok := authorizer.(*auth.CachedAuthorizer)
 	if !ok {
-		return nil // BOOM
+		return autorest.NewBearerAuthorizerCallback(nil, func(_, _ string) (*autorest.BearerAuthorizer, error) {
+			return nil, fmt.Errorf("authorizer was not an auth.CachedAuthorizer for %s", api.Endpoint)
+		})
 	}
 
 	return cast.BearerAuthorizerCallback()
