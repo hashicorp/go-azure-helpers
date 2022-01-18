@@ -82,9 +82,9 @@ func (id ManagementGroupId) ID() string {
 // Segments returns a slice of Resource ID Segments which comprise this Management Group ID
 func (id ManagementGroupId) Segments() []resourceids.Segment {
 	return []resourceids.Segment{
-		resourceids.StaticSegment("staticProviders", "providers", "providers"),
-		resourceids.ResourceProviderSegment("staticMicrosoftManagement", "Microsoft.Management", "Microsoft.Management"),
-		resourceids.StaticSegment("staticManagementGroups", "managementGroups", "managementGroups"),
+		resourceids.StaticSegment("providers", "providers", "providers"),
+		resourceids.ResourceProviderSegment("resourceProvider", "Microsoft.Management", "Microsoft.Management"),
+		resourceids.StaticSegment("managementGroups", "managementGroups", "managementGroups"),
 		resourceids.UserSpecifiedSegment("groupId", "groupIdValue"),
 	}
 }
