@@ -1,5 +1,6 @@
 package tags
 
+// Expand transforms the input Tags to a `*map[string]string`
 func Expand(input map[string]interface{}) *map[string]string {
 	output := make(map[string]string)
 
