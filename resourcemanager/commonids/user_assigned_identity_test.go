@@ -8,7 +8,7 @@ import (
 
 var _ resourceids.ResourceId = UserAssignedIdentityId{}
 
-func TestNewUserAssignedIdentitiesID(t *testing.T) {
+func TestNewUserAssignedIdentityID(t *testing.T) {
 	id := NewUserAssignedIdentityID("12345678-1234-9876-4563-123456789012", "example-resource-group", "resourceValue")
 
 	if id.SubscriptionId != "12345678-1234-9876-4563-123456789012" {
@@ -24,15 +24,15 @@ func TestNewUserAssignedIdentitiesID(t *testing.T) {
 	}
 }
 
-func TestFormatUserAssignedIdentitiesID(t *testing.T) {
+func TestFormatUserAssignedIdentityID(t *testing.T) {
 	actual := NewUserAssignedIdentityID("12345678-1234-9876-4563-123456789012", "example-resource-group", "resourceValue").ID()
 	expected := "/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/example-resource-group/providers/Microsoft.ManagedIdentity/userAssignedIdentities/resourceValue"
 	if actual != expected {
-		t.Fatalf("Expected the Formatted ID to be %q but got %q", actual, expected)
+		t.Fatalf("Expected the Formatted ID to be %q but got %q", expected, actual)
 	}
 }
 
-func TestParseUserAssignedIdentitiesID(t *testing.T) {
+func TestParseUserAssignedIdentityID(t *testing.T) {
 	testData := []struct {
 		Input    string
 		Error    bool
@@ -123,7 +123,7 @@ func TestParseUserAssignedIdentitiesID(t *testing.T) {
 	}
 }
 
-func TestParseUserAssignedIdentitiesIDInsensitively(t *testing.T) {
+func TestParseUserAssignedIdentityIDInsensitively(t *testing.T) {
 	testData := []struct {
 		Input    string
 		Error    bool
@@ -260,5 +260,20 @@ func TestParseUserAssignedIdentitiesIDInsensitively(t *testing.T) {
 			t.Fatalf("Expected %q but got %q for ResourceName", v.Expected.ResourceName, actual.ResourceName)
 		}
 
+	}
+}
+
+func TestSegmentsForUserAssignedIdentityId(t *testing.T) {
+	segments := UserAssignedIdentityId{}.Segments()
+	if len(segments) == 0 {
+		t.Fatalf("UserAssignedIdentityId has no segments")
+	}
+
+	uniqueNames := make(map[string]struct{}, 0)
+	for _, segment := range segments {
+		uniqueNames[segment.Name] = struct{}{}
+	}
+	if len(uniqueNames) != len(segments) {
+		t.Fatalf("Expected the Segments to be unique but got %q unique segments and %d total segments", len(uniqueNames), len(segments))
 	}
 }
