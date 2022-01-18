@@ -1,17 +1,15 @@
 package tags
 
-import (
-	"github.com/hashicorp/go-azure-helpers/lang/pointer"
-)
-
-func Flatten(input *map[string]string) map[string]*string {
-	output := make(map[string]*string)
+func Flatten(input *map[string]string) map[string]interface{} {
+	output := make(map[string]interface{})
 	if input == nil {
 		return output
 	}
 
 	for k, v := range *input {
-		output[k] = pointer.FromString(v)
+		tagKey := k
+		tagValue := v
+		output[tagKey] = tagValue
 	}
 
 	return output
