@@ -20,7 +20,7 @@ func TestFormatManagementGroupID(t *testing.T) {
 	actual := NewManagementGroupID("groupIdValue").ID()
 	expected := "/providers/Microsoft.Management/managementGroups/groupIdValue"
 	if actual != expected {
-		t.Fatalf("Expected the Formatted ID to be %q but got %q", actual, expected)
+		t.Fatalf("Expected the Formatted ID to be %q but got %q", expected, actual)
 	}
 }
 
@@ -170,5 +170,20 @@ func TestParseManagementGroupIDInsensitively(t *testing.T) {
 			t.Fatalf("Expected %q but got %q for GroupId", v.Expected.GroupId, actual.GroupId)
 		}
 
+	}
+}
+
+func TestSegmentsForManagementGroupId(t *testing.T) {
+	segments := ManagementGroupId{}.Segments()
+	if len(segments) == 0 {
+		t.Fatalf("ManagementGroupId has no segments")
+	}
+
+	uniqueNames := make(map[string]struct{}, 0)
+	for _, segment := range segments {
+		uniqueNames[segment.Name] = struct{}{}
+	}
+	if len(uniqueNames) != len(segments) {
+		t.Fatalf("Expected the Segments to be unique but got %q unique segments and %d total segments", len(uniqueNames), len(segments))
 	}
 }
