@@ -12,7 +12,7 @@ var _ json.Marshaler = &UserAssignedMap{}
 
 type UserAssignedMap struct {
 	Type        Type                                   `json:"type" tfschema:"type"`
-	IdentityIds map[string]UserAssignedIdentityDetails `json:"userAssignedIdentities" tfschema:"identity_ids"`
+	IdentityIds map[string]UserAssignedIdentityDetails `json:"userAssignedIdentities"`
 }
 
 func (s *UserAssignedMap) MarshalJSON() ([]byte, error) {

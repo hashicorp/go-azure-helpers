@@ -14,7 +14,7 @@ type SystemOrUserAssignedMap struct {
 	Type        Type                                   `json:"type" tfschema:"type"`
 	PrincipalId string                                 `json:"principalId" tfschema:"principal_id"`
 	TenantId    string                                 `json:"tenantId" tfschema:"tenant_id"`
-	IdentityIds map[string]UserAssignedIdentityDetails `json:"userAssignedIdentities" tfschema:"identity_ids"`
+	IdentityIds map[string]UserAssignedIdentityDetails `json:"userAssignedIdentities"`
 }
 
 func (s *SystemOrUserAssignedMap) MarshalJSON() ([]byte, error) {
