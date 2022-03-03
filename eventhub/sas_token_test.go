@@ -7,10 +7,10 @@ import (
 
 func TestParseEventHubConnectionString(t *testing.T) {
 	testCases := []struct {
-		input               string
+		input                       string
 		expectedSharedAccessKeyName string
-		expectedSharedAccessKey  string
-		expectedError       bool
+		expectedSharedAccessKey     string
+		expectedError               bool
 	}{
 		{
 			"Endpoint=sb://acctesteventhubnamespace-test01.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=IUSvXLiPZ3uAQcso/cL7vTiL4zsc/EMtcUzNCC2dhaM=",
@@ -57,11 +57,11 @@ func TestParseEventHubConnectionString(t *testing.T) {
 
 func TestComputeEventHubSASToken(t *testing.T) {
 	testCases := []struct {
-		sharedAccessKeyName    string
+		sharedAccessKeyName string
 		sharedAccessKey     string
-		eventHubUri    string
-		expiry       string
-		knownSasToken string
+		eventHubUri         string
+		expiry              string
+		knownSasToken       string
 	}{
 		{
 			"RootManageSharedAccessKey",
@@ -83,7 +83,7 @@ func TestComputeEventHubSASToken(t *testing.T) {
 		computedToken, err := ComputeEventHubSASToken(test.sharedAccessKeyName,
 			test.sharedAccessKey,
 			test.eventHubUri,
-			test.expiry,)
+			test.expiry)
 
 		if err != nil {
 			t.Fatalf("Test Failed: Error computing Event Hub Sas: %q", err)
@@ -101,8 +101,8 @@ func TestComputeEventHubSASConnectionString(t *testing.T) {
 		sasConnectionString string
 	}{
 		{
-			"sr=sb%3A%2F%2Facctesteventhubnamespace-test01.servicebus.windows.net&sig=sq0n%2FkmSizmo49sxiQuSmPZETsZDJ4xAbvrnjXUjdw8%3D&se=1641976155&skn=RootManageSharedAccessKey",
-			"SharedAccessSignature sr=sb%3A%2F%2Facctesteventhubnamespace-test01.servicebus.windows.net&sig=sq0n%2FkmSizmo49sxiQuSmPZETsZDJ4xAbvrnjXUjdw8%3D&se=1641976155&skn=RootManageSharedAccessKey",
+			"sr=sb%3A%2F%2Facctest-ehn-test01.servicebus.windows.net%2Facctest-eh-test01&sig=ozpLwoOHPAWD1s4GE2Khhu508JbcVA4%2FWutXZIV7VfI%3D&se=1672531200&skn=acctest-ehar-test01",
+			"SharedAccessSignature sr=sb%3A%2F%2Facctest-ehn-test01.servicebus.windows.net%2Facctest-eh-test01&sig=ozpLwoOHPAWD1s4GE2Khhu508JbcVA4%2FWutXZIV7VfI%3D&se=1672531200&skn=acctest-ehar-test01",
 		},
 	}
 
@@ -117,8 +117,8 @@ func TestComputeEventHubSASConnectionString(t *testing.T) {
 
 func TestComputeEventHubSASConnectionUrl(t *testing.T) {
 	testCases := []struct {
-		endpoint          string
-		entityPath             string
+		endpoint              string
+		entityPath            string
 		eventHubConnectionUrl string
 	}{
 		{

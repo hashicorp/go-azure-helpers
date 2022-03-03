@@ -67,7 +67,7 @@ func ComputeEventHubSASConnectionUrl(endpoint string, entityPath string) (*strin
 func ParseEventHubSASConnectionString(connString string) (map[string]string, error) {
 	// This connection string was for a real Event Hub which has been deleted
 	// so its safe to include here for reference to understand the format.
-	// Endpoint=sb://acctesteventhubnamespace-test01.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=6ECzugt0e3M+BbD9Edh/90VqB1cEYt1TmApI77/vors=
+	// Endpoint=sb://example-ehn.servicebus.windows.net/;SharedAccessKeyName=example-ehar;SharedAccessKey=DzGpfdyJda9D/xIkME0FLA66wZnheOBID0s1/rrtlHg=;EntityPath=example-eh
 	validKeys := map[string]bool{"Endpoint": true, "SharedAccessKeyName": true, "SharedAccessKey": true, "EntityPath": true}
 	// The k-v pairs are separated with semi-colons
 	tokens := strings.Split(connString, ";")
