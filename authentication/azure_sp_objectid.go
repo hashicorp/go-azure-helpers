@@ -12,6 +12,7 @@ import (
 	authWrapper "github.com/manicminer/hamilton-autorest/auth"
 	envWrapper "github.com/manicminer/hamilton-autorest/environments"
 	"github.com/manicminer/hamilton/auth"
+	"github.com/manicminer/hamilton/environments"
 	"github.com/manicminer/hamilton/msgraph"
 	"github.com/manicminer/hamilton/odata"
 
@@ -86,12 +87,16 @@ func objectIdFromADALTokenClaims(ctx context.Context, c *Config) (*string, error
 }
 
 func objectIdFromMSALTokenClaims(ctx context.Context, c *Config) (*string, error) {
-	azureEnv, err := AzureEnvironmentByNameFromEndpoint(ctx, c.MetadataHost, c.Environment)
+	env, err := environments.EnvironmentFromString(c.Environment)
 	if err != nil {
-		return nil, fmt.Errorf("determining environment: %v", err)
-	}
+		// failed to find a suitable hamilton environment, so convert the provided autorest environment
+		azureEnv, err := AzureEnvironmentByNameFromEndpoint(ctx, c.MetadataHost, c.Environment)
+		if err != nil {
+			return nil, fmt.Errorf("determining environment: %v", err)
+		}
 
-	env := envWrapper.EnvironmentFromAzureEnvironment(*azureEnv)
+		env = envWrapper.EnvironmentFromAzureEnvironment(*azureEnv)
+	}
 
 	oauthConfig, err := c.BuildOAuthConfig(string(env.AzureADEndpoint))
 	if err != nil {
@@ -148,12 +153,16 @@ func objectIdFromAadGraph(ctx context.Context, c *Config) (*string, error) {
 }
 
 func objectIdFromMsGraph(ctx context.Context, c *Config) (*string, error) {
-	azureEnv, err := AzureEnvironmentByNameFromEndpoint(ctx, c.MetadataHost, c.Environment)
+	env, err := environments.EnvironmentFromString(c.Environment)
 	if err != nil {
-		return nil, fmt.Errorf("determining environment: %v", err)
-	}
+		// failed to find a suitable hamilton environment, so convert the provided autorest environment
+		azureEnv, err := AzureEnvironmentByNameFromEndpoint(ctx, c.MetadataHost, c.Environment)
+		if err != nil {
+			return nil, fmt.Errorf("determining environment: %v", err)
+		}
 
-	env := envWrapper.EnvironmentFromAzureEnvironment(*azureEnv)
+		env = envWrapper.EnvironmentFromAzureEnvironment(*azureEnv)
+	}
 
 	oauthConfig, err := c.BuildOAuthConfig(string(env.AzureADEndpoint))
 	if err != nil {
