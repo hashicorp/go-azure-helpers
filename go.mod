@@ -1,5 +1,7 @@
 module github.com/hashicorp/go-azure-helpers
 
+go 1.18
+
 require (
 	github.com/Azure/azure-sdk-for-go v59.2.0+incompatible
 	github.com/Azure/go-autorest/autorest v0.11.24
@@ -49,5 +51,3 @@ require (
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/protobuf v1.26.0 // indirect
 )
-
-go 1.17
