@@ -139,8 +139,8 @@ func ExpandSystemAndUserAssignedMapFromModel(input []ModelSystemAssignedUserAssi
 	}, nil
 }
 
-// FlattenSystemAndUserAssignedMapFromModel turns a SystemAndUserAssignedMap into a typed schema model
-func FlattenSystemAndUserAssignedMapFromModel(input *SystemAndUserAssignedMap) (*[]ModelSystemAssignedUserAssigned, error) {
+// FlattenSystemAndUserAssignedMapToModel turns a SystemAndUserAssignedMap into a typed schema model
+func FlattenSystemAndUserAssignedMapToModel(input *SystemAndUserAssignedMap) (*[]ModelSystemAssignedUserAssigned, error) {
 	if input == nil {
 		return &[]ModelSystemAssignedUserAssigned{}, nil
 	}

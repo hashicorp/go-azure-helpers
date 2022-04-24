@@ -107,8 +107,8 @@ func ExpandUserAssignedListFromModel(input []ModelUserAssigned) (*UserAssignedLi
 	}, nil
 }
 
-// FlattenUserAssignedListFromModel turns a UserAssignedList into a typed schema model
-func FlattenUserAssignedListFromModel(input *UserAssignedList) (*[]ModelUserAssigned, error) {
+// FlattenUserAssignedListToModel turns a UserAssignedList into a typed schema model
+func FlattenUserAssignedListToModel(input *UserAssignedList) (*[]ModelUserAssigned, error) {
 	if input == nil {
 		return &[]ModelUserAssigned{}, nil
 	}

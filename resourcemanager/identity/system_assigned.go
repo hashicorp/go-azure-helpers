@@ -67,7 +67,7 @@ func ExpandSystemAssignedFromModel(input []ModelSystemAssigned) (*SystemAssigned
 	}, nil
 }
 
-func FlattenSystemAssignedFromModel(input *SystemAssigned) []ModelSystemAssigned {
+func FlattenSystemAssignedToModel(input *SystemAssigned) []ModelSystemAssigned {
 	if input == nil {
 		return []ModelSystemAssigned{}
 	}

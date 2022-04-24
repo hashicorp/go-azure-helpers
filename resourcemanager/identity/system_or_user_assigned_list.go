@@ -124,8 +124,8 @@ func ExpandSystemOrUserAssignedListFromModel(input []ModelSystemAssignedUserAssi
 	}, nil
 }
 
-// FlattenSystemAssignedOrUserAssignedListFromModel turns a SystemOrUserAssignedList into a typed schema model
-func FlattenSystemAssignedOrUserAssignedListFromModel(input *SystemOrUserAssignedList) (*[]ModelSystemAssignedUserAssigned, error) {
+// FlattenSystemAssignedOrUserAssignedListToModel turns a SystemOrUserAssignedList into a typed schema model
+func FlattenSystemAssignedOrUserAssignedListToModel(input *SystemOrUserAssignedList) (*[]ModelSystemAssignedUserAssigned, error) {
 	if input == nil {
 		return &[]ModelSystemAssignedUserAssigned{}, nil
 	}

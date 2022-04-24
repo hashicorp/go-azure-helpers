@@ -117,8 +117,8 @@ func ExpandUserAssignedMapFromModel(input []ModelUserAssigned) (*UserAssignedMap
 	}, nil
 }
 
-// FlattenUserAssignedMapFromModel turns a UserAssignedMap into a typed schema model
-func FlattenUserAssignedMapFromModel(input *UserAssignedMap) (*[]ModelUserAssigned, error) {
+// FlattenUserAssignedMapToModel turns a UserAssignedMap into a typed schema model
+func FlattenUserAssignedMapToModel(input *UserAssignedMap) (*[]ModelUserAssigned, error) {
 	if input == nil {
 		return &[]ModelUserAssigned{}, nil
 	}
