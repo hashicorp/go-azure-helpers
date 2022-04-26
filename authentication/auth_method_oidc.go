@@ -64,6 +64,7 @@ func (a oidcAuth) getMSALToken(ctx context.Context, api environments.Api, _ auto
 
 func (a oidcAuth) populateConfig(c *Config) error {
 	c.AuthenticatedAsAServicePrincipal = true
+	c.AuthenticatedViaOIDC = true
 	c.GetAuthenticatedObjectID = buildServicePrincipalObjectIDFunc(c)
 	return nil
 }
