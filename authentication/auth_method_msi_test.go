@@ -45,12 +45,12 @@ func TestManagedServiceIdentity_isApplicable(t *testing.T) {
 			Builder: Builder{
 				SupportsManagedServiceIdentity: true,
 			},
-			Valid: false,
+			Valid: true,
 		},
 	}
 
 	for _, v := range cases {
-		applicable := servicePrincipalClientSecretAuth{}.isApplicable(v.Builder)
+		applicable := managedServiceIdentityAuth{}.isApplicable(v.Builder)
 		if v.Valid != applicable {
 			t.Fatalf("Expected %q to be %t but got %t", v.Description, v.Valid, applicable)
 		}
@@ -59,7 +59,7 @@ func TestManagedServiceIdentity_isApplicable(t *testing.T) {
 
 func TestManagedServiceIdentity_populateConfig(t *testing.T) {
 	config := &Config{}
-	err := servicePrincipalClientSecretAuth{}.populateConfig(config)
+	err := managedServiceIdentityAuth{}.populateConfig(config)
 	if err != nil {
 		t.Fatalf("Error populating config: %s", err)
 	}
