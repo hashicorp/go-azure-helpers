@@ -65,6 +65,7 @@ func TestOIDC_isApplicable(t *testing.T) {
 				SupportsOIDCAuth:    true,
 				IDTokenRequestURL:   "https://token.endpoint",
 				IDTokenRequestToken: "abcdeftoken",
+				UseMicrosoftGraph:   true,
 			},
 			Valid: true,
 		},
