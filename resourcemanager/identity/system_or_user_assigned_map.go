@@ -69,10 +69,15 @@ func ExpandSystemOrUserAssignedMap(input []interface{}) (*SystemOrUserAssignedMa
 		return nil, fmt.Errorf("`identity_ids` can only be specified when `type` is set to %q", string(TypeUserAssigned))
 	}
 
-	return &SystemOrUserAssignedMap{
+	identity :=  &SystemOrUserAssignedMap{
 		Type:        identityType,
-		IdentityIds: identityIds,
-	}, nil
+	}
+
+	if len(identityIds) > 0 {
+		identity.IdentityIds = identityIds
+	}
+
+	return identity, nil
 }
 
 // FlattenSystemOrUserAssignedMap turns a SystemOrUserAssignedMap into a []interface{}
