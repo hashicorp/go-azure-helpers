@@ -2,7 +2,7 @@ package systemdata
 
 import "encoding/json"
 
-var _ json.Marshaler = &SystemAssigned{}
+var _ json.Marshaler = &SystemData{}
 
 type SystemData struct {
     CreatedBy          string `json:"createdBy"`
