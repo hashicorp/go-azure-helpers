@@ -117,7 +117,7 @@ func ExpandSystemAndUserAssignedMapFromModel(input []ModelSystemAssignedUserAssi
 	if len(input) == 0 {
 		return &SystemAndUserAssignedMap{
 			Type:        TypeNone,
-			IdentityIds: map[string]UserAssignedIdentityDetails{},
+			IdentityIds: nil,
 		}, nil
 	}
 

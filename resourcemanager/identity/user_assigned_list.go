@@ -96,7 +96,7 @@ func ExpandUserAssignedListFromModel(input []ModelUserAssigned) (*UserAssignedLi
 	if len(input) == 0 {
 		return &UserAssignedList{
 			Type:        TypeNone,
-			IdentityIds: []string{},
+			IdentityIds: nil,
 		}, nil
 	}
 

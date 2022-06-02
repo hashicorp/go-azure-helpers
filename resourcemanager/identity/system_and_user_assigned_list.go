@@ -114,7 +114,7 @@ func ExpandSystemAndUserAssignedListFromModel(input []ModelSystemAssignedUserAss
 	if len(input) == 0 {
 		return &SystemAndUserAssignedList{
 			Type:        TypeNone,
-			IdentityIds: []string{},
+			IdentityIds: nil,
 		}, nil
 	}
 

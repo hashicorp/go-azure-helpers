@@ -98,7 +98,7 @@ func ExpandUserAssignedMapFromModel(input []ModelUserAssigned) (*UserAssignedMap
 	if len(input) == 0 {
 		return &UserAssignedMap{
 			Type:        TypeNone,
-			IdentityIds: map[string]UserAssignedIdentityDetails{},
+			IdentityIds: nil,
 		}, nil
 	}
 
