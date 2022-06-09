@@ -37,7 +37,10 @@ func (s *SystemOrUserAssignedMap) MarshalJSON() ([]byte, error) {
 
 	out := map[string]interface{}{
 		"type":                   string(identityType),
-		"userAssignedIdentities": userAssignedIdentityIds,
+		"userAssignedIdentities": nil,
+	}
+	if len(userAssignedIdentityIds) > 0 {
+		out["userAssignedIdentities"] = userAssignedIdentityIds
 	}
 	return json.Marshal(out)
 }
@@ -69,12 +72,9 @@ func ExpandSystemOrUserAssignedMap(input []interface{}) (*SystemOrUserAssignedMa
 		return nil, fmt.Errorf("`identity_ids` can only be specified when `type` is set to %q", string(TypeUserAssigned))
 	}
 
-	identity :=  &SystemOrUserAssignedMap{
+	identity := &SystemOrUserAssignedMap{
 		Type:        identityType,
-	}
-
-	if len(identityIds) > 0 {
-		identity.IdentityIds = identityIds
+		IdentityIds: identityIds,
 	}
 
 	return identity, nil
