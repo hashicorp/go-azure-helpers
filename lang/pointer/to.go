@@ -1,5 +1,7 @@
 package pointer
 
+import "github.com/hashicorp/go-azure-helpers/lang/types"
+
 // ToBool turns a pointer to a bool into a bool, returning the default value for a bool if it's nil
 func ToBool(input *bool) bool {
 	if input != nil {
@@ -75,12 +77,8 @@ func ToString(input *string) string {
 	return ""
 }
 
-type primary interface {
-	~bool | ~int | ~int8 | ~int16 | ~int32 | ~int64 | ~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64 | ~float32 | ~float64 | ~string
-}
-
 // ToPrimary turns a pointer to a primary into a primary, returning its zero value if it's nul
-func ToPrimary[T primary](input *T) T {
+func ToPrimary[T types.Primary](input *T) T {
 	if input != nil {
 		return *input
 	}
@@ -89,7 +87,7 @@ func ToPrimary[T primary](input *T) T {
 }
 
 // ToMap turns a pointer to a map into a map, returning its zero value if it's nul
-func ToMap[K primary, T primary | interface{}](input *map[K]T) map[K]T {
+func ToMap[K types.Primary, T types.Primary | interface{}](input *map[K]T) map[K]T {
 	if input != nil {
 		return *input
 	}
@@ -97,7 +95,7 @@ func ToMap[K primary, T primary | interface{}](input *map[K]T) map[K]T {
 }
 
 // ToSlice turns a pointer to a slice into a slice, returning its zero value if it's nul
-func FromSlice[T primary | interface{}](input *[]T) []T {
+func FromSlice[T types.Primary | interface{}](input *[]T) []T {
 	if input != nil {
 		return *input
 	}
