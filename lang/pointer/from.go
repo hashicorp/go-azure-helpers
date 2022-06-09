@@ -39,3 +39,8 @@ func FromSliceOfStrings(input []string) *[]string {
 func FromString(input string) *string {
 	return &input
 }
+
+// From turns an object into a pointer to it.
+func From[T any](input T) *T {
+	return &input
+}
