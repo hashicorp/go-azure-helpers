@@ -3,12 +3,12 @@ package polling
 import (
 	"context"
 	"fmt"
-	"github.com/hashicorp/go-azure-helpers/lang/response"
 	"net/http"
 	"strings"
 
 	"github.com/Azure/go-autorest/autorest"
 	"github.com/Azure/go-autorest/autorest/azure"
+	"github.com/hashicorp/go-azure-helpers/lang/response"
 )
 
 type LongRunningPoller struct {
@@ -59,11 +59,11 @@ func (fw *LongRunningPoller) PollUntilDone() error {
 	}
 
 	err := fw.future.WaitForCompletionRef(fw.ctx, fw.client)
+	fw.HttpResponse = fw.future.Response()
 	if strings.EqualFold(fw.method, "DELETE") {
-		if !response.WasNotFound(fw.future.Response()) {
-			return err
+		if response.WasNotFound(fw.HttpResponse) {
+			err = nil
 		}
 	}
-	fw.HttpResponse = fw.future.Response()
 	return err
 }
