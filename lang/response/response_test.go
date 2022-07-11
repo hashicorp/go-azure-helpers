@@ -99,3 +99,61 @@ func TestNotFound_StatusCodes(t *testing.T) {
 		}
 	}
 }
+
+func TestWasStatusCode_DroppedConnection(t *testing.T) {
+	if WasStatusCode(&http.Response{}, http.StatusOK) {
+		t.Fatalf("WasStatusCode should return `false` for an empty response")
+	}
+	if WasStatusCode(nil, http.StatusOK) {
+		t.Fatalf("WasStatusCode should return `false` for a dropped connection")
+	}
+}
+
+func TestWasStatusCode_StatusCodes(t *testing.T) {
+	testCases := []struct {
+		returnedStatusCode int
+		checkForStatusCode int
+		result             bool
+	}{
+		{
+			checkForStatusCode: http.StatusOK,
+			returnedStatusCode: http.StatusOK,
+			result:             true,
+		},
+		{
+			checkForStatusCode: http.StatusOK,
+			returnedStatusCode: http.StatusInternalServerError,
+			result:             false,
+		},
+		{
+			checkForStatusCode: http.StatusInternalServerError,
+			returnedStatusCode: http.StatusInternalServerError,
+			result:             true,
+		},
+		{
+			checkForStatusCode: http.StatusInternalServerError,
+			returnedStatusCode: http.StatusOK,
+			result:             false,
+		},
+		{
+			checkForStatusCode: http.StatusNotFound,
+			returnedStatusCode: http.StatusNotFound,
+			result:             true,
+		},
+		{
+			checkForStatusCode: http.StatusOK,
+			returnedStatusCode: http.StatusNotFound,
+			result:             false,
+		},
+	}
+
+	for _, test := range testCases {
+		resp := http.Response{
+			StatusCode: test.returnedStatusCode,
+		}
+		actual := WasStatusCode(&resp, test.checkForStatusCode)
+		if test.result != actual {
+			t.Fatalf("expected %t but got %t for status codes %d (returned) and %d (checking for)", test.result, actual, test.returnedStatusCode, test.checkForStatusCode)
+		}
+	}
+}
