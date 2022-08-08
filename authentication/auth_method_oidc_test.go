@@ -60,12 +60,21 @@ func TestOIDC_isApplicable(t *testing.T) {
 			Valid: false,
 		},
 		{
-			Description: "Feature Toggled on",
+			Description: "GitHub Request URL + Token",
 			Builder: Builder{
 				SupportsOIDCAuth:    true,
 				IDTokenRequestURL:   "https://token.endpoint",
 				IDTokenRequestToken: "abcdeftoken",
 				UseMicrosoftGraph:   true,
+			},
+			Valid: true,
+		},
+		{
+			Description: "Generic OIDC",
+			Builder: Builder{
+				SupportsOIDCAuth:  true,
+				IDToken:           "oidctoken",
+				UseMicrosoftGraph: true,
 			},
 			Valid: true,
 		},
@@ -102,7 +111,7 @@ func TestOIDC_validate(t *testing.T) {
 			ExpectError: true,
 		},
 		{
-			Description: "Valid Configuration",
+			Description: "Valid GitHub Configuration",
 			Config: oidcAuth{
 				auxiliaryTenantIds:  []string{"a-tenant-id", "b-tenant-id"},
 				clientId:            "client-id",
@@ -110,6 +119,17 @@ func TestOIDC_validate(t *testing.T) {
 				idTokenRequestUrl:   "https://token.endpoint",
 				idTokenRequestToken: "abcdeftoken",
 				tenantId:            "tenant-id",
+			},
+			ExpectError: false,
+		},
+		{
+			Description: "Valid Generic Configuration",
+			Config: oidcAuth{
+				auxiliaryTenantIds: []string{"a-tenant-id", "b-tenant-id"},
+				clientId:           "client-id",
+				environment:        "environment",
+				idToken:            "oidctoken",
+				tenantId:           "tenant-id",
 			},
 			ExpectError: false,
 		},
