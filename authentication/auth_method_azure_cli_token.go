@@ -50,6 +50,10 @@ func (a azureCliTokenAuth) build(b Builder) (authMethod, error) {
 		servicePrincipalAuthDocsLink: b.ClientSecretDocsLink,
 	}
 
+	if err := refreshAccounts(); err != nil {
+		return nil, fmt.Errorf("refreshing the account list from the Azure CLI: %v", err)
+	}
+
 	var acc *cli.Subscription
 	if auth.profile.tenantOnly {
 		var err error
@@ -283,6 +287,17 @@ func obtainAuthorizationToken(endpoint string, subscriptionId string, tenantId s
 	}
 
 	return &token, nil
+}
+
+func refreshAccounts() error {
+	var accs []cli.Subscription
+	cmd := []string{"account", "list", "--refresh"}
+	err := jsonUnmarshalAzCmd(&accs, cmd...)
+	if err != nil {
+		return fmt.Errorf("parsing json result from the Azure CLI: %v", err)
+	}
+
+	return nil
 }
 
 // obtainSubscription returns a Subscription object of the specified subscriptionId.
