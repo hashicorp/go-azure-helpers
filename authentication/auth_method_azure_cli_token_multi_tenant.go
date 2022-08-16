@@ -35,6 +35,10 @@ func (a azureCliTokenMultiTenantAuth) build(b Builder) (authMethod, error) {
 		servicePrincipalAuthDocsLink: b.ClientSecretDocsLink,
 	}
 
+	if err := refreshAccounts(); err != nil {
+		return nil, fmt.Errorf("refreshing the account list from the Azure CLI: %v", err)
+	}
+
 	profilePath, err := cli.ProfilePath()
 	if err != nil {
 		return nil, fmt.Errorf("loading the Profile Path from the Azure CLI: %+v", err)
