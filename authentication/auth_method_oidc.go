@@ -35,7 +35,7 @@ func (a oidcAuth) build(b Builder) (authMethod, error) {
 }
 
 func (a oidcAuth) isApplicable(b Builder) bool {
-	return b.SupportsOIDCAuth && (b.IDToken != "" || (b.IDTokenRequestURL != "" && b.IDTokenRequestToken != "")) && b.UseMicrosoftGraph
+	return b.SupportsOIDCAuth && b.UseMicrosoftGraph && (b.IDToken != "" || (b.IDTokenRequestURL != "" && b.IDTokenRequestToken != ""))
 }
 
 func (a oidcAuth) name() string {
