@@ -3,7 +3,7 @@ package authentication
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
+	"os"
 
 	"github.com/Azure/go-autorest/autorest"
 	"github.com/hashicorp/go-multierror"
@@ -92,7 +92,7 @@ func (a oidcAuth) getMSALToken(ctx context.Context, api environments.Api, _ auto
 }
 
 func (a oidcAuth) readTokenFile(f string) (string, error) {
-	idTokenData, err := ioutil.ReadFile(f)
+	idTokenData, err := os.ReadFile(f)
 
 	if err != nil {
 		return "", fmt.Errorf("reading OIDC Token %q: %v", f, err)
