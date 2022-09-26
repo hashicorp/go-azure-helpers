@@ -79,10 +79,10 @@ func TestOIDC_isApplicable(t *testing.T) {
 			Valid: true,
 		},
 		{
-			Description: "Generic OIDC with Token Path",
+			Description: "Generic OIDC with Token File Path",
 			Builder: Builder{
 				SupportsOIDCAuth:  true,
-				IDTokenPath:       "path/to/oidctoken",
+				IDTokenFilePath:   "path/to/oidctoken",
 				UseMicrosoftGraph: true,
 			},
 			Valid: true,
@@ -143,12 +143,12 @@ func TestOIDC_validate(t *testing.T) {
 			ExpectError: false,
 		},
 		{
-			Description: "Valid Generic Configuration with Token Path",
+			Description: "Valid Generic Configuration with Token File Path",
 			Config: oidcAuth{
 				auxiliaryTenantIds: []string{"a-tenant-id", "b-tenant-id"},
 				clientId:           "client-id",
 				environment:        "environment",
-				idTokenPath:        "path/to/oidctoken",
+				idTokenFilePath:    "path/to/oidctoken",
 				tenantId:           "tenant-id",
 			},
 			ExpectError: false,
