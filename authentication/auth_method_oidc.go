@@ -76,6 +76,10 @@ func (a oidcAuth) getMSALToken(ctx context.Context, api environments.Api, _ auto
 		if err != nil {
 			return nil, fmt.Errorf("reading token file: %v", err)
 		}
+
+		if a.idToken != "" && a.idToken != idToken {
+			return nil, fmt.Errorf("mismatch between supplied OIDC token and supplied OIDC token file")
+		}
 	}
 
 	conf := auth.ClientCredentialsConfig{
