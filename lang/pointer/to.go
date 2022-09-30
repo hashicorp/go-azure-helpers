@@ -95,7 +95,7 @@ func ToMap[K types.Primary, T types.Primary | interface{}](input *map[K]T) map[K
 }
 
 // ToSlice turns a pointer to a slice into a slice, returning its zero value if it's nul
-func FromSlice[T types.Primary | interface{}](input *[]T) []T {
+func ToSlice[T types.Primary | interface{}](input *[]T) []T {
 	if input != nil {
 		return *input
 	}
