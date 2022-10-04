@@ -15,8 +15,8 @@ func TestNewVirtualHubIPConfigurationID(t *testing.T) {
 		t.Fatalf("Expected %q but got %q for Segment 'SubscriptionId'", id.SubscriptionId, "12345678-1234-9876-4563-123456789012")
 	}
 
-	if id.ResourceGroup != "example-resource-group" {
-		t.Fatalf("Expected %q but got %q for Segment 'ResourceGroup'", id.ResourceGroup, "example-resource-group")
+	if id.ResourceGroupName != "example-resource-group" {
+		t.Fatalf("Expected %q but got %q for Segment 'ResourceGroupName'", id.ResourceGroupName, "example-resource-group")
 	}
 
 	if id.VirtualHubName != "virtualHubValue" {
@@ -96,10 +96,10 @@ func TestParseVirtualHubIPConfigurationID(t *testing.T) {
 			// Valid URI
 			Input: "/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/example-resource-group/providers/Microsoft.Network/virtualHubs/virtualHubValue/ipConfigurations/ipConfigValue",
 			Expected: &VirtualHubIPConfigurationId{
-				SubscriptionId: "12345678-1234-9876-4563-123456789012",
-				ResourceGroup:  "example-resource-group",
-				VirtualHubName: "virtualHubValue",
-				IpConfigName:   "ipConfigValue",
+				SubscriptionId:    "12345678-1234-9876-4563-123456789012",
+				ResourceGroupName: "example-resource-group",
+				VirtualHubName:    "virtualHubValue",
+				IpConfigName:      "ipConfigValue",
 			},
 		},
 		{
@@ -127,8 +127,8 @@ func TestParseVirtualHubIPConfigurationID(t *testing.T) {
 			t.Fatalf("Expected %q but got %q for SubscriptionId", v.Expected.SubscriptionId, actual.SubscriptionId)
 		}
 
-		if actual.ResourceGroup != v.Expected.ResourceGroup {
-			t.Fatalf("Expected %q but got %q for ResourceGroup", v.Expected.ResourceGroup, actual.ResourceGroup)
+		if actual.ResourceGroupName != v.Expected.ResourceGroupName {
+			t.Fatalf("Expected %q but got %q for ResourceGroupName", v.Expected.ResourceGroupName, actual.ResourceGroupName)
 		}
 
 		if actual.VirtualHubName != v.Expected.VirtualHubName {
@@ -247,10 +247,10 @@ func TestParseVirtualHubIPConfigurationIDInsensitively(t *testing.T) {
 			// Valid URI
 			Input: "/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/example-resource-group/providers/Microsoft.Network/virtualHubs/virtualHubValue/ipConfigurations/ipConfigValue",
 			Expected: &VirtualHubIPConfigurationId{
-				SubscriptionId: "12345678-1234-9876-4563-123456789012",
-				ResourceGroup:  "example-resource-group",
-				VirtualHubName: "virtualHubValue",
-				IpConfigName:   "ipConfigValue",
+				SubscriptionId:    "12345678-1234-9876-4563-123456789012",
+				ResourceGroupName: "example-resource-group",
+				VirtualHubName:    "virtualHubValue",
+				IpConfigName:      "ipConfigValue",
 			},
 		},
 		{
@@ -262,10 +262,10 @@ func TestParseVirtualHubIPConfigurationIDInsensitively(t *testing.T) {
 			// Valid URI (mIxEd CaSe since this is insensitive)
 			Input: "/sUbScRiPtIoNs/12345678-1234-9876-4563-123456789012/rEsOuRcEgRoUpS/eXaMpLe-rEsOuRcE-GrOuP/pRoViDeRs/mIcRoSoFt.nEtWoRk/vIrTuAlHuBs/vIrTuAlHuBvAlUe/iPcOnFiGuRaTiOnS/iPcOnFiGvAlUe",
 			Expected: &VirtualHubIPConfigurationId{
-				SubscriptionId: "12345678-1234-9876-4563-123456789012",
-				ResourceGroup:  "eXaMpLe-rEsOuRcE-GrOuP",
-				VirtualHubName: "vIrTuAlHuBvAlUe",
-				IpConfigName:   "iPcOnFiGvAlUe",
+				SubscriptionId:    "12345678-1234-9876-4563-123456789012",
+				ResourceGroupName: "eXaMpLe-rEsOuRcE-GrOuP",
+				VirtualHubName:    "vIrTuAlHuBvAlUe",
+				IpConfigName:      "iPcOnFiGvAlUe",
 			},
 		},
 		{
@@ -293,8 +293,8 @@ func TestParseVirtualHubIPConfigurationIDInsensitively(t *testing.T) {
 			t.Fatalf("Expected %q but got %q for SubscriptionId", v.Expected.SubscriptionId, actual.SubscriptionId)
 		}
 
-		if actual.ResourceGroup != v.Expected.ResourceGroup {
-			t.Fatalf("Expected %q but got %q for ResourceGroup", v.Expected.ResourceGroup, actual.ResourceGroup)
+		if actual.ResourceGroupName != v.Expected.ResourceGroupName {
+			t.Fatalf("Expected %q but got %q for ResourceGroupName", v.Expected.ResourceGroupName, actual.ResourceGroupName)
 		}
 
 		if actual.VirtualHubName != v.Expected.VirtualHubName {

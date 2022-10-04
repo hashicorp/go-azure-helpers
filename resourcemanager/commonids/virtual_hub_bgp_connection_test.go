@@ -15,8 +15,8 @@ func TestNewVirtualHubBGPConnectionID(t *testing.T) {
 		t.Fatalf("Expected %q but got %q for Segment 'SubscriptionId'", id.SubscriptionId, "12345678-1234-9876-4563-123456789012")
 	}
 
-	if id.ResourceGroup != "example-resource-group" {
-		t.Fatalf("Expected %q but got %q for Segment 'ResourceGroup'", id.ResourceGroup, "example-resource-group")
+	if id.ResourceGroupName != "example-resource-group" {
+		t.Fatalf("Expected %q but got %q for Segment 'ResourceGroupName'", id.ResourceGroupName, "example-resource-group")
 	}
 
 	if id.HubName != "hubValue" {
@@ -96,10 +96,10 @@ func TestParseVirtualHubBGPConnectionID(t *testing.T) {
 			// Valid URI
 			Input: "/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/example-resource-group/providers/Microsoft.Network/virtualHubs/hubValue/bgpConnections/connectionValue",
 			Expected: &VirtualHubBGPConnectionId{
-				SubscriptionId: "12345678-1234-9876-4563-123456789012",
-				ResourceGroup:  "example-resource-group",
-				HubName:        "hubValue",
-				ConnectionName: "connectionValue",
+				SubscriptionId:    "12345678-1234-9876-4563-123456789012",
+				ResourceGroupName: "example-resource-group",
+				HubName:           "hubValue",
+				ConnectionName:    "connectionValue",
 			},
 		},
 		{
@@ -127,8 +127,8 @@ func TestParseVirtualHubBGPConnectionID(t *testing.T) {
 			t.Fatalf("Expected %q but got %q for SubscriptionId", v.Expected.SubscriptionId, actual.SubscriptionId)
 		}
 
-		if actual.ResourceGroup != v.Expected.ResourceGroup {
-			t.Fatalf("Expected %q but got %q for ResourceGroup", v.Expected.ResourceGroup, actual.ResourceGroup)
+		if actual.ResourceGroupName != v.Expected.ResourceGroupName {
+			t.Fatalf("Expected %q but got %q for ResourceGroupName", v.Expected.ResourceGroupName, actual.ResourceGroupName)
 		}
 
 		if actual.HubName != v.Expected.HubName {
@@ -247,10 +247,10 @@ func TestParseVirtualHubBGPConnectionIDInsensitively(t *testing.T) {
 			// Valid URI
 			Input: "/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/example-resource-group/providers/Microsoft.Network/virtualHubs/hubValue/bgpConnections/connectionValue",
 			Expected: &VirtualHubBGPConnectionId{
-				SubscriptionId: "12345678-1234-9876-4563-123456789012",
-				ResourceGroup:  "example-resource-group",
-				HubName:        "hubValue",
-				ConnectionName: "connectionValue",
+				SubscriptionId:    "12345678-1234-9876-4563-123456789012",
+				ResourceGroupName: "example-resource-group",
+				HubName:           "hubValue",
+				ConnectionName:    "connectionValue",
 			},
 		},
 		{
@@ -262,10 +262,10 @@ func TestParseVirtualHubBGPConnectionIDInsensitively(t *testing.T) {
 			// Valid URI (mIxEd CaSe since this is insensitive)
 			Input: "/sUbScRiPtIoNs/12345678-1234-9876-4563-123456789012/rEsOuRcEgRoUpS/eXaMpLe-rEsOuRcE-GrOuP/pRoViDeRs/mIcRoSoFt.nEtWoRk/vIrTuAlHuBs/hUbVaLuE/bGpCoNnEcTiOnS/cOnNeCtIoNvAlUe",
 			Expected: &VirtualHubBGPConnectionId{
-				SubscriptionId: "12345678-1234-9876-4563-123456789012",
-				ResourceGroup:  "eXaMpLe-rEsOuRcE-GrOuP",
-				HubName:        "hUbVaLuE",
-				ConnectionName: "cOnNeCtIoNvAlUe",
+				SubscriptionId:    "12345678-1234-9876-4563-123456789012",
+				ResourceGroupName: "eXaMpLe-rEsOuRcE-GrOuP",
+				HubName:           "hUbVaLuE",
+				ConnectionName:    "cOnNeCtIoNvAlUe",
 			},
 		},
 		{
@@ -293,8 +293,8 @@ func TestParseVirtualHubBGPConnectionIDInsensitively(t *testing.T) {
 			t.Fatalf("Expected %q but got %q for SubscriptionId", v.Expected.SubscriptionId, actual.SubscriptionId)
 		}
 
-		if actual.ResourceGroup != v.Expected.ResourceGroup {
-			t.Fatalf("Expected %q but got %q for ResourceGroup", v.Expected.ResourceGroup, actual.ResourceGroup)
+		if actual.ResourceGroupName != v.Expected.ResourceGroupName {
+			t.Fatalf("Expected %q but got %q for ResourceGroupName", v.Expected.ResourceGroupName, actual.ResourceGroupName)
 		}
 
 		if actual.HubName != v.Expected.HubName {

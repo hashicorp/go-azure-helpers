@@ -15,8 +15,8 @@ func TestNewCloudServicesIPConfigurationID(t *testing.T) {
 		t.Fatalf("Expected %q but got %q for Segment 'SubscriptionId'", id.SubscriptionId, "12345678-1234-9876-4563-123456789012")
 	}
 
-	if id.ResourceGroup != "example-resource-group" {
-		t.Fatalf("Expected %q but got %q for Segment 'ResourceGroup'", id.ResourceGroup, "example-resource-group")
+	if id.ResourceGroupName != "example-resource-group" {
+		t.Fatalf("Expected %q but got %q for Segment 'ResourceGroup'", id.ResourceGroupName, "example-resource-group")
 	}
 
 	if id.CloudServiceName != "cloudServiceValue" {
@@ -125,7 +125,7 @@ func TestParseCloudServicesIPConfigurationID(t *testing.T) {
 			Input: "/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/example-resource-group/providers/Microsoft.Compute/cloudServices/cloudServiceValue/roleInstances/roleInstanceValue/networkInterfaces/networkInterfaceValue/ipConfigurations/ipConfigurationValue",
 			Expected: &CloudServicesIPConfigurationId{
 				SubscriptionId:       "12345678-1234-9876-4563-123456789012",
-				ResourceGroup:        "example-resource-group",
+				ResourceGroupName:    "example-resource-group",
 				CloudServiceName:     "cloudServiceValue",
 				RoleInstanceName:     "roleInstanceValue",
 				NetworkInterfaceName: "networkInterfaceValue",
@@ -157,8 +157,8 @@ func TestParseCloudServicesIPConfigurationID(t *testing.T) {
 			t.Fatalf("Expected %q but got %q for SubscriptionId", v.Expected.SubscriptionId, actual.SubscriptionId)
 		}
 
-		if actual.ResourceGroup != v.Expected.ResourceGroup {
-			t.Fatalf("Expected %q but got %q for ResourceGroup", v.Expected.ResourceGroup, actual.ResourceGroup)
+		if actual.ResourceGroupName != v.Expected.ResourceGroupName {
+			t.Fatalf("Expected %q but got %q for ResourceGroup", v.Expected.ResourceGroupName, actual.ResourceGroupName)
 		}
 
 		if actual.CloudServiceName != v.Expected.CloudServiceName {
@@ -326,7 +326,7 @@ func TestParseCloudServicesIPConfigurationIDInsensitively(t *testing.T) {
 			Input: "/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/example-resource-group/providers/Microsoft.Compute/cloudServices/cloudServiceValue/roleInstances/roleInstanceValue/networkInterfaces/networkInterfaceValue/ipConfigurations/ipConfigurationValue",
 			Expected: &CloudServicesIPConfigurationId{
 				SubscriptionId:       "12345678-1234-9876-4563-123456789012",
-				ResourceGroup:        "example-resource-group",
+				ResourceGroupName:    "example-resource-group",
 				CloudServiceName:     "cloudServiceValue",
 				RoleInstanceName:     "roleInstanceValue",
 				NetworkInterfaceName: "networkInterfaceValue",
@@ -343,7 +343,7 @@ func TestParseCloudServicesIPConfigurationIDInsensitively(t *testing.T) {
 			Input: "/sUbScRiPtIoNs/12345678-1234-9876-4563-123456789012/rEsOuRcEgRoUpS/eXaMpLe-rEsOuRcE-GrOuP/pRoViDeRs/mIcRoSoFt.cOmPuTe/cLoUdSeRvIcEs/cLoUdSeRvIcEvAlUe/rOlEiNsTaNcEs/rOlEiNsTaNcEvAlUe/nEtWoRkInTeRfAcEs/nEtWoRkInTeRfAcEvAlUe/iPcOnFiGuRaTiOnS/iPcOnFiGuRaTiOnVaLuE",
 			Expected: &CloudServicesIPConfigurationId{
 				SubscriptionId:       "12345678-1234-9876-4563-123456789012",
-				ResourceGroup:        "eXaMpLe-rEsOuRcE-GrOuP",
+				ResourceGroupName:    "eXaMpLe-rEsOuRcE-GrOuP",
 				CloudServiceName:     "cLoUdSeRvIcEvAlUe",
 				RoleInstanceName:     "rOlEiNsTaNcEvAlUe",
 				NetworkInterfaceName: "nEtWoRkInTeRfAcEvAlUe",
@@ -375,8 +375,8 @@ func TestParseCloudServicesIPConfigurationIDInsensitively(t *testing.T) {
 			t.Fatalf("Expected %q but got %q for SubscriptionId", v.Expected.SubscriptionId, actual.SubscriptionId)
 		}
 
-		if actual.ResourceGroup != v.Expected.ResourceGroup {
-			t.Fatalf("Expected %q but got %q for ResourceGroup", v.Expected.ResourceGroup, actual.ResourceGroup)
+		if actual.ResourceGroupName != v.Expected.ResourceGroupName {
+			t.Fatalf("Expected %q but got %q for ResourceGroupName", v.Expected.ResourceGroupName, actual.ResourceGroupName)
 		}
 
 		if actual.CloudServiceName != v.Expected.CloudServiceName {
