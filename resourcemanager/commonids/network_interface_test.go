@@ -15,8 +15,8 @@ func TestNewNetworkInterfaceID(t *testing.T) {
 		t.Fatalf("Expected %q but got %q for Segment 'SubscriptionId'", id.SubscriptionId, "12345678-1234-9876-4563-123456789012")
 	}
 
-	if id.ResourceGroup != "example-resource-group" {
-		t.Fatalf("Expected %q but got %q for Segment 'ResourceGroup'", id.ResourceGroup, "example-resource-group")
+	if id.ResourceGroupName != "example-resource-group" {
+		t.Fatalf("Expected %q but got %q for Segment 'ResourceGroupName'", id.ResourceGroupName, "example-resource-group")
 	}
 
 	if id.NetworkInterfaceName != "networkInterfaceValue" {
@@ -83,7 +83,7 @@ func TestParseNetworkInterfaceID(t *testing.T) {
 			Input: "/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/example-resource-group/providers/Microsoft.Network/networkInterfaces/networkInterfaceValue",
 			Expected: &NetworkInterfaceId{
 				SubscriptionId:       "12345678-1234-9876-4563-123456789012",
-				ResourceGroup:        "example-resource-group",
+				ResourceGroupName:    "example-resource-group",
 				NetworkInterfaceName: "networkInterfaceValue",
 			},
 		},
@@ -112,8 +112,8 @@ func TestParseNetworkInterfaceID(t *testing.T) {
 			t.Fatalf("Expected %q but got %q for SubscriptionId", v.Expected.SubscriptionId, actual.SubscriptionId)
 		}
 
-		if actual.ResourceGroup != v.Expected.ResourceGroup {
-			t.Fatalf("Expected %q but got %q for ResourceGroup", v.Expected.ResourceGroup, actual.ResourceGroup)
+		if actual.ResourceGroupName != v.Expected.ResourceGroupName {
+			t.Fatalf("Expected %q but got %q for ResourceGroupName", v.Expected.ResourceGroupName, actual.ResourceGroupName)
 		}
 
 		if actual.NetworkInterfaceName != v.Expected.NetworkInterfaceName {
@@ -209,7 +209,7 @@ func TestParseNetworkInterfaceIDInsensitively(t *testing.T) {
 			Input: "/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/example-resource-group/providers/Microsoft.Network/networkInterfaces/networkInterfaceValue",
 			Expected: &NetworkInterfaceId{
 				SubscriptionId:       "12345678-1234-9876-4563-123456789012",
-				ResourceGroup:        "example-resource-group",
+				ResourceGroupName:    "example-resource-group",
 				NetworkInterfaceName: "networkInterfaceValue",
 			},
 		},
@@ -223,7 +223,7 @@ func TestParseNetworkInterfaceIDInsensitively(t *testing.T) {
 			Input: "/sUbScRiPtIoNs/12345678-1234-9876-4563-123456789012/rEsOuRcEgRoUpS/eXaMpLe-rEsOuRcE-GrOuP/pRoViDeRs/mIcRoSoFt.nEtWoRk/nEtWoRkInTeRfAcEs/nEtWoRkInTeRfAcEvAlUe",
 			Expected: &NetworkInterfaceId{
 				SubscriptionId:       "12345678-1234-9876-4563-123456789012",
-				ResourceGroup:        "eXaMpLe-rEsOuRcE-GrOuP",
+				ResourceGroupName:    "eXaMpLe-rEsOuRcE-GrOuP",
 				NetworkInterfaceName: "nEtWoRkInTeRfAcEvAlUe",
 			},
 		},
@@ -252,8 +252,8 @@ func TestParseNetworkInterfaceIDInsensitively(t *testing.T) {
 			t.Fatalf("Expected %q but got %q for SubscriptionId", v.Expected.SubscriptionId, actual.SubscriptionId)
 		}
 
-		if actual.ResourceGroup != v.Expected.ResourceGroup {
-			t.Fatalf("Expected %q but got %q for ResourceGroup", v.Expected.ResourceGroup, actual.ResourceGroup)
+		if actual.ResourceGroupName != v.Expected.ResourceGroupName {
+			t.Fatalf("Expected %q but got %q for ResourceGroupName", v.Expected.ResourceGroupName, actual.ResourceGroupName)
 		}
 
 		if actual.NetworkInterfaceName != v.Expected.NetworkInterfaceName {

@@ -15,8 +15,8 @@ func TestNewVirtualMachineScaleSetIPConfigurationID(t *testing.T) {
 		t.Fatalf("Expected %q but got %q for Segment 'SubscriptionId'", id.SubscriptionId, "12345678-1234-9876-4563-123456789012")
 	}
 
-	if id.ResourceGroup != "example-resource-group" {
-		t.Fatalf("Expected %q but got %q for Segment 'ResourceGroup'", id.ResourceGroup, "example-resource-group")
+	if id.ResourceGroupName != "example-resource-group" {
+		t.Fatalf("Expected %q but got %q for Segment 'ResourceGroupName'", id.ResourceGroupName, "example-resource-group")
 	}
 
 	if id.VirtualMachineScaleSetName != "virtualMachineScaleSetValue" {
@@ -126,7 +126,7 @@ func TestParseVirtualMachineScaleSetIPConfigurationID(t *testing.T) {
 			Input: "/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/example-resource-group/providers/Microsoft.Compute/virtualMachineScaleSets/virtualMachineScaleSetValue/virtualMachines/virtualMachineIndexValue/networkInterfaces/networkInterfaceValue/ipConfigurations/ipConfigurationValue",
 			Expected: &VirtualMachineScaleSetIPConfigurationId{
 				SubscriptionId:             "12345678-1234-9876-4563-123456789012",
-				ResourceGroup:              "example-resource-group",
+				ResourceGroupName:          "example-resource-group",
 				VirtualMachineScaleSetName: "virtualMachineScaleSetValue",
 				VirtualMachineIndex:        "virtualMachineIndexValue",
 				NetworkInterfaceName:       "networkInterfaceValue",
@@ -158,8 +158,8 @@ func TestParseVirtualMachineScaleSetIPConfigurationID(t *testing.T) {
 			t.Fatalf("Expected %q but got %q for SubscriptionId", v.Expected.SubscriptionId, actual.SubscriptionId)
 		}
 
-		if actual.ResourceGroup != v.Expected.ResourceGroup {
-			t.Fatalf("Expected %q but got %q for ResourceGroup", v.Expected.ResourceGroup, actual.ResourceGroup)
+		if actual.ResourceGroupName != v.Expected.ResourceGroupName {
+			t.Fatalf("Expected %q but got %q for ResourceGroup", v.Expected.ResourceGroupName, actual.ResourceGroupName)
 		}
 
 		if actual.VirtualMachineScaleSetName != v.Expected.VirtualMachineScaleSetName {
@@ -327,7 +327,7 @@ func TestParseVirtualMachineScaleSetIPConfigurationIDInsensitively(t *testing.T)
 			Input: "/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/example-resource-group/providers/Microsoft.Compute/virtualMachineScaleSets/virtualMachineScaleSetValue/virtualMachines/virtualMachineIndexValue/networkInterfaces/networkInterfaceValue/ipConfigurations/ipConfigurationValue",
 			Expected: &VirtualMachineScaleSetIPConfigurationId{
 				SubscriptionId:             "12345678-1234-9876-4563-123456789012",
-				ResourceGroup:              "example-resource-group",
+				ResourceGroupName:          "example-resource-group",
 				VirtualMachineScaleSetName: "virtualMachineScaleSetValue",
 				VirtualMachineIndex:        "virtualMachineIndexValue",
 				NetworkInterfaceName:       "networkInterfaceValue",
@@ -344,7 +344,7 @@ func TestParseVirtualMachineScaleSetIPConfigurationIDInsensitively(t *testing.T)
 			Input: "/sUbScRiPtIoNs/12345678-1234-9876-4563-123456789012/rEsOuRcEgRoUpS/eXaMpLe-rEsOuRcE-GrOuP/pRoViDeRs/mIcRoSoFt.cOmPuTe/vIrTuAlMaChInEsCaLeSeTs/vIrTuAlMaChInEsCaLeSeTvAlUe/vIrTuAlMaChInEs/vIrTuAlMaChInEiNdExVaLuE/nEtWoRkInTeRfAcEs/nEtWoRkInTeRfAcEvAlUe/iPcOnFiGuRaTiOnS/iPcOnFiGuRaTiOnVaLuE",
 			Expected: &VirtualMachineScaleSetIPConfigurationId{
 				SubscriptionId:             "12345678-1234-9876-4563-123456789012",
-				ResourceGroup:              "eXaMpLe-rEsOuRcE-GrOuP",
+				ResourceGroupName:          "eXaMpLe-rEsOuRcE-GrOuP",
 				VirtualMachineScaleSetName: "vIrTuAlMaChInEsCaLeSeTvAlUe",
 				VirtualMachineIndex:        "vIrTuAlMaChInEiNdExVaLuE",
 				NetworkInterfaceName:       "nEtWoRkInTeRfAcEvAlUe",
@@ -376,8 +376,8 @@ func TestParseVirtualMachineScaleSetIPConfigurationIDInsensitively(t *testing.T)
 			t.Fatalf("Expected %q but got %q for SubscriptionId", v.Expected.SubscriptionId, actual.SubscriptionId)
 		}
 
-		if actual.ResourceGroup != v.Expected.ResourceGroup {
-			t.Fatalf("Expected %q but got %q for ResourceGroup", v.Expected.ResourceGroup, actual.ResourceGroup)
+		if actual.ResourceGroupName != v.Expected.ResourceGroupName {
+			t.Fatalf("Expected %q but got %q for ResourceGroupName", v.Expected.ResourceGroupName, actual.ResourceGroupName)
 		}
 
 		if actual.VirtualMachineScaleSetName != v.Expected.VirtualMachineScaleSetName {
@@ -395,7 +395,7 @@ func TestParseVirtualMachineScaleSetIPConfigurationIDInsensitively(t *testing.T)
 		if actual.IpConfigurationName != v.Expected.IpConfigurationName {
 			t.Fatalf("Expected %q but got %q for IpConfigurationName", v.Expected.IpConfigurationName, actual.IpConfigurationName)
 		}
-		
+
 	}
 }
 
