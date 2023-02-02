@@ -12,7 +12,7 @@ import (
 var _ resourceids.ResourceId = UserAssignedIdentityId{}
 
 func TestNewUserAssignedIdentityID(t *testing.T) {
-	id := NewUserAssignedIdentityID("12345678-1234-9876-4563-123456789012", "example-resource-group", "resourceValue")
+	id := NewUserAssignedIdentityID("12345678-1234-9876-4563-123456789012", "example-resource-group", "userAssignedIdentityName")
 
 	if id.SubscriptionId != "12345678-1234-9876-4563-123456789012" {
 		t.Fatalf("Expected %q but got %q for Segment 'SubscriptionId'", id.SubscriptionId, "12345678-1234-9876-4563-123456789012")
@@ -22,14 +22,14 @@ func TestNewUserAssignedIdentityID(t *testing.T) {
 		t.Fatalf("Expected %q but got %q for Segment 'ResourceGroupName'", id.ResourceGroupName, "example-resource-group")
 	}
 
-	if id.ResourceName != "resourceValue" {
-		t.Fatalf("Expected %q but got %q for Segment 'ResourceName'", id.ResourceName, "resourceValue")
+	if id.UserAssignedIdentityName != "userAssignedIdentityName" {
+		t.Fatalf("Expected %q but got %q for Segment 'UserAssignedIdentityName'", id.UserAssignedIdentityName, "userAssignedIdentityName")
 	}
 }
 
 func TestFormatUserAssignedIdentityID(t *testing.T) {
-	actual := NewUserAssignedIdentityID("12345678-1234-9876-4563-123456789012", "example-resource-group", "resourceValue").ID()
-	expected := "/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/example-resource-group/providers/Microsoft.ManagedIdentity/userAssignedIdentities/resourceValue"
+	actual := NewUserAssignedIdentityID("12345678-1234-9876-4563-123456789012", "example-resource-group", "userAssignedIdentityName").ID()
+	expected := "/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/example-resource-group/providers/Microsoft.ManagedIdentity/userAssignedIdentities/userAssignedIdentityName"
 	if actual != expected {
 		t.Fatalf("Expected the Formatted ID to be %q but got %q", expected, actual)
 	}
@@ -83,16 +83,16 @@ func TestParseUserAssignedIdentityID(t *testing.T) {
 		},
 		{
 			// Valid URI
-			Input: "/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/example-resource-group/providers/Microsoft.ManagedIdentity/userAssignedIdentities/resourceValue",
+			Input: "/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/example-resource-group/providers/Microsoft.ManagedIdentity/userAssignedIdentities/userAssignedIdentityName",
 			Expected: &UserAssignedIdentityId{
-				SubscriptionId:    "12345678-1234-9876-4563-123456789012",
-				ResourceGroupName: "example-resource-group",
-				ResourceName:      "resourceValue",
+				SubscriptionId:           "12345678-1234-9876-4563-123456789012",
+				ResourceGroupName:        "example-resource-group",
+				UserAssignedIdentityName: "userAssignedIdentityName",
 			},
 		},
 		{
 			// Invalid (Valid Uri with Extra segment)
-			Input: "/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/example-resource-group/providers/Microsoft.ManagedIdentity/userAssignedIdentities/resourceValue/extra",
+			Input: "/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/example-resource-group/providers/Microsoft.ManagedIdentity/userAssignedIdentities/userAssignedIdentityName/extra",
 			Error: true,
 		},
 	}
@@ -119,8 +119,8 @@ func TestParseUserAssignedIdentityID(t *testing.T) {
 			t.Fatalf("Expected %q but got %q for ResourceGroupName", v.Expected.ResourceGroupName, actual.ResourceGroupName)
 		}
 
-		if actual.ResourceName != v.Expected.ResourceName {
-			t.Fatalf("Expected %q but got %q for ResourceName", v.Expected.ResourceName, actual.ResourceName)
+		if actual.UserAssignedIdentityName != v.Expected.UserAssignedIdentityName {
+			t.Fatalf("Expected %q but got %q for UserAssignedIdentityName", v.Expected.UserAssignedIdentityName, actual.UserAssignedIdentityName)
 		}
 
 	}
@@ -209,30 +209,30 @@ func TestParseUserAssignedIdentityIDInsensitively(t *testing.T) {
 		},
 		{
 			// Valid URI
-			Input: "/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/example-resource-group/providers/Microsoft.ManagedIdentity/userAssignedIdentities/resourceValue",
+			Input: "/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/example-resource-group/providers/Microsoft.ManagedIdentity/userAssignedIdentities/userAssignedIdentityName",
 			Expected: &UserAssignedIdentityId{
-				SubscriptionId:    "12345678-1234-9876-4563-123456789012",
-				ResourceGroupName: "example-resource-group",
-				ResourceName:      "resourceValue",
+				SubscriptionId:           "12345678-1234-9876-4563-123456789012",
+				ResourceGroupName:        "example-resource-group",
+				UserAssignedIdentityName: "userAssignedIdentityName",
 			},
 		},
 		{
 			// Invalid (Valid Uri with Extra segment)
-			Input: "/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/example-resource-group/providers/Microsoft.ManagedIdentity/userAssignedIdentities/resourceValue/extra",
+			Input: "/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/example-resource-group/providers/Microsoft.ManagedIdentity/userAssignedIdentities/userAssignedIdentityName/extra",
 			Error: true,
 		},
 		{
 			// Valid URI (mIxEd CaSe since this is insensitive)
-			Input: "/sUbScRiPtIoNs/12345678-1234-9876-4563-123456789012/rEsOuRcEgRoUpS/eXaMpLe-rEsOuRcE-GrOuP/pRoViDeRs/mIcRoSoFt.mAnAgEdIdEnTiTy/uSeRaSsIgNeDiDeNtItIeS/rEsOuRcEvAlUe",
+			Input: "/sUbScRiPtIoNs/12345678-1234-9876-4563-123456789012/rEsOuRcEgRoUpS/eXaMpLe-rEsOuRcE-GrOuP/pRoViDeRs/mIcRoSoFt.mAnAgEdIdEnTiTy/uSeRaSsIgNeDiDeNtItIeS/uSeRAsSiGnEdIdEnTiTyNaMe",
 			Expected: &UserAssignedIdentityId{
-				SubscriptionId:    "12345678-1234-9876-4563-123456789012",
-				ResourceGroupName: "eXaMpLe-rEsOuRcE-GrOuP",
-				ResourceName:      "rEsOuRcEvAlUe",
+				SubscriptionId:           "12345678-1234-9876-4563-123456789012",
+				ResourceGroupName:        "eXaMpLe-rEsOuRcE-GrOuP",
+				UserAssignedIdentityName: "uSeRAsSiGnEdIdEnTiTyNaMe",
 			},
 		},
 		{
 			// Invalid (Valid Uri with Extra segment - mIxEd CaSe since this is insensitive)
-			Input: "/sUbScRiPtIoNs/12345678-1234-9876-4563-123456789012/rEsOuRcEgRoUpS/eXaMpLe-rEsOuRcE-GrOuP/pRoViDeRs/mIcRoSoFt.mAnAgEdIdEnTiTy/uSeRaSsIgNeDiDeNtItIeS/rEsOuRcEvAlUe/extra",
+			Input: "/sUbScRiPtIoNs/12345678-1234-9876-4563-123456789012/rEsOuRcEgRoUpS/eXaMpLe-rEsOuRcE-GrOuP/pRoViDeRs/mIcRoSoFt.mAnAgEdIdEnTiTy/uSeRaSsIgNeDiDeNtItIeS/uSeRAsSiGnEdIdEnTiTyNaMe/extra",
 			Error: true,
 		},
 	}
@@ -259,8 +259,8 @@ func TestParseUserAssignedIdentityIDInsensitively(t *testing.T) {
 			t.Fatalf("Expected %q but got %q for ResourceGroupName", v.Expected.ResourceGroupName, actual.ResourceGroupName)
 		}
 
-		if actual.ResourceName != v.Expected.ResourceName {
-			t.Fatalf("Expected %q but got %q for ResourceName", v.Expected.ResourceName, actual.ResourceName)
+		if actual.UserAssignedIdentityName != v.Expected.UserAssignedIdentityName {
+			t.Fatalf("Expected %q but got %q for UserAssignedIdentityName", v.Expected.UserAssignedIdentityName, actual.UserAssignedIdentityName)
 		}
 
 	}
