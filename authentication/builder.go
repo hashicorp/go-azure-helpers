@@ -54,6 +54,9 @@ type Builder struct {
 	IDTokenRequestURL   string
 	IDTokenRequestToken string
 
+	//Bear Token Auth
+	BearToken string
+
 	// Beta opt-in for Microsoft Graph
 	UseMicrosoftGraph bool
 }
@@ -82,6 +85,7 @@ func (b Builder) Build() (*Config, error) {
 		managedServiceIdentityAuth{},
 		azureCliTokenMultiTenantAuth{},
 		azureCliTokenAuth{},
+		azureBearTokenAuth{},
 	}
 
 	for _, method := range supportedAuthenticationMethods {
