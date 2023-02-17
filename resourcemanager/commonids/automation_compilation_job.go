@@ -99,7 +99,7 @@ func ValidateAutomationCompilationJobID(input interface{}, key string) (warnings
 		return
 	}
 
-	if _, err := ParseCloudServicesIPConfigurationID(v); err != nil {
+	if _, err := ParseAutomationCompilationJobID(v); err != nil {
 		errors = append(errors, err)
 	}
 
