@@ -48,11 +48,18 @@ func TestAccAzureEnvironmentByName(t *testing.T) {
 	if !strings.EqualFold(env.Name, "AzureChinaCloud") {
 		t.Fatalf("Incorrect environment name returned. Expected: %q. Received: %q", "AzureChinaCloud", env.Name)
 	}
-
 }
 
 func TestAccAzureEnvironmentByNameFromEndpoint(t *testing.T) {
 	env, err := AzureEnvironmentByNameFromEndpoint(context.TODO(), "management.azure.com", "AzureCloud")
+	if err != nil {
+		t.Fatalf("Error getting Endpoint: %s", err)
+	}
+	if !strings.EqualFold(env.Name, "AzureCloud") {
+		t.Fatalf("Incorrect environment name returned. Expected: %q. Received: %q", "AzureCloud", env.Name)
+	}
+	// Same as above, except the metadata host has the scheme specified
+	env, err = AzureEnvironmentByNameFromEndpoint(context.TODO(), "https://management.azure.com", "AzureCloud")
 	if err != nil {
 		t.Fatalf("Error getting Endpoint: %s", err)
 	}
@@ -81,10 +88,20 @@ func TestAccAzureEnvironmentByNameFromEndpoint(t *testing.T) {
 	if err == nil {
 		t.Fatal("Expected error from bad environment")
 	}
+
 }
 
 func TestAccIsEnvironmentAzureStack(t *testing.T) {
 	ok, err := IsEnvironmentAzureStack(context.TODO(), "management.azure.com", "public")
+	if err != nil {
+		t.Fatalf("Error getting Endpoint: %s", err)
+	}
+	if ok {
+		t.Fatal("Expected `public` environment to not be Azure Stack")
+	}
+
+	// Same as above, except the metadata host has the scheme specified
+	ok, err = IsEnvironmentAzureStack(context.TODO(), "https://management.azure.com", "public")
 	if err != nil {
 		t.Fatalf("Error getting Endpoint: %s", err)
 	}

@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 	"strings"
 
 	"github.com/Azure/go-autorest/autorest/azure"
@@ -100,16 +101,21 @@ func normalizeEnvironmentName(input string) string {
 }
 
 // AzureEnvironmentByName returns a specific Azure Environment from the specified endpoint
-func AzureEnvironmentByNameFromEndpoint(ctx context.Context, endpoint string, environmentName string) (*azure.Environment, error) {
+func AzureEnvironmentByNameFromEndpoint(ctx context.Context, metadataHost string, environmentName string) (*azure.Environment, error) {
 	if env, ok := sdkEnvironmentLookupMap[strings.ToLower(environmentName)]; ok {
 		return &env, nil
 	}
 
-	if endpoint == "" {
+	if metadataHost == "" {
 		return nil, fmt.Errorf("unable to locate metadata for environment %q from the built in `public`, `usgoverment`, `china` and no custom metadata host has been specified", environmentName)
 	}
 
-	environments, err := getSupportedEnvironments(ctx, endpoint)
+	metadataHostURL, err := url.Parse(metadataHost)
+	if err != nil {
+		return nil, err
+	}
+
+	environments, err := getSupportedEnvironments(ctx, *metadataHostURL)
 	if err != nil {
 		return nil, err
 	}
@@ -119,7 +125,7 @@ func AzureEnvironmentByNameFromEndpoint(ctx context.Context, endpoint string, en
 		if strings.EqualFold(env.Name, environmentName) || (environmentName == "" && len(environments) == 1) {
 			// if resourceManager endpoint is empty, assume it's the provided endpoint
 			if env.ResourceManager == "" {
-				env.ResourceManager = fmt.Sprintf("https://%s/", endpoint)
+				env.ResourceManager = metadataHostURL.String()
 			}
 
 			aEnv, err := buildAzureEnvironment(env)
@@ -131,16 +137,21 @@ func AzureEnvironmentByNameFromEndpoint(ctx context.Context, endpoint string, en
 		}
 	}
 
-	return nil, fmt.Errorf("unable to locate metadata for environment %q from custom metadata host %q", environmentName, endpoint)
+	return nil, fmt.Errorf("unable to locate metadata for environment %q from custom metadata host %q", environmentName, metadataHostURL.String())
 }
 
 // IsEnvironmentAzureStack returns whether a specific Azure Environment is an Azure Stack environment
-func IsEnvironmentAzureStack(ctx context.Context, endpoint string, environmentName string) (bool, error) {
+func IsEnvironmentAzureStack(ctx context.Context, metadataHost string, environmentName string) (bool, error) {
 	if _, ok := sdkEnvironmentLookupMap[strings.ToLower(environmentName)]; ok {
 		return false, nil
 	}
 
-	environments, err := getSupportedEnvironments(ctx, endpoint)
+	metadataHostURL, err := url.Parse(metadataHost)
+	if err != nil {
+		return false, err
+	}
+
+	environments, err := getSupportedEnvironments(ctx, *metadataHostURL)
 	if err != nil {
 		return false, err
 	}
@@ -148,7 +159,7 @@ func IsEnvironmentAzureStack(ctx context.Context, endpoint string, environmentNa
 	// while the array contains values
 	for _, env := range environments {
 		if err != nil {
-			return false, fmt.Errorf("unable to decode environment from %q response: %+v", endpoint, err)
+			return false, fmt.Errorf("unable to decode environment from %q response: %+v", metadataHostURL.String(), err)
 		}
 		if strings.EqualFold(env.Name, environmentName) {
 			if !strings.EqualFold(env.Authentication.IdentityProvider, "AAD") || !strings.EqualFold(env.Authentication.Tenant, "common") {
@@ -158,11 +169,16 @@ func IsEnvironmentAzureStack(ctx context.Context, endpoint string, environmentNa
 		}
 	}
 
-	return false, fmt.Errorf("unable to find environment %q from endpoint %q", environmentName, endpoint)
+	return false, fmt.Errorf("unable to find environment %q from endpoint %q", environmentName, metadataHostURL.String())
 }
 
-func getSupportedEnvironments(ctx context.Context, endpoint string) ([]Environment, error) {
-	uri := fmt.Sprintf("https://%s/metadata/endpoints?api-version=2020-06-01", endpoint)
+func getSupportedEnvironments(ctx context.Context, metadataHost url.URL) ([]Environment, error) {
+	// For backwards compatibility where the metadataHost is always just a host name
+	if metadataHost.Scheme == "" {
+		metadataHost.Scheme = "https"
+	}
+
+	uri := fmt.Sprintf("%s/metadata/endpoints?api-version=2020-06-01", metadataHost.String())
 	client := &http.Client{
 		Transport: &http.Transport{
 			Proxy: http.ProxyFromEnvironment,
