@@ -13,6 +13,30 @@ import (
 	"github.com/Azure/azure-sdk-for-go/profiles/2017-03-09/resources/mgmt/resources"
 )
 
+// EnsureRegistered ensures the requiredRPs are registered
+func EnsureRegistered(ctx context.Context, client resources.ProvidersClient, requiredRPs map[string]struct{}) error {
+	if cachedResourceProviders == nil {
+		if err := CacheSupportedProviders(ctx, &client); err != nil {
+			return fmt.Errorf("Unable to list provider registration status, it is possible that this is due to invalid "+
+				"credentials or the service principal does not have permission to use the Resource Manager API, Azure "+
+				"error: %s", err)
+		}
+	}
+	log.Printf("[DEBUG] Determining which Resource Providers require Registration")
+	providersToRegister := DetermineResourceProvidersRequiringRegistration(*cachedResourceProviders, requiredRPs)
+
+	if len(providersToRegister) > 0 {
+		log.Printf("[DEBUG] Registering %d Resource Providers", len(providersToRegister))
+		if err := RegisterForSubscription(ctx, client, providersToRegister); err != nil {
+			return err
+		}
+	} else {
+		log.Printf("[DEBUG] All required Resource Providers are registered")
+	}
+
+	return nil
+}
+
 // DetermineResourceProvidersRequiringRegistration determines which Resource Providers require registration to be able to be used
 func DetermineResourceProvidersRequiringRegistration(availableResourceProviders []resources.Provider, requiredResourceProviders map[string]struct{}) map[string]struct{} {
 	providers := make(map[string]struct{})
