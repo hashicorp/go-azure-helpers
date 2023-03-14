@@ -102,6 +102,22 @@ func TestAccAzureEnvironmentFromEndpoint(t *testing.T) {
 		t.Fatalf("Incorrect environment name returned. Expected: %q. Received: %q", "AzureCloud", env.Name)
 	}
 
+	env, err = AzureEnvironmentFromEndpoint(context.TODO(), "management.chinacloudapi.cn")
+	if err != nil {
+		t.Fatalf("Error getting Endpoint: %s", err)
+	}
+	if !strings.EqualFold(env.Name, "AzureChinaCloud") {
+		t.Fatalf("Incorrect environment name returned. Expected: %q. Received: %q", "AzureChinaCloud", env.Name)
+	}
+
+	env, err = AzureEnvironmentFromEndpoint(context.TODO(), "management.usgovcloudapi.net")
+	if err != nil {
+		t.Fatalf("Error getting Endpoint: %s", err)
+	}
+	if !strings.EqualFold(env.Name, "AzureUSGovernment") {
+		t.Fatalf("Incorrect environment name returned. Expected: %q. Received: %q", "AzureUSGovernment", env.Name)
+	}
+
 	_, err = AzureEnvironmentFromEndpoint(context.TODO(), "badurl")
 	if err == nil {
 		t.Fatal("Expected error from bad endpoint")
