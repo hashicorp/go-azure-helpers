@@ -134,6 +134,17 @@ func AzureEnvironmentByNameFromEndpoint(ctx context.Context, endpoint string, en
 	return nil, fmt.Errorf("unable to locate metadata for environment %q from custom metadata host %q", environmentName, endpoint)
 }
 
+// AzureEnvironmentFromEndpoint returns a specific Azure Environment from the specified endpoint
+// The difference between this and AzureEnvironmentByNameFromEndpoint is that
+// this function doesn't require an environment name as input
+func AzureEnvironmentFromEndpoint(ctx context.Context, endpoint string) (*azure.Environment, error) {
+	environment, err := getSupportedEnvironment(ctx, endpoint)
+	if err != nil {
+		return nil, err
+	}
+	return buildAzureEnvironment(environment)
+}
+
 // IsEnvironmentAzureStack returns whether a specific Azure Environment is an Azure Stack environment
 func IsEnvironmentAzureStack(ctx context.Context, endpoint string, environmentName string) (bool, error) {
 	if _, ok := sdkEnvironmentLookupMap[strings.ToLower(environmentName)]; ok {
@@ -183,6 +194,31 @@ func getSupportedEnvironments(ctx context.Context, endpoint string) ([]Environme
 	}
 
 	return environments, nil
+}
+
+// getSupportedEnvironment returns the current cloud that the caller is in
+func getSupportedEnvironment(ctx context.Context, endpoint string) (Environment, error) {
+	uri := fmt.Sprintf("https://%s/metadata/endpoints?api-version=2022-09-01", endpoint)
+	client := &http.Client{
+		Transport: &http.Transport{
+			Proxy: http.ProxyFromEnvironment,
+		},
+	}
+	req, err := http.NewRequestWithContext(ctx, "GET", uri, nil)
+	if err != nil {
+		return Environment{}, err
+	}
+	resp, err := client.Do(req)
+	if err != nil {
+		return Environment{}, fmt.Errorf("retrieving environments from Azure MetaData service: %+v", err)
+	}
+
+	var environment Environment
+	if err := json.NewDecoder(resp.Body).Decode(&environment); err != nil {
+		return Environment{}, err
+	}
+
+	return environment, nil
 }
 
 func buildAzureEnvironment(env Environment) (*azure.Environment, error) {

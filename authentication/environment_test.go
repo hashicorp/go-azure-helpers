@@ -92,3 +92,18 @@ func TestAccIsEnvironmentAzureStack(t *testing.T) {
 		t.Fatal("Expected `public` environment to not be Azure Stack")
 	}
 }
+
+func TestAccAzureEnvironmentFromEndpoint(t *testing.T) {
+	env, err := AzureEnvironmentFromEndpoint(context.TODO(), "management.azure.com")
+	if err != nil {
+		t.Fatalf("Error getting Endpoint: %s", err)
+	}
+	if !strings.EqualFold(env.Name, "AzureCloud") {
+		t.Fatalf("Incorrect environment name returned. Expected: %q. Received: %q", "AzureCloud", env.Name)
+	}
+
+	_, err = AzureEnvironmentFromEndpoint(context.TODO(), "badurl")
+	if err == nil {
+		t.Fatal("Expected error from bad endpoint")
+	}
+}
