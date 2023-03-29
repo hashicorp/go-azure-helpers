@@ -69,7 +69,17 @@ func ExpandSystemOrSingleUserAssignedList(input []interface{}) (*SystemOrSingleU
 		}
 	}
 
-	if len(identityIds) > 0 && identityType != TypeUserAssigned {
+	if identityType == TypeUserAssigned {
+		if len(identityIds) == 0 {
+			return nil, fmt.Errorf("`identity_ids` must be specified when `type` is set to %q", string(TypeUserAssigned))
+		}
+
+		if len(identityIds) > 1 {
+			return nil, fmt.Errorf("`identity_ids` can only contain a single identity ID when `type` is set to %q", string(TypeUserAssigned))
+		}
+	}
+
+	if len(identityIds) > 0 && identityType == TypeSystemAssigned {
 		return nil, fmt.Errorf("`identity_ids` can only be specified when `type` is set to %q", string(TypeUserAssigned))
 	}
 
@@ -122,16 +132,16 @@ func ExpandSystemOrSingleUserAssignedListFromModel(input []ModelSystemAssignedUs
 
 	if identity.Type == TypeUserAssigned {
 		if len(identity.IdentityIds) == 0 {
-			return nil, fmt.Errorf("`identity_ids` must be specified when `type` is set to %q", TypeUserAssigned)
+			return nil, fmt.Errorf("`identity_ids` must be specified when `type` is set to %q", string(TypeUserAssigned))
 		}
 
 		if len(identity.IdentityIds) > 1 {
-			return nil, fmt.Errorf("`identity_ids` can only contain a single identity ID when `type` is set to %q", TypeUserAssigned)
+			return nil, fmt.Errorf("`identity_ids` can only contain a single identity ID when `type` is set to %q", string(TypeUserAssigned))
 		}
 	}
 
-	if len(identity.IdentityIds) > 0 && identity.Type != TypeUserAssigned {
-		return nil, fmt.Errorf("`identity_ids` can only be specified when `type` is set to %q", TypeUserAssigned)
+	if len(identity.IdentityIds) > 0 && identity.Type == TypeSystemAssigned {
+		return nil, fmt.Errorf("`identity_ids` can only be specified when `type` is set to %q", string(TypeUserAssigned))
 	}
 
 	return &SystemOrSingleUserAssignedList{
