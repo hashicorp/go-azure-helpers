@@ -1,3 +1,6 @@
+// Copyright (c) HashiCorp, Inc.
+// SPDX-License-Identifier: MPL-2.0
+
 package storage
 
 import (
@@ -57,17 +60,18 @@ func TestParseStorageAccountConnectionString(t *testing.T) {
 // DefaultEndpointsProtocol=https;AccountName=azurermtestsa0;AccountKey=T0ZQouXBDpWud/PlTRHIJH2+VUK8D+fnedEynb9Mx638IYnsMUe4mv1fFjC7t0NayTfFAQJzPZuV1WHFKOzGdg==;EndpointSuffix=core.windows.net
 func TestComputeAccountSASToken(t *testing.T) {
 	testCases := []struct {
-		accountName    string
-		accountKey     string
-		permissions    string
-		services       string
-		resourceTypes  string
-		start          string
-		expiry         string
-		signedProtocol string
-		signedIp       string
-		signedVersion  string
-		knownSasToken  string
+		accountName           string
+		accountKey            string
+		permissions           string
+		services              string
+		resourceTypes         string
+		start                 string
+		expiry                string
+		signedProtocol        string
+		signedIp              string
+		signedVersion         string
+		signedEncryptionScope string
+		knownSasToken         string
 	}{
 		{
 			"azurermtestsa0",
@@ -80,6 +84,7 @@ func TestComputeAccountSASToken(t *testing.T) {
 			"https",
 			"",
 			"2017-07-29",
+			"",
 			"?sv=2017-07-29&ss=b&srt=c&sp=rwac&se=2020-03-20T04:00:00Z&st=2018-03-20T04:00:00Z&spr=https&sig=SQigK%2FnFA4pv0F0oMLqr6DxUWV4vtFqWi6q3Mf7o9nY%3D",
 		},
 		{
@@ -93,7 +98,22 @@ func TestComputeAccountSASToken(t *testing.T) {
 			"https,http",
 			"",
 			"2017-07-29",
+			"",
 			"?sv=2017-07-29&ss=b&srt=sco&sp=rwdlac&se=2018-03-28T05:04:25Z&st=2018-03-20T04:00:00Z&spr=https,http&sig=OLNwL%2B7gxeDQQaUyNdXcDPK2aCbCMgEkJNjha9te448%3D",
+		},
+		{
+			"azurermtestsa0",
+			"2vJrjEyL4re2nxCEg590wJUUC7PiqqrDHjAN5RU304FNUQieiEwS2bfp83O0v28iSfWjvYhkGmjYQAdd9x+6nw==",
+			"rwdlac",
+			"b",
+			"sco",
+			"2018-03-20T04:00:00Z",
+			"2018-03-28T05:04:25Z",
+			"https,http",
+			"",
+			"2020-12-06",
+			"",
+			"?sv=2020-12-06&ss=b&srt=sco&sp=rwdlac&se=2018-03-28T05:04:25Z&st=2018-03-20T04:00:00Z&spr=https,http&sig=4c45MsN46zG%2Fl3aH3zzrrVU%2F03HnvSMCID%2FZ0DxpKcw%3D",
 		},
 	}
 
@@ -107,7 +127,9 @@ func TestComputeAccountSASToken(t *testing.T) {
 			test.expiry,
 			test.signedProtocol,
 			test.signedIp,
-			test.signedVersion)
+			test.signedVersion,
+			test.signedEncryptionScope,
+		)
 
 		if err != nil {
 			t.Fatalf("Test Failed: Error computing storage account Sas: %q", err)
