@@ -72,6 +72,38 @@ func TestConflict_StatusCodes(t *testing.T) {
 	}
 }
 
+func TestForbidden_DroppedConnection(t *testing.T) {
+	if WasForbidden(&http.Response{}) {
+		t.Fatalf("WasForbidden should return `false` for an empty response")
+	}
+	if WasForbidden(nil) {
+		t.Fatalf("WasForbidden should return `false` for a dropped connection")
+	}
+}
+
+func TestForbidden_StatusCodes(t *testing.T) {
+	testCases := []struct {
+		statusCode     int
+		expectedResult bool
+	}{
+		{http.StatusOK, false},
+		{http.StatusInternalServerError, false},
+		{http.StatusNotFound, false},
+		{http.StatusForbidden, true},
+	}
+
+	for _, test := range testCases {
+		resp := http.Response{
+			StatusCode: test.statusCode,
+		}
+		result := WasForbidden(&resp)
+		if test.expectedResult != result {
+			t.Fatalf("Expected '%+v' for status code '%d' - got '%+v'",
+				test.expectedResult, test.statusCode, result)
+		}
+	}
+}
+
 func TestNotFound_DroppedConnection(t *testing.T) {
 	if WasNotFound(&http.Response{}) {
 		t.Fatalf("WasNotFound should return `false` for an empty response")
