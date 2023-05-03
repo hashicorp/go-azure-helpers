@@ -176,7 +176,7 @@ func TestComputeContainerSASToken(t *testing.T) {
 			"",
 			"",
 			"",
-			"?st=2019-03-27&se=2019-09-21T09%3A21Z&sp=rwl&spr=https&sv=2018-11-09&sr=c&sig=DnHeyj11jpfGEmdskSIuASIZorLghcjLbKN90n%2B6UO4%3D",
+			"?st=2019-03-27&se=2019-09-21T09:21Z&sp=rwl&spr=https&sv=2018-11-09&sr=c&sig=DnHeyj11jpfGEmdskSIuASIZorLghcjLbKN90n%2B6UO4%3D",
 		},
 		{
 			"rwl",
@@ -194,7 +194,7 @@ func TestComputeContainerSASToken(t *testing.T) {
 			"gzip",
 			"en-US",
 			"text/html; charset=utf-8",
-			"?st=2019-03-27&se=2019-09-21T09%3A21Z&sp=rwl&sip=93.23.223.54&spr=https&sv=2018-11-09&sr=c&rscc=no-cache&rscd=attachment&rsce=gzip&rscl=en-US&rsct=text/html%3B%20charset%3Dutf-8&sig=M2TaUVEGlRVJjNt/c7Eqt2zH6%2BA8dpiLmTXR0ZevEX8%3D",
+			"?st=2019-03-27&se=2019-09-21T09:21Z&sp=rwl&sip=93.23.223.54&spr=https&sv=2018-11-09&sr=c&rscc=no-cache&rscd=attachment&rsce=gzip&rscl=en-US&rsct=text/html%3B%20charset%3Dutf-8&sig=M2TaUVEGlRVJjNt/c7Eqt2zH6%2BA8dpiLmTXR0ZevEX8%3D",
 		},
 	}
 
@@ -235,20 +235,20 @@ func TestComputeAccountSASConnectionString(t *testing.T) {
 		{
 			azure.PublicCloud,
 			"testaccount",
-			"?st=2019-03-27&se=2019-09-21T09%3A21Z&sp=rwl&sip=93.23.223.54&spr=https&sv=2018-11-09&sr=c&rscc=no-cache&rscd=attachment&rsce=gzip&rscl=en-US&rsct=text/html%3B%20charset%3Dutf-8&sig=M2TaUVEGlRVJjNt/c7Eqt2zH6%2BA8dpiLmTXR0ZevEX8%3D",
-			"BlobEndpoint=https://testaccount.blob.core.windows.net/;FileEndpoint=https://testaccount.file.core.windows.net/;QueueEndpoint=https://testaccount.queue.core.windows.net/;TableEndpoint=https://testaccount.table.core.windows.net/;SharedAccessSignature=st=2019-03-27&se=2019-09-21T09%3A21Z&sp=rwl&sip=93.23.223.54&spr=https&sv=2018-11-09&sr=c&rscc=no-cache&rscd=attachment&rsce=gzip&rscl=en-US&rsct=text/html%3B%20charset%3Dutf-8&sig=M2TaUVEGlRVJjNt/c7Eqt2zH6%2BA8dpiLmTXR0ZevEX8%3D",
+			"?st=2019-03-27&se=2019-09-21T09:21Z&sp=rwl&sip=93.23.223.54&spr=https&sv=2018-11-09&sr=c&rscc=no-cache&rscd=attachment&rsce=gzip&rscl=en-US&rsct=text/html%3B%20charset%3Dutf-8&sig=M2TaUVEGlRVJjNt/c7Eqt2zH6%2BA8dpiLmTXR0ZevEX8%3D",
+			"BlobEndpoint=https://testaccount.blob.core.windows.net/;FileEndpoint=https://testaccount.file.core.windows.net/;QueueEndpoint=https://testaccount.queue.core.windows.net/;TableEndpoint=https://testaccount.table.core.windows.net/;SharedAccessSignature=st=2019-03-27&se=2019-09-21T09:21Z&sp=rwl&sip=93.23.223.54&spr=https&sv=2018-11-09&sr=c&rscc=no-cache&rscd=attachment&rsce=gzip&rscl=en-US&rsct=text/html%3B%20charset%3Dutf-8&sig=M2TaUVEGlRVJjNt/c7Eqt2zH6%2BA8dpiLmTXR0ZevEX8%3D",
 		},
 		{
 			azure.ChinaCloud,
 			"testaccount",
-			"?st=2019-03-27&se=2019-09-21T09%3A21Z&sp=rwl&sip=93.23.223.54&spr=https&sv=2018-11-09&sr=c&rscc=no-cache&rscd=attachment&rsce=gzip&rscl=en-US&rsct=text/html%3B%20charset%3Dutf-8&sig=M2TaUVEGlRVJjNt/c7Eqt2zH6%2BA8dpiLmTXR0ZevEX8%3D",
-			"BlobEndpoint=https://testaccount.blob.core.chinacloudapi.cn/;FileEndpoint=https://testaccount.file.core.chinacloudapi.cn/;QueueEndpoint=https://testaccount.queue.core.chinacloudapi.cn/;TableEndpoint=https://testaccount.table.core.chinacloudapi.cn/;SharedAccessSignature=st=2019-03-27&se=2019-09-21T09%3A21Z&sp=rwl&sip=93.23.223.54&spr=https&sv=2018-11-09&sr=c&rscc=no-cache&rscd=attachment&rsce=gzip&rscl=en-US&rsct=text/html%3B%20charset%3Dutf-8&sig=M2TaUVEGlRVJjNt/c7Eqt2zH6%2BA8dpiLmTXR0ZevEX8%3D",
+			"?st=2019-03-27&se=2019-09-21T09:21Z&sp=rwl&sip=93.23.223.54&spr=https&sv=2018-11-09&sr=c&rscc=no-cache&rscd=attachment&rsce=gzip&rscl=en-US&rsct=text/html%3B%20charset%3Dutf-8&sig=M2TaUVEGlRVJjNt/c7Eqt2zH6%2BA8dpiLmTXR0ZevEX8%3D",
+			"BlobEndpoint=https://testaccount.blob.core.chinacloudapi.cn/;FileEndpoint=https://testaccount.file.core.chinacloudapi.cn/;QueueEndpoint=https://testaccount.queue.core.chinacloudapi.cn/;TableEndpoint=https://testaccount.table.core.chinacloudapi.cn/;SharedAccessSignature=st=2019-03-27&se=2019-09-21T09:21Z&sp=rwl&sip=93.23.223.54&spr=https&sv=2018-11-09&sr=c&rscc=no-cache&rscd=attachment&rsce=gzip&rscl=en-US&rsct=text/html%3B%20charset%3Dutf-8&sig=M2TaUVEGlRVJjNt/c7Eqt2zH6%2BA8dpiLmTXR0ZevEX8%3D",
 		},
 		{
 			azure.USGovernmentCloud,
 			"testaccount",
-			"?st=2019-03-27&se=2019-09-21T09%3A21Z&sp=rwl&sip=93.23.223.54&spr=https&sv=2018-11-09&sr=c&rscc=no-cache&rscd=attachment&rsce=gzip&rscl=en-US&rsct=text/html%3B%20charset%3Dutf-8&sig=M2TaUVEGlRVJjNt/c7Eqt2zH6%2BA8dpiLmTXR0ZevEX8%3D",
-			"BlobEndpoint=https://testaccount.blob.core.usgovcloudapi.net/;FileEndpoint=https://testaccount.file.core.usgovcloudapi.net/;QueueEndpoint=https://testaccount.queue.core.usgovcloudapi.net/;TableEndpoint=https://testaccount.table.core.usgovcloudapi.net/;SharedAccessSignature=st=2019-03-27&se=2019-09-21T09%3A21Z&sp=rwl&sip=93.23.223.54&spr=https&sv=2018-11-09&sr=c&rscc=no-cache&rscd=attachment&rsce=gzip&rscl=en-US&rsct=text/html%3B%20charset%3Dutf-8&sig=M2TaUVEGlRVJjNt/c7Eqt2zH6%2BA8dpiLmTXR0ZevEX8%3D",
+			"?st=2019-03-27&se=2019-09-21T09:21Z&sp=rwl&sip=93.23.223.54&spr=https&sv=2018-11-09&sr=c&rscc=no-cache&rscd=attachment&rsce=gzip&rscl=en-US&rsct=text/html%3B%20charset%3Dutf-8&sig=M2TaUVEGlRVJjNt/c7Eqt2zH6%2BA8dpiLmTXR0ZevEX8%3D",
+			"BlobEndpoint=https://testaccount.blob.core.usgovcloudapi.net/;FileEndpoint=https://testaccount.file.core.usgovcloudapi.net/;QueueEndpoint=https://testaccount.queue.core.usgovcloudapi.net/;TableEndpoint=https://testaccount.table.core.usgovcloudapi.net/;SharedAccessSignature=st=2019-03-27&se=2019-09-21T09:21Z&sp=rwl&sip=93.23.223.54&spr=https&sv=2018-11-09&sr=c&rscc=no-cache&rscd=attachment&rsce=gzip&rscl=en-US&rsct=text/html%3B%20charset%3Dutf-8&sig=M2TaUVEGlRVJjNt/c7Eqt2zH6%2BA8dpiLmTXR0ZevEX8%3D",
 		},
 	}
 

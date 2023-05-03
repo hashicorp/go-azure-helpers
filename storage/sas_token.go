@@ -149,8 +149,8 @@ func ComputeContainerSASToken(signedPermissions string,
 
 	sasToken := "?sv=" + signedVersion
 	sasToken += "&sr=" + signedResource
-	sasToken += "&st=" + url.QueryEscape(signedStart)
-	sasToken += "&se=" + url.QueryEscape(signedExpiry)
+	sasToken += "&st=" + signedStart
+	sasToken += "&se=" + signedExpiry
 	sasToken += "&sp=" + signedPermissions
 
 	if len(signedIp) > 0 {
