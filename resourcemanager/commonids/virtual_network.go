@@ -14,16 +14,16 @@ var _ resourceids.ResourceId = VirtualNetworkId{}
 
 // VirtualNetworkId is a struct representing the Resource ID for a Virtual Network
 type VirtualNetworkId struct {
-	SubscriptionId        string
-	ResourceGroupName     string
+	SubscriptionId     string
+	ResourceGroupName  string
 	VirtualNetworkName string
 }
 
 // NewVirtualNetworkID returns a new VirtualNetworkId struct
 func NewVirtualNetworkID(subscriptionId string, resourceGroupName string, virtualNetworkName string) VirtualNetworkId {
 	return VirtualNetworkId{
-		SubscriptionId:        subscriptionId,
-		ResourceGroupName:     resourceGroupName,
+		SubscriptionId:     subscriptionId,
+		ResourceGroupName:  resourceGroupName,
 		VirtualNetworkName: virtualNetworkName,
 	}
 }

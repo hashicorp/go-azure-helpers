@@ -94,10 +94,10 @@ func TestParseSubnetID(t *testing.T) {
 			// Valid URI
 			Input: "/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/example-resource-group/providers/Microsoft.Network/virtualNetworks/virtualNetworksValue/subnets/subnetValue",
 			Expected: &SubnetId{
-				SubscriptionId:        "12345678-1234-9876-4563-123456789012",
-				ResourceGroupName:     "example-resource-group",
+				SubscriptionId:     "12345678-1234-9876-4563-123456789012",
+				ResourceGroupName:  "example-resource-group",
 				VirtualNetworkName: "virtualNetworksValue",
-				SubnetName: "subnetValue",
+				SubnetName:         "subnetValue",
 			},
 		},
 		{
@@ -245,10 +245,10 @@ func TestParseSubnetIDInsensitively(t *testing.T) {
 			// Valid URI
 			Input: "/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/example-resource-group/providers/Microsoft.Network/virtualNetworks/virtualNetworksValue/subnets/subnetValue",
 			Expected: &SubnetId{
-				SubscriptionId:        "12345678-1234-9876-4563-123456789012",
-				ResourceGroupName:     "example-resource-group",
+				SubscriptionId:     "12345678-1234-9876-4563-123456789012",
+				ResourceGroupName:  "example-resource-group",
 				VirtualNetworkName: "virtualNetworksValue",
-				SubnetName: "subnetValue",
+				SubnetName:         "subnetValue",
 			},
 		},
 		{
@@ -260,10 +260,10 @@ func TestParseSubnetIDInsensitively(t *testing.T) {
 			// Valid URI (mIxEd CaSe since this is insensitive)
 			Input: "/sUbScRiPtIoNs/12345678-1234-9876-4563-123456789012/rEsOuRcEgRoUpS/eXaMpLe-rEsOuRcE-GrOuP/pRoViDeRs/mIcRoSoFt.nEtWoRk/vIrTuAlNeTwOrKs/vIrTuAlNeTwOrkSvAlUe/sUbNeTs/SuBnEtVaLuE",
 			Expected: &SubnetId{
-				SubscriptionId:        "12345678-1234-9876-4563-123456789012",
-				ResourceGroupName:     "eXaMpLe-rEsOuRcE-GrOuP",
+				SubscriptionId:     "12345678-1234-9876-4563-123456789012",
+				ResourceGroupName:  "eXaMpLe-rEsOuRcE-GrOuP",
 				VirtualNetworkName: "vIrTuAlNeTwOrkSvAlUe",
-				SubnetName: "SuBnEtVaLuE",
+				SubnetName:         "SuBnEtVaLuE",
 			},
 		},
 		{

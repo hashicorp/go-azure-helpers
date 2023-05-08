@@ -85,8 +85,8 @@ func TestParseVirtualNetworkID(t *testing.T) {
 			// Valid URI
 			Input: "/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/example-resource-group/providers/Microsoft.Network/virtualNetworks/virtualNetworksValue",
 			Expected: &VirtualNetworkId{
-				SubscriptionId:        "12345678-1234-9876-4563-123456789012",
-				ResourceGroupName:     "example-resource-group",
+				SubscriptionId:     "12345678-1234-9876-4563-123456789012",
+				ResourceGroupName:  "example-resource-group",
 				VirtualNetworkName: "virtualNetworksValue",
 			},
 		},
@@ -211,8 +211,8 @@ func TestParseVirtualNetworkIDInsensitively(t *testing.T) {
 			// Valid URI
 			Input: "/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/example-resource-group/providers/Microsoft.Network/virtualNetworks/virtualNetworksValue",
 			Expected: &VirtualNetworkId{
-				SubscriptionId:        "12345678-1234-9876-4563-123456789012",
-				ResourceGroupName:     "example-resource-group",
+				SubscriptionId:     "12345678-1234-9876-4563-123456789012",
+				ResourceGroupName:  "example-resource-group",
 				VirtualNetworkName: "virtualNetworksValue",
 			},
 		},
@@ -225,8 +225,8 @@ func TestParseVirtualNetworkIDInsensitively(t *testing.T) {
 			// Valid URI (mIxEd CaSe since this is insensitive)
 			Input: "/sUbScRiPtIoNs/12345678-1234-9876-4563-123456789012/rEsOuRcEgRoUpS/eXaMpLe-rEsOuRcE-GrOuP/pRoViDeRs/mIcRoSoFt.nEtWoRk/vIrTuAlNeTwOrKs/vIrTuAlNeTwOrkSvAlUe",
 			Expected: &VirtualNetworkId{
-				SubscriptionId:        "12345678-1234-9876-4563-123456789012",
-				ResourceGroupName:     "eXaMpLe-rEsOuRcE-GrOuP",
+				SubscriptionId:     "12345678-1234-9876-4563-123456789012",
+				ResourceGroupName:  "eXaMpLe-rEsOuRcE-GrOuP",
 				VirtualNetworkName: "vIrTuAlNeTwOrkSvAlUe",
 			},
 		},

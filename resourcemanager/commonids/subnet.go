@@ -14,19 +14,19 @@ var _ resourceids.ResourceId = SubnetId{}
 
 // SubnetId is a struct representing the Resource ID for a Subnet
 type SubnetId struct {
-	SubscriptionId        string
-	ResourceGroupName     string
+	SubscriptionId     string
+	ResourceGroupName  string
 	VirtualNetworkName string
-	SubnetName string
+	SubnetName         string
 }
 
 // NewSubnetID returns a new SubnetId struct
 func NewSubnetID(subscriptionId string, resourceGroupName string, virtualNetworkName string, subnetName string) SubnetId {
 	return SubnetId{
-		SubscriptionId:        subscriptionId,
-		ResourceGroupName:     resourceGroupName,
+		SubscriptionId:     subscriptionId,
+		ResourceGroupName:  resourceGroupName,
 		VirtualNetworkName: virtualNetworkName,
-		SubnetName: subnetName,
+		SubnetName:         subnetName,
 	}
 }
 
