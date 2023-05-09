@@ -9,16 +9,16 @@ import (
 )
 
 func TestSystemAssignedMarshal(t *testing.T) {
-	testData := []struct{
+	testData := []struct {
 		input         *SystemAssigned
 		expectedValue string
 	}{
 		{
-			input: nil,
+			input:         nil,
 			expectedValue: "None",
 		},
 		{
-			input: &SystemAssigned{},
+			input:         &SystemAssigned{},
 			expectedValue: "None",
 		},
 		{
