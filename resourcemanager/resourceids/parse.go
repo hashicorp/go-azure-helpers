@@ -263,7 +263,6 @@ func (p Parser) parseSegment(segment Segment, rawValue string, insensitively boo
 			}
 
 			return nil, NewSegmentNotSpecifiedError(p.resourceId, segment.Name, currentlyParsed)
-			return nil, fmt.Errorf("expected the segment %q to be %q", rawValue, *segment.FixedValue)
 		}
 
 	case ScopeSegmentType:
