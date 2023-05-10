@@ -1,16 +1,22 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: MPL-2.0
 
-package resourceids
+package resourceids_test
 
 import (
 	"reflect"
 	"testing"
+
+	"github.com/hashicorp/go-azure-helpers/resourcemanager/resourceids"
 )
 
 func TestParseEmptyId(t *testing.T) {
 	t.Logf("Sensitively")
-	actual, err := NewParser([]Segment{}).Parse("", false)
+	rid := fakeIdParser{
+		[]resourceids.Segment{},
+	}
+	parser := resourceids.NewParserFromResourceIdType(rid)
+	actual, err := parser.Parse("", false)
 	if err == nil {
 		t.Fatalf("expected an error but didn't get one")
 	}
@@ -19,7 +25,7 @@ func TestParseEmptyId(t *testing.T) {
 	}
 
 	t.Logf("Insensitively")
-	actual, err = NewParser([]Segment{}).Parse("", true)
+	actual, err = parser.Parse("", true)
 	if err == nil {
 		t.Fatalf("expected an error but didn't get one")
 	}
@@ -31,63 +37,67 @@ func TestParseEmptyId(t *testing.T) {
 func TestParseStaticId(t *testing.T) {
 	testData := []struct {
 		name          string
-		segments      []Segment
-		expected      *ParseResult
+		segments      []resourceids.Segment
+		expected      *resourceids.ParseResult
 		input         string
 		insensitively bool
 	}{
 		{
 			name: "single segment sensitive",
-			segments: []Segment{
-				StaticSegment("hello", "hello", "example"),
+			segments: []resourceids.Segment{
+				resourceids.StaticSegment("hello", "hello", "example"),
 			},
-			expected: &ParseResult{
-				map[string]string{
+			expected: &resourceids.ParseResult{
+				Parsed: map[string]string{
 					"hello": "hello",
 				},
+				RawInput: "/hello",
 			},
 			input:         "/hello",
 			insensitively: false,
 		},
 		{
 			name: "single segment insensitive",
-			segments: []Segment{
-				StaticSegment("hello", "hello", "example"),
+			segments: []resourceids.Segment{
+				resourceids.StaticSegment("hello", "hello", "example"),
 			},
-			expected: &ParseResult{
-				map[string]string{
+			expected: &resourceids.ParseResult{
+				Parsed: map[string]string{
 					"hello": "hello",
 				},
+				RawInput: "/Hello",
 			},
 			input:         "/Hello",
 			insensitively: true,
 		},
 		{
 			name: "multiple segments sensitive",
-			segments: []Segment{
-				StaticSegment("hello", "hello", "example"),
-				StaticSegment("there", "there", "example"),
+			segments: []resourceids.Segment{
+				resourceids.StaticSegment("hello", "hello", "example"),
+				resourceids.StaticSegment("there", "there", "example"),
 			},
-			expected: &ParseResult{
-				map[string]string{
+			expected: &resourceids.ParseResult{
+				Parsed: map[string]string{
 					"hello": "hello",
 					"there": "there",
 				},
+				RawInput: "/hello/there",
 			},
 			input:         "/hello/there",
 			insensitively: false,
 		},
 		{
 			name: "multiple segments sensitive",
-			segments: []Segment{
-				StaticSegment("hello", "hello", "example"),
-				StaticSegment("there", "there", "example"),
+			segments: []resourceids.Segment{
+				resourceids.StaticSegment("hello", "hello", "example"),
+				resourceids.StaticSegment("there", "there", "example"),
 			},
-			expected: &ParseResult{
-				map[string]string{
+			expected: &resourceids.ParseResult{
+				Parsed: map[string]string{
 					"hello": "hello",
 					"there": "there",
 				},
+				RawInput: "/Hello/tHere",
 			},
 			input:         "/Hello/tHere",
 			insensitively: true,
@@ -95,23 +105,26 @@ func TestParseStaticId(t *testing.T) {
 	}
 	for _, test := range testData {
 		t.Logf("Test %q..", test.name)
-		parser := NewParser(test.segments)
+		rid := fakeIdParser{
+			test.segments,
+		}
+		parser := resourceids.NewParserFromResourceIdType(rid)
 		actual, err := parser.Parse(test.input, test.insensitively)
 		validateResult(t, actual, test.expected, err)
 	}
 }
 
 func TestParseResourceGroupId(t *testing.T) {
-	segments := []Segment{
-		StaticSegment("subscriptions", "subscriptions", "example"),
-		SubscriptionIdSegment("subscriptionId", "example"),
-		StaticSegment("resourceGroups", "resourceGroups", "example"),
-		ResourceGroupSegment("resourceGroupName", "example"),
+	segments := []resourceids.Segment{
+		resourceids.StaticSegment("subscriptions", "subscriptions", "example"),
+		resourceids.SubscriptionIdSegment("subscriptionId", "example"),
+		resourceids.StaticSegment("resourceGroups", "resourceGroups", "example"),
+		resourceids.ResourceGroupSegment("resourceGroupName", "example"),
 	}
 	testData := []struct {
 		name        string
 		input       string
-		expected    *ParseResult
+		expected    *resourceids.ParseResult
 		insensitive bool
 	}{
 		{
@@ -168,52 +181,57 @@ func TestParseResourceGroupId(t *testing.T) {
 			name:        "resource group id - sensitive",
 			input:       "/subscriptions/11112222-3333-4444-555566667777/resourceGroups/BoB",
 			insensitive: false,
-			expected: &ParseResult{
-				map[string]string{
+			expected: &resourceids.ParseResult{
+				Parsed: map[string]string{
 					"subscriptions":     "subscriptions",
 					"subscriptionId":    "11112222-3333-4444-555566667777",
 					"resourceGroups":    "resourceGroups",
 					"resourceGroupName": "BoB",
 				},
+				RawInput: "/subscriptions/11112222-3333-4444-555566667777/resourceGroups/BoB",
 			},
 		},
 		{
 			name:        "resource groups id - insensitive",
 			input:       "/subscRiptions/11112222-3333-4444-555566667777/resourcegroups/BoB",
 			insensitive: true,
-			expected: &ParseResult{
-				map[string]string{
+			expected: &resourceids.ParseResult{
+				Parsed: map[string]string{
 					"subscriptions":     "subscriptions",
 					"subscriptionId":    "11112222-3333-4444-555566667777",
 					"resourceGroups":    "resourceGroups",
 					"resourceGroupName": "BoB",
 				},
+				RawInput: "/subscRiptions/11112222-3333-4444-555566667777/resourcegroups/BoB",
 			},
 		},
 	}
 	for _, test := range testData {
 		t.Logf("Test %q..", test.name)
-		parser := NewParser(segments)
+		rid := fakeIdParser{
+			segments,
+		}
+		parser := resourceids.NewParserFromResourceIdType(rid)
 		actual, err := parser.Parse(test.input, test.insensitive)
 		validateResult(t, actual, test.expected, err)
 	}
 }
 
 func TestParseVirtualMachineId(t *testing.T) {
-	segments := []Segment{
-		StaticSegment("subscriptions", "subscriptions", "example"),
-		SubscriptionIdSegment("subscriptionId", "example"),
-		StaticSegment("resourceGroups", "resourceGroups", "example"),
-		ResourceGroupSegment("resourceGroupName", "example"),
-		StaticSegment("providers", "providers", "example"),
-		ResourceProviderSegment("provider", "Microsoft.Compute", "example"),
-		StaticSegment("virtualMachines", "virtualMachines", "example"),
-		UserSpecifiedSegment("virtualMachineName", "example"),
+	segments := []resourceids.Segment{
+		resourceids.StaticSegment("subscriptions", "subscriptions", "example"),
+		resourceids.SubscriptionIdSegment("subscriptionId", "example"),
+		resourceids.StaticSegment("resourceGroups", "resourceGroups", "example"),
+		resourceids.ResourceGroupSegment("resourceGroupName", "example"),
+		resourceids.StaticSegment("providers", "providers", "example"),
+		resourceids.ResourceProviderSegment("provider", "Microsoft.Compute", "example"),
+		resourceids.StaticSegment("virtualMachines", "virtualMachines", "example"),
+		resourceids.UserSpecifiedSegment("virtualMachineName", "example"),
 	}
 	testData := []struct {
 		name        string
 		input       string
-		expected    *ParseResult
+		expected    *resourceids.ParseResult
 		insensitive bool
 	}{
 		{
@@ -270,8 +288,8 @@ func TestParseVirtualMachineId(t *testing.T) {
 			name:        "virtual machine id - sensitive",
 			input:       "/subscriptions/11112222-3333-4444-555566667777/resourceGroups/BoB/providers/Microsoft.Compute/virtualMachines/machine1",
 			insensitive: false,
-			expected: &ParseResult{
-				map[string]string{
+			expected: &resourceids.ParseResult{
+				Parsed: map[string]string{
 					"subscriptions":      "subscriptions",
 					"subscriptionId":     "11112222-3333-4444-555566667777",
 					"resourceGroups":     "resourceGroups",
@@ -281,14 +299,15 @@ func TestParseVirtualMachineId(t *testing.T) {
 					"virtualMachines":    "virtualMachines",
 					"virtualMachineName": "machine1",
 				},
+				RawInput: "/subscriptions/11112222-3333-4444-555566667777/resourceGroups/BoB/providers/Microsoft.Compute/virtualMachines/machine1",
 			},
 		},
 		{
 			name:        "virtual machine id - insensitive",
 			input:       "/subScriptions/11112222-3333-4444-555566667777/resourcegroups/BoB/pRoviders/microsoft.Compute/virtualmachines/machine1",
 			insensitive: true,
-			expected: &ParseResult{
-				map[string]string{
+			expected: &resourceids.ParseResult{
+				Parsed: map[string]string{
 					"subscriptions":      "subscriptions",
 					"subscriptionId":     "11112222-3333-4444-555566667777",
 					"resourceGroups":     "resourceGroups",
@@ -298,6 +317,7 @@ func TestParseVirtualMachineId(t *testing.T) {
 					"virtualMachines":    "virtualMachines",
 					"virtualMachineName": "machine1",
 				},
+				RawInput: "/subScriptions/11112222-3333-4444-555566667777/resourcegroups/BoB/pRoviders/microsoft.Compute/virtualmachines/machine1",
 			},
 		},
 		{
@@ -313,29 +333,32 @@ func TestParseVirtualMachineId(t *testing.T) {
 	}
 	for _, test := range testData {
 		t.Logf("Test %q..", test.name)
-		parser := NewParser(segments)
+		rid := fakeIdParser{
+			segments,
+		}
+		parser := resourceids.NewParserFromResourceIdType(rid)
 		actual, err := parser.Parse(test.input, test.insensitive)
 		validateResult(t, actual, test.expected, err)
 	}
 }
 
 func TestParseVirtualMachineExtensionId(t *testing.T) {
-	segments := []Segment{
-		StaticSegment("subscriptions", "subscriptions", "example"),
-		SubscriptionIdSegment("subscriptionId", "example"),
-		StaticSegment("resourceGroups", "resourceGroups", "example"),
-		ResourceGroupSegment("resourceGroupName", "example"),
-		StaticSegment("providers", "providers", "example"),
-		ResourceProviderSegment("provider", "Microsoft.Compute", "example"),
-		StaticSegment("virtualMachines", "virtualMachines", "example"),
-		UserSpecifiedSegment("virtualMachineName", "example"),
-		StaticSegment("extensions", "extensions", "example"),
-		UserSpecifiedSegment("extensionName", "example"),
+	segments := []resourceids.Segment{
+		resourceids.StaticSegment("subscriptions", "subscriptions", "example"),
+		resourceids.SubscriptionIdSegment("subscriptionId", "example"),
+		resourceids.StaticSegment("resourceGroups", "resourceGroups", "example"),
+		resourceids.ResourceGroupSegment("resourceGroupName", "example"),
+		resourceids.StaticSegment("providers", "providers", "example"),
+		resourceids.ResourceProviderSegment("provider", "Microsoft.Compute", "example"),
+		resourceids.StaticSegment("virtualMachines", "virtualMachines", "example"),
+		resourceids.UserSpecifiedSegment("virtualMachineName", "example"),
+		resourceids.StaticSegment("extensions", "extensions", "example"),
+		resourceids.UserSpecifiedSegment("extensionName", "example"),
 	}
 	testData := []struct {
 		name        string
 		input       string
-		expected    *ParseResult
+		expected    *resourceids.ParseResult
 		insensitive bool
 	}{
 		{
@@ -372,8 +395,8 @@ func TestParseVirtualMachineExtensionId(t *testing.T) {
 			name:        "virtual machine extension id - sensitive",
 			input:       "/subscriptions/11112222-3333-4444-555566667777/resourceGroups/BoB/providers/Microsoft.Compute/virtualMachines/machine1/extensions/extension1",
 			insensitive: false,
-			expected: &ParseResult{
-				map[string]string{
+			expected: &resourceids.ParseResult{
+				Parsed: map[string]string{
 					"subscriptions":      "subscriptions",
 					"subscriptionId":     "11112222-3333-4444-555566667777",
 					"resourceGroups":     "resourceGroups",
@@ -385,14 +408,15 @@ func TestParseVirtualMachineExtensionId(t *testing.T) {
 					"extensions":         "extensions",
 					"extensionName":      "extension1",
 				},
+				RawInput: "/subscriptions/11112222-3333-4444-555566667777/resourceGroups/BoB/providers/Microsoft.Compute/virtualMachines/machine1/extensions/extension1",
 			},
 		},
 		{
 			name:        "resource groups id - insensitive",
 			input:       "/subScriptions/11112222-3333-4444-555566667777/resourcegroups/BoB/pRoviders/microsoft.Compute/virtualmachines/machine1/exTensions/extension1",
 			insensitive: true,
-			expected: &ParseResult{
-				map[string]string{
+			expected: &resourceids.ParseResult{
+				Parsed: map[string]string{
 					"subscriptions":      "subscriptions",
 					"subscriptionId":     "11112222-3333-4444-555566667777",
 					"resourceGroups":     "resourceGroups",
@@ -404,43 +428,48 @@ func TestParseVirtualMachineExtensionId(t *testing.T) {
 					"extensions":         "extensions",
 					"extensionName":      "extension1",
 				},
+				RawInput: "/subScriptions/11112222-3333-4444-555566667777/resourcegroups/BoB/pRoviders/microsoft.Compute/virtualmachines/machine1/exTensions/extension1",
 			},
 		},
 	}
 	for _, test := range testData {
 		t.Logf("Test %q..", test.name)
-		parser := NewParser(segments)
+		rid := fakeIdParser{
+			segments,
+		}
+		parser := resourceids.NewParserFromResourceIdType(rid)
 		actual, err := parser.Parse(test.input, test.insensitive)
 		validateResult(t, actual, test.expected, err)
 	}
 }
 
 func TestParseAdvancedThreatProtectionId(t *testing.T) {
-	segments := []Segment{
-		ScopeSegment("scope", "example"),
-		StaticSegment("providers", "providers", "example"),
-		ResourceProviderSegment("provider", "Microsoft.Security", "example"),
-		StaticSegment("advancedThreatProtectionSettings", "advancedThreatProtectionSettings", "example"),
-		UserSpecifiedSegment("name", "example"),
+	segments := []resourceids.Segment{
+		resourceids.ScopeSegment("scope", "example"),
+		resourceids.StaticSegment("providers", "providers", "example"),
+		resourceids.ResourceProviderSegment("provider", "Microsoft.Security", "example"),
+		resourceids.StaticSegment("advancedThreatProtectionSettings", "advancedThreatProtectionSettings", "example"),
+		resourceids.UserSpecifiedSegment("name", "example"),
 	}
 	testData := []struct {
 		name        string
 		input       string
-		expected    *ParseResult
+		expected    *resourceids.ParseResult
 		insensitive bool
 	}{
 		{
 			name:        "resource group id - sensitive",
 			input:       "/subscriptions/11112222-3333-4444-555566667777/resourceGroups/BoB/providers/Microsoft.Security/advancedThreatProtectionSettings/someName",
 			insensitive: false,
-			expected: &ParseResult{
-				map[string]string{
+			expected: &resourceids.ParseResult{
+				Parsed: map[string]string{
 					"scope":                            "/subscriptions/11112222-3333-4444-555566667777/resourceGroups/BoB",
 					"providers":                        "providers",
 					"provider":                         "Microsoft.Security",
 					"advancedThreatProtectionSettings": "advancedThreatProtectionSettings",
 					"name":                             "someName",
 				},
+				RawInput: "/subscriptions/11112222-3333-4444-555566667777/resourceGroups/BoB/providers/Microsoft.Security/advancedThreatProtectionSettings/someName",
 			},
 		},
 		{
@@ -452,14 +481,15 @@ func TestParseAdvancedThreatProtectionId(t *testing.T) {
 			name:        "resource group id - insensitive",
 			input:       "/subscripTions/11112222-3333-4444-555566667777/resourcEgroups/BoB/proviDers/Microsoft.security/advancedthreatProtectionSettings/someName",
 			insensitive: true,
-			expected: &ParseResult{
-				map[string]string{
+			expected: &resourceids.ParseResult{
+				Parsed: map[string]string{
 					"scope":                            "/subscripTions/11112222-3333-4444-555566667777/resourcEgroups/BoB",
 					"providers":                        "providers",
 					"provider":                         "Microsoft.Security",
 					"advancedThreatProtectionSettings": "advancedThreatProtectionSettings",
 					"name":                             "someName",
 				},
+				RawInput: "/subscripTions/11112222-3333-4444-555566667777/resourcEgroups/BoB/proviDers/Microsoft.security/advancedthreatProtectionSettings/someName",
 			},
 		},
 		{
@@ -476,14 +506,15 @@ func TestParseAdvancedThreatProtectionId(t *testing.T) {
 			name:        "virtual machine id - sensitive",
 			input:       "/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/resGroup1/providers/Microsoft.Compute/virtualMachines/machine1/providers/Microsoft.Security/advancedThreatProtectionSettings/someName",
 			insensitive: false,
-			expected: &ParseResult{
-				map[string]string{
+			expected: &resourceids.ParseResult{
+				Parsed: map[string]string{
 					"scope":                            "/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/resGroup1/providers/Microsoft.Compute/virtualMachines/machine1",
 					"providers":                        "providers",
 					"provider":                         "Microsoft.Security",
 					"advancedThreatProtectionSettings": "advancedThreatProtectionSettings",
 					"name":                             "someName",
 				},
+				RawInput: "/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/resGroup1/providers/Microsoft.Compute/virtualMachines/machine1/providers/Microsoft.Security/advancedThreatProtectionSettings/someName",
 			},
 		},
 		{
@@ -495,34 +526,38 @@ func TestParseAdvancedThreatProtectionId(t *testing.T) {
 			name:        "virtual machine id - insensitive",
 			input:       "/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/resGroup1/providers/Microsoft.Compute/virtualMachines/machine1/Providers/Microsoft.SecuRity/advancedThreatprotectionSettings/someName",
 			insensitive: true,
-			expected: &ParseResult{
-				map[string]string{
+			expected: &resourceids.ParseResult{
+				Parsed: map[string]string{
 					"scope":                            "/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/resGroup1/providers/Microsoft.Compute/virtualMachines/machine1",
 					"providers":                        "providers",
 					"provider":                         "Microsoft.Security",
 					"advancedThreatProtectionSettings": "advancedThreatProtectionSettings",
 					"name":                             "someName",
 				},
+				RawInput: "/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/resGroup1/providers/Microsoft.Compute/virtualMachines/machine1/Providers/Microsoft.SecuRity/advancedThreatprotectionSettings/someName",
 			},
 		},
 	}
 	for _, test := range testData {
 		t.Logf("Test %q..", test.name)
-		parser := NewParser(segments)
+		rid := fakeIdParser{
+			segments,
+		}
+		parser := resourceids.NewParserFromResourceIdType(rid)
 		actual, err := parser.Parse(test.input, test.insensitive)
 		validateResult(t, actual, test.expected, err)
 	}
 }
 
 func TestParseIdContainingAConstant(t *testing.T) {
-	segments := []Segment{
-		StaticSegment("planets", "planets", "example"),
-		ConstantSegment("planetName", []string{"Mars", "Earth"}, "example"),
+	segments := []resourceids.Segment{
+		resourceids.StaticSegment("planets", "planets", "example"),
+		resourceids.ConstantSegment("planetName", []string{"Mars", "Earth"}, "example"),
 	}
 	testData := []struct {
 		name        string
 		input       string
-		expected    *ParseResult
+		expected    *resourceids.ParseResult
 		insensitive bool
 	}{
 		{
@@ -539,44 +574,48 @@ func TestParseIdContainingAConstant(t *testing.T) {
 			name:        "planets - earth - sensitive",
 			input:       "/planets/Earth",
 			insensitive: false,
-			expected: &ParseResult{
-				map[string]string{
+			expected: &resourceids.ParseResult{
+				Parsed: map[string]string{
 					"planets":    "planets",
 					"planetName": "Earth",
 				},
+				RawInput: "/planets/Earth",
 			},
 		},
 		{
 			name:        "planets - earth - insensitive",
 			input:       "/planets/earth",
 			insensitive: true,
-			expected: &ParseResult{
-				map[string]string{
+			expected: &resourceids.ParseResult{
+				Parsed: map[string]string{
 					"planets":    "planets",
 					"planetName": "Earth",
 				},
+				RawInput: "/planets/earth",
 			},
 		},
 		{
 			name:        "planets - mars - sensitive",
 			input:       "/planets/Mars",
 			insensitive: false,
-			expected: &ParseResult{
-				map[string]string{
+			expected: &resourceids.ParseResult{
+				Parsed: map[string]string{
 					"planets":    "planets",
 					"planetName": "Mars",
 				},
+				RawInput: "/planets/Mars",
 			},
 		},
 		{
 			name:        "planets - mars - insensitive",
 			input:       "/planets/mars",
 			insensitive: true,
-			expected: &ParseResult{
-				map[string]string{
+			expected: &resourceids.ParseResult{
+				Parsed: map[string]string{
 					"planets":    "planets",
 					"planetName": "Mars",
 				},
+				RawInput: "/planets/mars",
 			},
 		},
 		{
@@ -592,22 +631,25 @@ func TestParseIdContainingAConstant(t *testing.T) {
 	}
 	for _, test := range testData {
 		t.Logf("Test %q..", test.name)
-		parser := NewParser(segments)
+		rid := fakeIdParser{
+			segments,
+		}
+		parser := resourceids.NewParserFromResourceIdType(rid)
 		actual, err := parser.Parse(test.input, test.insensitive)
 		validateResult(t, actual, test.expected, err)
 	}
 }
 
 func TestParseIdContainingAScopePrefix(t *testing.T) {
-	segments := []Segment{
-		ScopeSegment("scope", "example"),
-		StaticSegment("extensions", "extensions", "example"),
-		UserSpecifiedSegment("extensionName", "example"),
+	segments := []resourceids.Segment{
+		resourceids.ScopeSegment("scope", "example"),
+		resourceids.StaticSegment("extensions", "extensions", "example"),
+		resourceids.UserSpecifiedSegment("extensionName", "example"),
 	}
 	testData := []struct {
 		name        string
 		input       string
-		expected    *ParseResult
+		expected    *resourceids.ParseResult
 		insensitive bool
 	}{
 		{
@@ -624,69 +666,76 @@ func TestParseIdContainingAScopePrefix(t *testing.T) {
 			name:        "scope - single level - sensitive",
 			input:       "/planets/extensions/terraform",
 			insensitive: false,
-			expected: &ParseResult{
-				map[string]string{
+			expected: &resourceids.ParseResult{
+				Parsed: map[string]string{
 					"scope":         "/planets",
 					"extensions":    "extensions",
 					"extensionName": "terraform",
 				},
+				RawInput: "/planets/extensions/terraform",
 			},
 		},
 		{
 			name:        "scope - single level - insensitive",
 			input:       "/planets/extenSions/terraform",
 			insensitive: true,
-			expected: &ParseResult{
-				map[string]string{
+			expected: &resourceids.ParseResult{
+				Parsed: map[string]string{
 					"scope":         "/planets",
 					"extensions":    "extensions",
 					"extensionName": "terraform",
 				},
+				RawInput: "/planets/extenSions/terraform",
 			},
 		},
 		{
 			name:        "scope - multiple level - sensitive",
 			input:       "/solarSystems/milkyWay/planets/mars/extensions/terraform",
 			insensitive: false,
-			expected: &ParseResult{
-				map[string]string{
+			expected: &resourceids.ParseResult{
+				Parsed: map[string]string{
 					"scope":         "/solarSystems/milkyWay/planets/mars",
 					"extensions":    "extensions",
 					"extensionName": "terraform",
 				},
+				RawInput: "/solarSystems/milkyWay/planets/mars/extensions/terraform",
 			},
 		},
 		{
 			name:        "scope - multiple level - insensitive",
 			input:       "/solarSystems/milkyWay/planets/mars/extenSions/terraform",
 			insensitive: true,
-			expected: &ParseResult{
-				map[string]string{
+			expected: &resourceids.ParseResult{
+				Parsed: map[string]string{
 					"scope":         "/solarSystems/milkyWay/planets/mars",
 					"extensions":    "extensions",
 					"extensionName": "terraform",
 				},
+				RawInput: "/solarSystems/milkyWay/planets/mars/extenSions/terraform",
 			},
 		},
 	}
 	for _, test := range testData {
 		t.Logf("Test %q..", test.name)
-		parser := NewParser(segments)
+		rid := fakeIdParser{
+			segments,
+		}
+		parser := resourceids.NewParserFromResourceIdType(rid)
 		actual, err := parser.Parse(test.input, test.insensitive)
 		validateResult(t, actual, test.expected, err)
 	}
 }
 
 func TestParseIdContainingAScopeSuffix(t *testing.T) {
-	segments := []Segment{
-		StaticSegment("subscriptions", "subscriptions", "example"),
-		SubscriptionIdSegment("subscriptionId", "example"),
-		ScopeSegment("scope", "example"),
+	segments := []resourceids.Segment{
+		resourceids.StaticSegment("subscriptions", "subscriptions", "example"),
+		resourceids.SubscriptionIdSegment("subscriptionId", "example"),
+		resourceids.ScopeSegment("scope", "example"),
 	}
 	testData := []struct {
 		name        string
 		input       string
-		expected    *ParseResult
+		expected    *resourceids.ParseResult
 		insensitive bool
 	}{
 		{
@@ -703,70 +752,77 @@ func TestParseIdContainingAScopeSuffix(t *testing.T) {
 			name:        "scope - single level - sensitive",
 			input:       "/subscriptions/1111/someThing",
 			insensitive: false,
-			expected: &ParseResult{
-				map[string]string{
+			expected: &resourceids.ParseResult{
+				Parsed: map[string]string{
 					"scope":          "/someThing",
 					"subscriptions":  "subscriptions",
 					"subscriptionId": "1111",
 				},
+				RawInput: "/subscriptions/1111/someThing",
 			},
 		},
 		{
 			name:        "scope - single level - insensitive",
 			input:       "/subscrIptions/1111/someThing",
 			insensitive: true,
-			expected: &ParseResult{
-				map[string]string{
+			expected: &resourceids.ParseResult{
+				Parsed: map[string]string{
 					"scope":          "/someThing",
 					"subscriptions":  "subscriptions",
 					"subscriptionId": "1111",
 				},
+				RawInput: "/subscrIptions/1111/someThing",
 			},
 		},
 		{
 			name:        "scope - multiple level - sensitive",
 			input:       "/subscriptions/1111/solarSystems/milkyWay/planets/mars",
 			insensitive: false,
-			expected: &ParseResult{
-				map[string]string{
+			expected: &resourceids.ParseResult{
+				Parsed: map[string]string{
 					"scope":          "/solarSystems/milkyWay/planets/mars",
 					"subscriptions":  "subscriptions",
 					"subscriptionId": "1111",
 				},
+				RawInput: "/subscriptions/1111/solarSystems/milkyWay/planets/mars",
 			},
 		},
 		{
 			name:        "scope - multiple level - insensitive",
 			input:       "/subscriPtions/1111/solarSystems/milkyWay/planets/mars",
 			insensitive: true,
-			expected: &ParseResult{
-				map[string]string{
+			expected: &resourceids.ParseResult{
+				Parsed: map[string]string{
 					"scope":          "/solarSystems/milkyWay/planets/mars",
 					"subscriptions":  "subscriptions",
 					"subscriptionId": "1111",
 				},
+				RawInput: "/subscriPtions/1111/solarSystems/milkyWay/planets/mars",
 			},
 		},
 	}
 	for _, test := range testData {
 		t.Logf("Test %q..", test.name)
-		parser := NewParser(segments)
+		rid := fakeIdParser{
+			segments,
+		}
+		parser := resourceids.NewParserFromResourceIdType(rid)
 		actual, err := parser.Parse(test.input, test.insensitive)
 		validateResult(t, actual, test.expected, err)
 	}
 }
 
 func TestParseIdContainingAScopeEitherEnd(t *testing.T) {
-	segments := []Segment{
-		ScopeSegment("start", "example"),
-		StaticSegment("connections", "connections", "example"),
-		SubscriptionIdSegment("connectionName", "example"),
-		ScopeSegment("end", "example"),
+	segments := []resourceids.Segment{
+		resourceids.ScopeSegment("start", "example"),
+		resourceids.StaticSegment("connections", "connections", "example"),
+		resourceids.SubscriptionIdSegment("connectionName", "example"),
+		resourceids.ScopeSegment("end", "example"),
 	}
 	testData := []struct {
 		name        string
 		input       string
-		expected    *ParseResult
+		expected    *resourceids.ParseResult
 		insensitive bool
 	}{
 		{
@@ -803,71 +859,78 @@ func TestParseIdContainingAScopeEitherEnd(t *testing.T) {
 			name:        "scope - single level - sensitive",
 			input:       "/someThing/connections/BER-FCO/someOtherThing",
 			insensitive: false,
-			expected: &ParseResult{
-				map[string]string{
+			expected: &resourceids.ParseResult{
+				Parsed: map[string]string{
 					"connectionName": "BER-FCO",
 					"connections":    "connections",
 					"end":            "/someOtherThing",
 					"start":          "/someThing",
 				},
+				RawInput: "/someThing/connections/BER-FCO/someOtherThing",
 			},
 		},
 		{
 			name:        "scope - single level - insensitive",
 			input:       "/someThing/Connections/BER-FCO/someOtherThing",
 			insensitive: true,
-			expected: &ParseResult{
-				map[string]string{
+			expected: &resourceids.ParseResult{
+				Parsed: map[string]string{
 					"connectionName": "BER-FCO",
 					"connections":    "connections",
 					"end":            "/someOtherThing",
 					"start":          "/someThing",
 				},
+				RawInput: "/someThing/Connections/BER-FCO/someOtherThing",
 			},
 		},
 		{
 			name:        "scope - multiple level - sensitive",
 			input:       "/someThing/thats/really/awesome/connections/BER-FCO/someOtherThing/woah",
 			insensitive: false,
-			expected: &ParseResult{
-				map[string]string{
+			expected: &resourceids.ParseResult{
+				Parsed: map[string]string{
 					"connectionName": "BER-FCO",
 					"connections":    "connections",
 					"end":            "/someOtherThing/woah",
 					"start":          "/someThing/thats/really/awesome",
 				},
+				RawInput: "/someThing/thats/really/awesome/connections/BER-FCO/someOtherThing/woah",
 			},
 		},
 		{
 			name:        "scope - multiple level - insensitive",
 			input:       "/someThing/thats/really/awesome/conNections/BER-FCO/someOtherThing/woah",
 			insensitive: true,
-			expected: &ParseResult{
-				map[string]string{
+			expected: &resourceids.ParseResult{
+				Parsed: map[string]string{
 					"connectionName": "BER-FCO",
 					"connections":    "connections",
 					"end":            "/someOtherThing/woah",
 					"start":          "/someThing/thats/really/awesome",
 				},
+				RawInput: "/someThing/thats/really/awesome/conNections/BER-FCO/someOtherThing/woah",
 			},
 		},
 	}
 	for _, test := range testData {
 		t.Logf("Test %q..", test.name)
-		parser := NewParser(segments)
+		rid := fakeIdParser{
+			segments,
+		}
+		parser := resourceids.NewParserFromResourceIdType(rid)
 		actual, err := parser.Parse(test.input, test.insensitive)
 		validateResult(t, actual, test.expected, err)
 	}
 }
 
 func TestParseIdContainingJustAScope(t *testing.T) {
-	segments := []Segment{
-		ScopeSegment("scope", "example"),
+	segments := []resourceids.Segment{
+		resourceids.ScopeSegment("scope", "example"),
 	}
 	testData := []struct {
 		name        string
 		input       string
-		expected    *ParseResult
+		expected    *resourceids.ParseResult
 		insensitive bool
 	}{
 		{
@@ -879,72 +942,99 @@ func TestParseIdContainingJustAScope(t *testing.T) {
 			name:        "slash - sensitive",
 			input:       "/",
 			insensitive: false,
-			expected: &ParseResult{
-				map[string]string{
+			expected: &resourceids.ParseResult{
+				Parsed: map[string]string{
 					"scope": "/",
 				},
+				RawInput: "/",
 			},
 		},
 		{
 			name:        "slash - insensitive",
 			input:       "/",
 			insensitive: true,
-			expected: &ParseResult{
-				map[string]string{
+			expected: &resourceids.ParseResult{
+				Parsed: map[string]string{
 					"scope": "/",
 				},
+				RawInput: "/",
 			},
 		},
 		{
 			name:        "single level - sensitive",
 			input:       "/hello",
 			insensitive: false,
-			expected: &ParseResult{
-				map[string]string{
+			expected: &resourceids.ParseResult{
+				Parsed: map[string]string{
 					"scope": "/hello",
 				},
+				RawInput: "/hello",
 			},
 		},
 		{
 			name:        "single level - insensitive",
 			input:       "/hello",
 			insensitive: true,
-			expected: &ParseResult{
-				map[string]string{
+			expected: &resourceids.ParseResult{
+				Parsed: map[string]string{
 					"scope": "/hello",
 				},
+				RawInput: "/hello",
 			},
 		},
 		{
 			name:        "multiple levels - sensitive",
 			input:       "/hello/there/world",
 			insensitive: false,
-			expected: &ParseResult{
-				map[string]string{
+			expected: &resourceids.ParseResult{
+				Parsed: map[string]string{
 					"scope": "/hello/there/world",
 				},
+				RawInput: "/hello/there/world",
 			},
 		},
 		{
 			name:        "multiple levels - insensitive",
 			input:       "/hello/there/world",
 			insensitive: true,
-			expected: &ParseResult{
-				map[string]string{
+			expected: &resourceids.ParseResult{
+				Parsed: map[string]string{
 					"scope": "/hello/there/world",
 				},
+				RawInput: "/hello/there/world",
 			},
 		},
 	}
 	for _, test := range testData {
 		t.Logf("Test %q..", test.name)
-		parser := NewParser(segments)
+		rid := fakeIdParser{
+			segments,
+		}
+		parser := resourceids.NewParserFromResourceIdType(rid)
 		actual, err := parser.Parse(test.input, test.insensitive)
 		validateResult(t, actual, test.expected, err)
 	}
 }
 
-func validateResult(t *testing.T, actual *ParseResult, expected *ParseResult, err error) {
+var _ resourceids.ResourceId = fakeIdParser{}
+
+type fakeIdParser struct {
+	segments []resourceids.Segment
+}
+
+func (f fakeIdParser) ID() string {
+	panic("shouldn't be called in test")
+}
+
+func (f fakeIdParser) String() string {
+	panic("shouldn't be called in test")
+}
+
+func (f fakeIdParser) Segments() []resourceids.Segment {
+	return f.segments
+}
+
+func validateResult(t *testing.T, actual *resourceids.ParseResult, expected *resourceids.ParseResult, err error) {
 	if err != nil {
 		if expected == nil {
 			return
@@ -969,5 +1059,8 @@ func validateResult(t *testing.T, actual *ParseResult, expected *ParseResult, er
 
 	if !reflect.DeepEqual(expected.Parsed, actual.Parsed) {
 		t.Fatalf("Diff between Expected and Actual.\n\nExpected: %+v\n\nActual: %+v", expected.Parsed, actual.Parsed)
+	}
+	if expected.RawInput != actual.RawInput {
+		t.Fatalf("Diff between Expected and Actual RawInput.\n\nExpected: %q\nActual:%q", expected.RawInput, actual.RawInput)
 	}
 }
