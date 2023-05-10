@@ -259,7 +259,7 @@ func (p Parser) parseSegment(segment Segment, rawValue string, insensitively boo
 			}
 
 			if matches {
-				return &*segment.FixedValue, nil
+				return segment.FixedValue, nil
 			}
 
 			return nil, NewSegmentNotSpecifiedError(p.resourceId, segment.Name, currentlyParsed)
