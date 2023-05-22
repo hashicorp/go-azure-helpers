@@ -47,8 +47,7 @@ func (s *LegacySystemAndUserAssignedMap) MarshalJSON() ([]byte, error) {
 	}
 
 	out := map[string]interface{}{
-		"type":                   string(identityType),
-		"userAssignedIdentities": nil,
+		"type": string(identityType),
 	}
 	if len(userAssignedIdentityIds) > 0 {
 		out["userAssignedIdentities"] = userAssignedIdentityIds
