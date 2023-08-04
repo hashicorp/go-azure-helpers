@@ -8,8 +8,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
-// NOTE: we intentionally don't have an Optional & Computed here for behavioural consistency.
-
 // ZoneSingleRequired returns the schema used when a single Zone must be specified
 func ZoneSingleRequired() *schema.Schema {
 	return &schema.Schema{
@@ -44,6 +42,16 @@ func ZoneSingleOptionalForceNew() *schema.Schema {
 		Type:         schema.TypeString,
 		Optional:     true,
 		ForceNew:     true,
+		ValidateFunc: validation.StringIsNotEmpty,
+	}
+}
+
+// ZoneSingleOptionalComputed returns the schema used when a single Zone can be specified or is being set from the api when not specified
+func ZoneSingleOptionalComputed() *schema.Schema {
+	return &schema.Schema{
+		Type:         schema.TypeString,
+		Optional:     true,
+		Computed:     true,
 		ValidateFunc: validation.StringIsNotEmpty,
 	}
 }
