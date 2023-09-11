@@ -5,8 +5,9 @@ package commonids
 
 import (
 	"fmt"
-	"github.com/hashicorp/go-azure-helpers/resourcemanager/resourceids"
 	"strings"
+
+	"github.com/hashicorp/go-azure-helpers/resourcemanager/resourceids"
 )
 
 // VirtualMachineScaleSetId is a struct representing the Resource ID for a Virtual Machine Scale Set
