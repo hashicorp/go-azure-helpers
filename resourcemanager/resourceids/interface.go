@@ -15,6 +15,12 @@ type ResourceId interface {
 	Segments() []Segment
 }
 
+type ResourceIdWithParser interface {
+	ResourceId
+
+	FromParseResult(input ParseResult) error
+}
+
 type Segment struct {
 	// ExampleValue is an example of a value for this field, which is intended only to
 	// be used as a placeholder.
