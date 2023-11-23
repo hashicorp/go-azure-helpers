@@ -114,7 +114,7 @@ func TestParseSqlDatabaseID(t *testing.T) {
 	for _, v := range testData {
 		t.Logf("[DEBUG] Testing %q", v.Input)
 
-		actual, err := ParseDatabaseID(v.Input)
+		actual, err := ParseSqlDatabaseID(v.Input)
 		if err != nil {
 			if v.Error {
 				continue
@@ -307,7 +307,6 @@ func TestParseSqlDatabaseIDInsensitively(t *testing.T) {
 		if actual.DatabaseName != v.Expected.DatabaseName {
 			t.Fatalf("Expected %q but got %q for DatabaseName", v.Expected.DatabaseName, actual.DatabaseName)
 		}
-
 	}
 }
 
