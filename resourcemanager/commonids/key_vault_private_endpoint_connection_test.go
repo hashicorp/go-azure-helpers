@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/resourceids"
 )
 
-var _ resourceids.ResourceId = KeyVaultPrivateEndpointConnectionId{}
+var _ resourceids.ResourceId = &KeyVaultPrivateEndpointConnectionId{}
 
 func TestNewKeyVaultPrivateEndpointConnectionID(t *testing.T) {
 	id := NewKeyVaultPrivateEndpointConnectionID("12345678-1234-9876-4563-123456789012", "example-resource-group", "vaultValue", "privateEndpointConnectionValue")

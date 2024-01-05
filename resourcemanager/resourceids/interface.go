@@ -13,6 +13,8 @@ type ResourceId interface {
 
 	// Segments returns an ordered list of expected Segments that make up this Resource ID
 	Segments() []Segment
+
+	FromParseResult(ParseResult) error
 }
 
 type Segment struct {

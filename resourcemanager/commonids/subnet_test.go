@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/resourceids"
 )
 
-var _ resourceids.ResourceId = SubnetId{}
+var _ resourceids.ResourceId = &SubnetId{}
 
 func TestNewSubnetID(t *testing.T) {
 	id := NewSubnetID("12345678-1234-9876-4563-123456789012", "example-resource-group", "virtualNetworkValue", "subnetValue")

@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/resourceids"
 )
 
-var _ resourceids.ResourceId = DedicatedHostGroupId{}
+var _ resourceids.ResourceId = &DedicatedHostGroupId{}
 
 func TestNewDedicatedHostGroupID(t *testing.T) {
 	id := NewDedicatedHostGroupID("12345678-1234-9876-4563-123456789012", "example-resource-group", "hostGroupValue")

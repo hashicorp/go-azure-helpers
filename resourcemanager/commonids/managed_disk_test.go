@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/resourceids"
 )
 
-var _ resourceids.ResourceId = ManagedDiskId{}
+var _ resourceids.ResourceId = &ManagedDiskId{}
 
 func TestNewManagedDiskID(t *testing.T) {
 	id := NewManagedDiskID("12345678-1234-9876-4563-123456789012", "example-resource-group", "diskValue")

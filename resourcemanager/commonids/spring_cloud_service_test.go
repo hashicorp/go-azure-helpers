@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/resourceids"
 )
 
-var _ resourceids.ResourceId = SpringCloudServiceId{}
+var _ resourceids.ResourceId = &SpringCloudServiceId{}
 
 func TestNewSpringCloudServiceID(t *testing.T) {
 	id := NewSpringCloudServiceID("12345678-1234-9876-4563-123456789012", "example-resource-group", "serviceValue")
