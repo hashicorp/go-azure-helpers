@@ -4,6 +4,10 @@
 package resourceids
 
 type ResourceId interface {
+
+	// FromParseResult populates the Resource ID using the ParseResult provided in `input`
+	FromParseResult(input ParseResult) error
+
 	// ID returns the fully formatted ID for this Resource ID
 	ID() string
 
@@ -13,8 +17,6 @@ type ResourceId interface {
 
 	// Segments returns an ordered list of expected Segments that make up this Resource ID
 	Segments() []Segment
-
-	FromParseResult(ParseResult) error
 }
 
 type Segment struct {
