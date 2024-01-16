@@ -18,7 +18,7 @@ func TestSegmentNotSpecifiedError_CommonId(t *testing.T) {
 	result := resourceids.ParseResult{
 		RawInput: "/example",
 	}
-	actual := resourceids.NewSegmentNotSpecifiedError(subId, "resourceGroupName", result)
+	actual := resourceids.NewSegmentNotSpecifiedError(&subId, "resourceGroupName", result)
 	expected := `parsing the ResourceGroup ID: the segment at position 3 didn't match
 
 Expected a ResourceGroup ID that matched:
@@ -40,7 +40,7 @@ func TestSegmentNotSpecifiedError_MissingSegment(t *testing.T) {
 	result := resourceids.ParseResult{
 		RawInput: "/example",
 	}
-	actual := resourceids.NewSegmentNotSpecifiedError(subId, "somethingRandom", result)
+	actual := resourceids.NewSegmentNotSpecifiedError(&subId, "somethingRandom", result)
 	expected := `internal-error: couldn't determine the position for segment "somethingRandom"`
 	assertTemplatedCodeMatches(t, expected, actual.Error())
 }
@@ -55,7 +55,7 @@ func TestSegmentNotSpecifiedError_Constant(t *testing.T) {
 	result := resourceids.ParseResult{
 		RawInput: "/planets",
 	}
-	actual := resourceids.NewSegmentNotSpecifiedError(id, "planetName", result)
+	actual := resourceids.NewSegmentNotSpecifiedError(&id, "planetName", result)
 	expected := `parsing the planet ID: the segment at position 1 didn't match
 
 Expected a planet ID that matched:
@@ -267,4 +267,8 @@ func (p planetId) String() string {
 
 func (p planetId) Segments() []resourceids.Segment {
 	return p.segments
+}
+
+func (p planetId) FromParseResult(resourceids.ParseResult) error {
+	panic("should not be called in test")
 }

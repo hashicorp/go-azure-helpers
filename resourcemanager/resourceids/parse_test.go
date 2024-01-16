@@ -15,7 +15,7 @@ func TestParseEmptyId(t *testing.T) {
 	rid := fakeIdParser{
 		[]resourceids.Segment{},
 	}
-	parser := resourceids.NewParserFromResourceIdType(rid)
+	parser := resourceids.NewParserFromResourceIdType(&rid)
 	actual, err := parser.Parse("", false)
 	if err == nil {
 		t.Fatalf("expected an error but didn't get one")
@@ -806,7 +806,7 @@ func TestParseIdContainingAScopeSuffix(t *testing.T) {
 		rid := fakeIdParser{
 			segments,
 		}
-		parser := resourceids.NewParserFromResourceIdType(rid)
+		parser := resourceids.NewParserFromResourceIdType(&rid)
 		actual, err := parser.Parse(test.input, test.insensitive)
 		validateResult(t, actual, test.expected, err)
 	}
@@ -1032,6 +1032,10 @@ func (f fakeIdParser) String() string {
 
 func (f fakeIdParser) Segments() []resourceids.Segment {
 	return f.segments
+}
+
+func (f fakeIdParser) FromParseResult(resourceids.ParseResult) error {
+	panic("shouldn't be called in test")
 }
 
 func validateResult(t *testing.T, actual *resourceids.ParseResult, expected *resourceids.ParseResult, err error) {

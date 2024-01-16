@@ -41,7 +41,7 @@ The following Segments were parsed:
 * Segment 2 - not found
 * Segment 3 - not found
 `
-	actual := resourceids.NewNumberOfSegmentsDidntMatchError(id, parseResult).Error()
+	actual := resourceids.NewNumberOfSegmentsDidntMatchError(&id, parseResult).Error()
 	assertTemplatedCodeMatches(t, expected, actual)
 }
 
@@ -79,6 +79,6 @@ The following Segments were parsed:
 * Segment 2 - not found
 * Segment 3 - not found
 `
-	actual := resourceids.NewNumberOfSegmentsDidntMatchError(id, parseResult).Error()
+	actual := resourceids.NewNumberOfSegmentsDidntMatchError(&id, parseResult).Error()
 	assertTemplatedCodeMatches(t, expected, actual)
 }
