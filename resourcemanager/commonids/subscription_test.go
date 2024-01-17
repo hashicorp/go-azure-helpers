@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/resourceids"
 )
 
-var _ resourceids.ResourceId = SubscriptionId{}
+var _ resourceids.ResourceId = &SubscriptionId{}
 
 func TestNewSubscriptionID(t *testing.T) {
 	id := NewSubscriptionID("12345678-1234-9876-4563-123456789012")

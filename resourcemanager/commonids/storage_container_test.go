@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/resourceids"
 )
 
-var _ resourceids.ResourceId = StorageContainerId{}
+var _ resourceids.ResourceId = &StorageContainerId{}
 
 func TestNewStorageContainerID(t *testing.T) {
 	id := NewStorageContainerID("12345678-1234-9876-4563-123456789012", "example-resource-group", "storageAccountValue", "containerValue")

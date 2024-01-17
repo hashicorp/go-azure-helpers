@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/resourceids"
 )
 
-var _ resourceids.ResourceId = VirtualMachineScaleSetNetworkInterfaceId{}
+var _ resourceids.ResourceId = &VirtualMachineScaleSetNetworkInterfaceId{}
 
 func TestNewVirtualMachineScaleSetNetworkInterfaceID(t *testing.T) {
 	id := NewVirtualMachineScaleSetNetworkInterfaceID("12345678-1234-9876-4563-123456789012", "example-resource-group", "virtualMachineScaleSetValue", "virtualMachineIndexValue", "networkInterfaceValue")

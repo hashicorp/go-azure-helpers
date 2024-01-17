@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/resourceids"
 )
 
-var _ resourceids.ResourceId = ScopeId{}
+var _ resourceids.ResourceId = &ScopeId{}
 
 func TestNewScopeID(t *testing.T) {
 	id := NewScopeID("/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/some-resource-group")

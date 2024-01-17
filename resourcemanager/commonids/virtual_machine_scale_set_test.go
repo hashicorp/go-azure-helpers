@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/resourceids"
 )
 
-var _ resourceids.ResourceId = VirtualMachineScaleSetId{}
+var _ resourceids.ResourceId = &VirtualMachineScaleSetId{}
 
 func TestNewVirtualMachineScaleSetID(t *testing.T) {
 	id := NewVirtualMachineScaleSetID("12345678-1234-9876-4563-123456789012", "example-resource-group", "virtualMachineScaleSetValue")

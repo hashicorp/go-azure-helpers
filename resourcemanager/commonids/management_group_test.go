@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/resourceids"
 )
 
-var _ resourceids.ResourceId = ManagementGroupId{}
+var _ resourceids.ResourceId = &ManagementGroupId{}
 
 func TestNewManagementGroupID(t *testing.T) {
 	id := NewManagementGroupID("groupIdValue")

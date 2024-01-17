@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/resourceids"
 )
 
-var _ resourceids.ResourceId = KustoDatabaseId{}
+var _ resourceids.ResourceId = &KustoDatabaseId{}
 
 func TestNewKustoDatabaseID(t *testing.T) {
 	id := NewKustoDatabaseID("12345678-1234-9876-4563-123456789012", "example-resource-group", "clusterValue", "databaseValue")

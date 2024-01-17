@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/resourceids"
 )
 
-var _ resourceids.ResourceId = UserAssignedIdentityId{}
+var _ resourceids.ResourceId = &UserAssignedIdentityId{}
 
 func TestNewUserAssignedIdentityID(t *testing.T) {
 	id := NewUserAssignedIdentityID("12345678-1234-9876-4563-123456789012", "example-resource-group", "userAssignedIdentityName")
