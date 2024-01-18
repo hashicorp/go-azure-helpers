@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/resourceids"
 )
 
-var _ resourceids.ResourceId = ChaosStudioTargetId{}
+var _ resourceids.ResourceId = &ChaosStudioTargetId{}
 
 func TestNewChaosStudioTargetId(t *testing.T) {
 	id := NewChaosStudioTargetID("/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/some-resource-group", "targetName")

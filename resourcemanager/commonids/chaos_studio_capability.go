@@ -10,7 +10,7 @@ import (
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/resourceids"
 )
 
-var _ resourceids.ResourceId = ChaosStudioCapabilityId{}
+var _ resourceids.ResourceId = &ChaosStudioCapabilityId{}
 
 // ChaosStudioCapabilityId is a struct representing the Resource ID for an App Service Plan
 type ChaosStudioCapabilityId struct {
@@ -30,7 +30,7 @@ func NewChaosStudioCapabilityID(scope string, targetName string, capabilityName 
 
 // ParseChaosStudioCapabilityID parses 'input' into a ChaosStudioCapabilityId
 func ParseChaosStudioCapabilityID(input string) (*ChaosStudioCapabilityId, error) {
-	parser := resourceids.NewParserFromResourceIdType(ChaosStudioCapabilityId{})
+	parser := resourceids.NewParserFromResourceIdType(&ChaosStudioCapabilityId{})
 	parsed, err := parser.Parse(input, false)
 	if err != nil {
 		return nil, fmt.Errorf("parsing %q: %+v", input, err)
@@ -47,14 +47,14 @@ func ParseChaosStudioCapabilityID(input string) (*ChaosStudioCapabilityId, error
 // ParseChaosStudioCapabilityIDInsensitively parses 'input' case-insensitively into a ChaosStudioCapabilityId
 // note: this method should only be used for API response data and not user input
 func ParseChaosStudioCapabilityIDInsensitively(input string) (*ChaosStudioCapabilityId, error) {
-	parser := resourceids.NewParserFromResourceIdType(ChaosStudioCapabilityId{})
+	parser := resourceids.NewParserFromResourceIdType(&ChaosStudioCapabilityId{})
 	parsed, err := parser.Parse(input, true)
 	if err != nil {
 		return nil, fmt.Errorf("parsing %q: %+v", input, err)
 	}
 
 	id := ChaosStudioCapabilityId{}
-	if err := id.FromParseResult(*parsed); err != nil {
+	if err = id.FromParseResult(*parsed); err != nil {
 		return nil, err
 	}
 
