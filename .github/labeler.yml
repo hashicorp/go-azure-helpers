@@ -1,0 +1,7 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
+release-once-merged:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '**'
