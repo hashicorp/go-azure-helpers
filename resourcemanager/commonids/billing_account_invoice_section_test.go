@@ -9,15 +9,15 @@ func TestNewBillingAccountInvoiceSectionID(t *testing.T) {
 	id := NewBillingAccountInvoiceSectionID("billingAccountNameValue", "billingProfileNameValue", "invoiceSectionNameValue")
 
 	if id.BillingAccountName != "billingAccountNameValue" {
-		t.Fatalf("Expected %q but got %q for Segment 'BillingAccountName'", id.BillingAccountName, "billingAccountNameValue")
+		t.Fatalf("Expected %q but got %q for Segment 'BillingAccountName'", "billingAccountNameValue", id.BillingAccountName)
 	}
 
 	if id.BillingProfileName != "billingProfileNameValue" {
-		t.Fatalf("Expected %q but got %q for Segment 'BillingProfileName'", id.BillingProfileName, "billingProfileNameValue")
+		t.Fatalf("Expected %q but got %q for Segment 'BillingProfileName'", "billingProfileNameValue", id.BillingProfileName)
 	}
 
 	if id.InvoiceSectionName != "invoiceSectionNameValue" {
-		t.Fatalf("Expected %q but got %q for Segment 'InvoiceSectionName'", id.InvoiceSectionName, "invoiceSectionNameValue")
+		t.Fatalf("Expected %q but got %q for Segment 'InvoiceSectionName'", "invoiceSectionNameValue", id.InvoiceSectionName)
 	}
 
 }
@@ -148,7 +148,7 @@ func TestParseBillingAccountInvoiceSectionIDInsensitively(t *testing.T) {
 		},
 		{
 			// Incomplete URI  (Insensitively)
-			Input: "/pRoViVeRs/MiCrOsOfT.biLLing/BillInGAccouNts",
+			Input: "/pRoVideRs/MiCrOsOfT.biLLing/BillInGAccouNts",
 			Error: true,
 		},
 		{
@@ -158,7 +158,7 @@ func TestParseBillingAccountInvoiceSectionIDInsensitively(t *testing.T) {
 		},
 		{
 			// Incomplete URI (Insensitively)
-			Input: "/pRoViVeRs/MiCrOsOfT.biLLing/BillInGAccouNts/BillingAcCOUNTNameValue",
+			Input: "/pRoVideRs/MiCrOsOfT.biLLing/BillInGAccouNts/BillingAcCOUNTNameValue",
 			Error: true,
 		},
 		{
