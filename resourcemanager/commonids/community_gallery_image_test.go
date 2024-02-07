@@ -85,7 +85,7 @@ func TestParseCommunityGalleryImageID(t *testing.T) {
 		}
 
 		if actual.ImageName != v.Expected.ImageName {
-			t.Fatalf("Expected %q but got %q for CommunityGalleryImageName", v.Expected.ImageName, actual.ImageName)
+			t.Fatalf("Expected %q but got %q for ImageName", v.Expected.ImageName, actual.ImageName)
 		}
 	}
 }
@@ -173,7 +173,7 @@ func TestParseCommunityGalleryImageIDInsensitively(t *testing.T) {
 		}
 
 		if actual.ImageName != v.Expected.ImageName {
-			t.Fatalf("Expected %q but got %q for CommunityGalleryImageName", v.Expected.ImageName, actual.ImageName)
+			t.Fatalf("Expected %q but got %q for ImageName", v.Expected.ImageName, actual.ImageName)
 		}
 	}
 }
