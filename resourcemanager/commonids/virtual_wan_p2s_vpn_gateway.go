@@ -5,10 +5,15 @@ package commonids
 
 import (
 	"fmt"
+	"github.com/hashicorp/go-azure-helpers/resourcemanager/recaser"
 	"strings"
 
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/resourceids"
 )
+
+func init() {
+	recaser.RegisterResourceId(&VirtualWANP2SVPNGatewayId{})
+}
 
 var _ resourceids.ResourceId = &VirtualWANP2SVPNGatewayId{}
 

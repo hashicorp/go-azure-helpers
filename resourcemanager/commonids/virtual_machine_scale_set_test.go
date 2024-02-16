@@ -4,10 +4,15 @@
 package commonids
 
 import (
+	"github.com/hashicorp/go-azure-helpers/resourcemanager/recaser"
 	"testing"
 
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/resourceids"
 )
+
+func init() {
+	recaser.RegisterResourceId(&VirtualMachineScaleSetId{})
+}
 
 var _ resourceids.ResourceId = &VirtualMachineScaleSetId{}
 

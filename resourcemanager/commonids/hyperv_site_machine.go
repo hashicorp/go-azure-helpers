@@ -5,10 +5,15 @@ package commonids
 
 import (
 	"fmt"
+	"github.com/hashicorp/go-azure-helpers/resourcemanager/recaser"
 	"strings"
 
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/resourceids"
 )
+
+func init() {
+	recaser.RegisterResourceId(&HyperVSiteMachineId{})
+}
 
 var _ resourceids.ResourceId = &HyperVSiteMachineId{}
 
