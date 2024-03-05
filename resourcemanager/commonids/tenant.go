@@ -18,9 +18,7 @@ type TenantId struct {
 }
 
 // DefaultTenantId returns a default TenantId
-var DefaultTenantId = TenantId{
-	TenantId: "/",
-}
+var DefaultTenantId = NewTenantID("/")
 
 // NewTenantID returns a new TenantId struct
 func NewTenantID(tenantId string) TenantId {
