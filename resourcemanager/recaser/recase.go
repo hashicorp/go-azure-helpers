@@ -2,9 +2,10 @@ package recaser
 
 import (
 	"fmt"
-	"github.com/hashicorp/go-azure-helpers/resourcemanager/resourceids"
 	"regexp"
 	"strings"
+
+	"github.com/hashicorp/go-azure-helpers/resourcemanager/resourceids"
 )
 
 // ReCase tries to determine the type of Resource ID defined in `input` to be able to re-case it from
