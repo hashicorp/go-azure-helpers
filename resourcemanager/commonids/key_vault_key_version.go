@@ -5,7 +5,6 @@ package commonids
 
 import (
 	"fmt"
-	"github.com/hashicorp/go-azure-helpers/resourcemanager/recaser"
 	"strings"
 
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/resourceids"
@@ -13,10 +12,6 @@ import (
 
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See NOTICE.txt in the project root for license information.
-
-func init() {
-	recaser.RegisterResourceId(&KeyVaultKeyVersionId{})
-}
 
 var _ resourceids.ResourceId = &KeyVaultKeyVersionId{}
 

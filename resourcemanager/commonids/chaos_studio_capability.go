@@ -5,15 +5,10 @@ package commonids
 
 import (
 	"fmt"
-	"github.com/hashicorp/go-azure-helpers/resourcemanager/recaser"
 	"strings"
 
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/resourceids"
 )
-
-func init() {
-	recaser.RegisterResourceId(&ChaosStudioCapabilityId{})
-}
 
 var _ resourceids.ResourceId = &ChaosStudioCapabilityId{}
 

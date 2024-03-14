@@ -1,63 +1,49 @@
 package recaser
 
 import (
+	"fmt"
+	"github.com/hashicorp/go-azure-helpers/resourcemanager/resourceids"
 	"regexp"
 	"strings"
-	"sync"
-
-	"github.com/hashicorp/go-azure-helpers/resourcemanager/resourceids"
 )
-
-var knownResourceIds = make(map[string]resourceids.ResourceId)
-
-var resourceIdsWriteLock = &sync.Mutex{}
-
-func RegisterResourceId(id resourceids.ResourceId) {
-	//fullName := fmt.Sprintf("%s/%s", reflect.TypeOf(id).PkgPath(), reflect.TypeOf(id).Name())
-	key := id.ID()
-
-	resourceIdsWriteLock.Lock()
-	if _, ok := knownResourceIds[key]; !ok {
-		knownResourceIds[key] = id
-	}
-	resourceIdsWriteLock.Unlock()
-}
 
 // ReCase tries to determine the type of Resource ID defined in `input` to be able to re-case it from
 func ReCase(input string) string {
+	return ReCaseWithIds(input, knownResourceIds)
+}
+
+// ReCaseWithIds tries to determine the type of Resource ID defined in `input` to be able to re-case it from based on an input list of Resource IDs
+func ReCaseWithIds(input string, ids map[string]resourceids.ResourceId) string {
 	output := input
 	recased := false
 
-	for _, id := range knownResourceIds {
-		output, recased = parseId(id, input)
-		if recased {
-			break
+	idKey := buildInputKey(input)
+	if idKey != "" {
+		id := ids[idKey]
+		if id != nil {
+			output, recased = parseId(id, input)
 		}
 	}
 
-	// recase just "subscriptions" and "resourceGroups" segments if we can't find a matching id
+	// if we can't find a matching id recase these known segments
 	if !recased {
-		subscriptions := "/subscriptions/"
-		resourceGroups := "/resourceGroups/"
 
-		if strings.Contains(strings.ToLower(input), strings.ToLower(subscriptions)) {
-			re := regexp.MustCompile(`(?i)/subscriptions/`)
-			output = re.ReplaceAllString(output, subscriptions)
-			recased = true
+		segmentsToFix := []string{
+			"/subscriptions/",
+			"/resourceGroups/",
+			"/managementGroups/",
+			"/tenants/",
 		}
 
-		if strings.Contains(strings.ToLower(input), strings.ToLower(resourceGroups)) {
-			re := regexp.MustCompile(`(?i)/resourceGroups/`)
-			output = re.ReplaceAllString(output, resourceGroups)
-			recased = true
+		for _, segment := range segmentsToFix {
+			output = fixSegment(output, segment)
 		}
 	}
-
-	// TODO if !recased check scope? possible import cycle error?
 
 	return output
 }
 
+// parseId uses the specified ResourceId to parse the input and returns the id string with correct casing
 func parseId(id resourceids.ResourceId, input string) (string, bool) {
 
 	// we need to take a local copy of id to work against else we're mutating the original
@@ -75,4 +61,35 @@ func parseId(id resourceids.ResourceId, input string) (string, bool) {
 	input = id.ID()
 
 	return input, true
+}
+
+// fixSegment searches the input id string for a specified segment case-insensitively
+// and returns the input string with the casing corrected on the segment
+func fixSegment(input, segment string) string {
+	if strings.Contains(strings.ToLower(input), strings.ToLower(segment)) {
+		re := regexp.MustCompile(fmt.Sprintf("(?i)%s", segment))
+		input = re.ReplaceAllString(input, segment)
+	}
+	return input
+}
+
+// buildInputKey takes an input id string and removes user-specified values from it
+// so it can be used as a key to extract the correct id from knownResourceIds
+func buildInputKey(input string) string {
+	output := ""
+	segments := strings.Split(input, "/")
+
+	if len(segments)%2 != 0 {
+		for i := 1; len(segments) > i; i++ {
+			if i%2 != 0 {
+				key := segments[i]
+				output = fmt.Sprintf("%s/%s/", output, key)
+				if strings.EqualFold(key, "providers") && len(segments) >= i+2 {
+					value := segments[i+1]
+					output = fmt.Sprintf("%s%s", output, value)
+				}
+			}
+		}
+	}
+	return strings.ToLower(output)
 }
