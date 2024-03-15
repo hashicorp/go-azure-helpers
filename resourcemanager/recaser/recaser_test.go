@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/resourceids"
 )
 
-func TestRecaserWithIncorrectCasing(t *testing.T) {
+func TestReCaserWithIncorrectCasing(t *testing.T) {
 	expected := "/subscriptions/11111/resourceGroups/bobby/providers/Microsoft.Compute/availabilitySets/HeYO"
 
 	actual := reCaseWithIds("/Subscriptions/11111/resourcegroups/bobby/Providers/Microsoft.Compute/AvailabilitySets/HeYO", getTestIds())
@@ -17,7 +17,7 @@ func TestRecaserWithIncorrectCasing(t *testing.T) {
 	}
 }
 
-func TestRecaserWithCorrectCasing(t *testing.T) {
+func TestReCaserWithCorrectCasing(t *testing.T) {
 	expected := "/subscriptions/11111/resourceGroups/bobby/providers/Microsoft.Compute/availabilitySets/HeYO"
 	actual := reCaseWithIds("/subscriptions/11111/resourceGroups/bobby/providers/Microsoft.Compute/availabilitySets/HeYO", getTestIds())
 
@@ -27,7 +27,7 @@ func TestRecaserWithCorrectCasing(t *testing.T) {
 
 }
 
-func TestRecaserWithCorrectCasingResourceGroupId(t *testing.T) {
+func TestReCaserWithCorrectCasingResourceGroupId(t *testing.T) {
 	expected := "/subscriptions/11111/resourceGroups/bobby"
 	actual := reCaseWithIds("/subscriptions/11111/resourceGroups/bobby", getTestIds())
 
@@ -36,7 +36,7 @@ func TestRecaserWithCorrectCasingResourceGroupId(t *testing.T) {
 	}
 }
 
-func TestRecaserWithIncorrectCasingResourceGroupId(t *testing.T) {
+func TestReCaserWithIncorrectCasingResourceGroupId(t *testing.T) {
 	expected := "/subscriptions/11111/resourceGroups/bobby"
 	actual := reCaseWithIds("/Subscriptions/11111/resourcegroups/bobby", getTestIds())
 
@@ -45,7 +45,7 @@ func TestRecaserWithIncorrectCasingResourceGroupId(t *testing.T) {
 	}
 }
 
-func TestRecaserWithUnknownId(t *testing.T) {
+func TestReCaserWithUnknownId(t *testing.T) {
 	// should return string without recasing
 	expected := "/blah/11111/Blah"
 	actual := reCaseWithIds("/blah/11111/Blah", getTestIds())
@@ -55,7 +55,7 @@ func TestRecaserWithUnknownId(t *testing.T) {
 	}
 }
 
-func TestRecaserWithUnkownIdContainingSubscriptions(t *testing.T) {
+func TestReCaserWithUnkownIdContainingSubscriptions(t *testing.T) {
 
 	expected := "/subscriptions/11111/Blah"
 	actual := reCaseWithIds("/suBsCrIpTiOnS/11111/Blah", getTestIds())
@@ -65,7 +65,7 @@ func TestRecaserWithUnkownIdContainingSubscriptions(t *testing.T) {
 	}
 }
 
-func TestRecaserWithUnkownIdContainingSubscriptionsAndResourceGroups(t *testing.T) {
+func TestReCaserWithUnkownIdContainingSubscriptionsAndResourceGroups(t *testing.T) {
 	expected := "/subscriptions/11111/resourceGroups/group1/blah/"
 	actual := reCaseWithIds("/suBscriptions/11111/ReSoUrCeGRoUps/group1/blah/", getTestIds())
 
@@ -74,7 +74,7 @@ func TestRecaserWithUnkownIdContainingSubscriptionsAndResourceGroups(t *testing.
 	}
 }
 
-func TestRecaserWithEmptyString(t *testing.T) {
+func TestReCaserWithEmptyString(t *testing.T) {
 	expected := ""
 	actual := reCaseWithIds("", getTestIds())
 
@@ -83,7 +83,7 @@ func TestRecaserWithEmptyString(t *testing.T) {
 	}
 }
 
-func TestRecaserWithMultipleProviderSegmentsAndCorrectCasing(t *testing.T) {
+func TestReCaserWithMultipleProviderSegmentsAndCorrectCasing(t *testing.T) {
 	expected := "/subscriptions/11111/resourceGroups/bobby/providers/Microsoft.Compute/availabilitySets/HeYO/providers/Microsoft.Compute"
 	actual := reCaseWithIds("/subscriptions/11111/resourceGroups/bobby/providers/Microsoft.Compute/availabilitySets/HeYO/providers/Microsoft.Compute", getTestIds())
 
@@ -92,7 +92,7 @@ func TestRecaserWithMultipleProviderSegmentsAndCorrectCasing(t *testing.T) {
 	}
 }
 
-func TestRecaserWithMultipleProviderSegmentsAndIncorrectCasing(t *testing.T) {
+func TestReCaserWithMultipleProviderSegmentsAndIncorrectCasing(t *testing.T) {
 	expected := "/subscriptions/11111/resourceGroups/bobby/providers/Microsoft.Compute/availabilitySets/HeYO/providers/Microsoft.Compute"
 	actual := reCaseWithIds("/Subscriptions/11111/resourcegroups/bobby/providers/Microsoft.Compute/availabilitySets/HeYO/providers/Microsoft.Compute", getTestIds())
 
@@ -101,7 +101,7 @@ func TestRecaserWithMultipleProviderSegmentsAndIncorrectCasing(t *testing.T) {
 	}
 }
 
-func TestRecaserWithIncompleteProviderSegments(t *testing.T) {
+func TestReCaserWithIncompleteProviderSegments(t *testing.T) {
 	expected := "/subscriptions/11111/resourceGroups/bobby/providers/"
 	actual := reCaseWithIds("/Subscriptions/11111/resourcegroups/bobby/providers/", getTestIds())
 
@@ -110,7 +110,7 @@ func TestRecaserWithIncompleteProviderSegments(t *testing.T) {
 	}
 }
 
-func TestRecaserWithOddNumberOfSegmentsAndCorrectCasing(t *testing.T) {
+func TestReCaserWithOddNumberOfSegmentsAndCorrectCasing(t *testing.T) {
 	expected := "/subscriptions/11111/resourceGroups/bobby/providers/Microsoft.Compute/availabilitySets/"
 	actual := reCaseWithIds("/subscriptions/11111/resourceGroups/bobby/providers/Microsoft.Compute/availabilitySets/", getTestIds())
 
@@ -119,7 +119,7 @@ func TestRecaserWithOddNumberOfSegmentsAndCorrectCasing(t *testing.T) {
 	}
 }
 
-func TestRecaserWithOddNumberOfSegmentsAndIncorrectCasing(t *testing.T) {
+func TestReCaserWithOddNumberOfSegmentsAndIncorrectCasing(t *testing.T) {
 	// expect /subscriptions/ and /resourceGroups/ to be recased but not /AvaiLabilitySets/
 	expected := "/subscriptions/11111/resourceGroups/bobby/providers/Microsoft.Compute/AvaiLabilitySets/"
 	actual := reCaseWithIds("/SubsCriptions/11111/ResourceGroups/bobby/providers/Microsoft.Compute/AvaiLabilitySets/", getTestIds())
