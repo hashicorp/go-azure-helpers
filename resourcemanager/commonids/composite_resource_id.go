@@ -9,7 +9,11 @@ import (
 
 // CompositeResourceID is a struct representing the Resource ID for a Composite Resource Id
 type CompositeResourceID[T1 resourceids.ResourceId, T2 resourceids.ResourceId] struct {
-	First  T1
+	// First specifies the first component of this Resource ID.
+	// This is in the format `{first}|{second}`.
+	First T1
+	// Second specifies the second component of this Resource ID
+	// This is in the format `{first}|{second}`.
 	Second T2
 }
 
@@ -21,7 +25,7 @@ func (id CompositeResourceID[T1, T2]) ID() string {
 
 // String returns a human-readable description of this Composite Resource Id
 func (id CompositeResourceID[T1, T2]) String() string {
-	fmtString := "%s\n%s"
+	fmtString := "Composite Resource ID (%s | %s)"
 	return fmt.Sprintf(fmtString, id.First.String(), id.Second.String())
 }
 
@@ -36,16 +40,16 @@ func (id CompositeResourceID[T1, T2]) String() string {
 //	second := SqlServerId{}
 //	id, err := ParseCompositeResourceID(input, &first, &second)
 func ParseCompositeResourceID[T1 resourceids.ResourceId, T2 resourceids.ResourceId](input string, first T1, second T2) (*CompositeResourceID[T1, T2], error) {
-	return parse(input, first, second, false)
+	return parseCompositeResourceID(input, first, second, false)
 }
 
 // ParseCompositeResourceIDInsensitively parses 'input' and two ResourceIds (first,second) case-insensitively into a CompositeResourceID
 // note: this method should only be used for API response data and not user input
 func ParseCompositeResourceIDInsensitively[T1 resourceids.ResourceId, T2 resourceids.ResourceId](input string, first T1, second T2) (*CompositeResourceID[T1, T2], error) {
-	return parse(input, first, second, true)
+	return parseCompositeResourceID(input, first, second, true)
 }
 
-func parse[T1 resourceids.ResourceId, T2 resourceids.ResourceId](input string, first T1, second T2, insensitively bool) (*CompositeResourceID[T1, T2], error) {
+func parseCompositeResourceID[T1 resourceids.ResourceId, T2 resourceids.ResourceId](input string, first T1, second T2, insensitively bool) (*CompositeResourceID[T1, T2], error) {
 
 	components := strings.Split(input, "|")
 	if len(components) != 2 {

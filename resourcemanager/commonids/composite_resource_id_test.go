@@ -47,7 +47,7 @@ Site Name: "siteValue")`
 		t.Fatalf("Expected the Second ID String to be %q but got %q", expectedIdString2, actualIdString2)
 	}
 
-	expectedCompositeString := fmt.Sprintf("%s\n%s", expectedIdString1, expectedIdString2)
+	expectedCompositeString := fmt.Sprintf("Composite Resource ID (%s | %s)", expectedIdString1, expectedIdString2)
 	actualCompositeString := id.String()
 	if expectedCompositeString != actualCompositeString {
 		t.Fatalf("Expected the Composite ID String to be %q but got %q", expectedCompositeString, actualCompositeString)
@@ -97,7 +97,7 @@ Site Name: "siteValue")`
 		t.Fatalf("Expected the Second ID String to be %q but got %q", expectedIdString2, actualIdString2)
 	}
 
-	expectedCompositeString := fmt.Sprintf("%s\n%s", expectedIdString1, expectedIdString2)
+	expectedCompositeString := fmt.Sprintf("Composite Resource ID (%s | %s)", expectedIdString1, expectedIdString2)
 	actualCompositeString := id.String()
 	if expectedCompositeString != actualCompositeString {
 		t.Fatalf("Expected the Composite ID String to be %q but got %q", expectedCompositeString, actualCompositeString)
