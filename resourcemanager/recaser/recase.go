@@ -10,11 +10,11 @@ import (
 
 // ReCase tries to determine the type of Resource ID defined in `input` to be able to re-case it from
 func ReCase(input string) string {
-	return ReCaseWithIds(input, knownResourceIds)
+	return reCaseWithIds(input, knownResourceIds)
 }
 
-// ReCaseWithIds tries to determine the type of Resource ID defined in `input` to be able to re-case it from based on an input list of Resource IDs
-func ReCaseWithIds(input string, ids map[string]resourceids.ResourceId) string {
+// reCaseWithIds tries to determine the type of Resource ID defined in `input` to be able to re-case it from based on an input list of Resource IDs
+func reCaseWithIds(input string, ids map[string]resourceids.ResourceId) string {
 	output := input
 	recased := false
 
@@ -78,8 +78,13 @@ func fixSegment(input, segment string) string {
 // so it can be used as a key to extract the correct id from knownResourceIds
 func buildInputKey(input string) string {
 	output := ""
-	segments := strings.Split(input, "/")
 
+	// don't attempt to build a key if this isn't a standard resource id
+	if !strings.HasPrefix(input, "/") {
+		return output
+	}
+
+	segments := strings.Split(input, "/")
 	if len(segments)%2 != 0 {
 		for i := 1; len(segments) > i; i++ {
 			if i%2 != 0 {

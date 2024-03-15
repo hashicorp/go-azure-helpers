@@ -9,10 +9,10 @@ import (
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/resourceids"
 )
 
-var _ resourceids.ResourceId = &FleetId{}
+var _ resourceids.ResourceId = &KubernetesFleetId{}
 
-func TestNewFleetID(t *testing.T) {
-	id := NewFleetID("12345678-1234-9876-4563-123456789012", "example-resource-group", "fleetValue")
+func TestNewKubernetesFleetID(t *testing.T) {
+	id := NewKubernetesFleetID("12345678-1234-9876-4563-123456789012", "example-resource-group", "fleetValue")
 
 	if id.SubscriptionId != "12345678-1234-9876-4563-123456789012" {
 		t.Fatalf("Expected %q but got %q for Segment 'SubscriptionId'", id.SubscriptionId, "12345678-1234-9876-4563-123456789012")
@@ -27,19 +27,19 @@ func TestNewFleetID(t *testing.T) {
 	}
 }
 
-func TestFormatFleetID(t *testing.T) {
-	actual := NewFleetID("12345678-1234-9876-4563-123456789012", "example-resource-group", "fleetValue").ID()
+func TestFormatKubernetesFleetID(t *testing.T) {
+	actual := NewKubernetesFleetID("12345678-1234-9876-4563-123456789012", "example-resource-group", "fleetValue").ID()
 	expected := "/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/example-resource-group/providers/Microsoft.ContainerService/fleets/fleetValue"
 	if actual != expected {
 		t.Fatalf("Expected the Formatted ID to be %q but got %q", expected, actual)
 	}
 }
 
-func TestParseFleetID(t *testing.T) {
+func TestParseKubernetesFleetID(t *testing.T) {
 	testData := []struct {
 		Input    string
 		Error    bool
-		Expected *FleetId
+		Expected *KubernetesFleetId
 	}{
 		{
 			// Incomplete URI
@@ -84,7 +84,7 @@ func TestParseFleetID(t *testing.T) {
 		{
 			// Valid URI
 			Input: "/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/example-resource-group/providers/Microsoft.ContainerService/fleets/fleetValue",
-			Expected: &FleetId{
+			Expected: &KubernetesFleetId{
 				SubscriptionId:    "12345678-1234-9876-4563-123456789012",
 				ResourceGroupName: "example-resource-group",
 				FleetName:         "fleetValue",
@@ -99,7 +99,7 @@ func TestParseFleetID(t *testing.T) {
 	for _, v := range testData {
 		t.Logf("[DEBUG] Testing %q", v.Input)
 
-		actual, err := ParseFleetID(v.Input)
+		actual, err := ParseKubernetesFleetID(v.Input)
 		if err != nil {
 			if v.Error {
 				continue
@@ -126,11 +126,11 @@ func TestParseFleetID(t *testing.T) {
 	}
 }
 
-func TestParseFleetIDInsensitively(t *testing.T) {
+func TestParseKubernetesFleetIDInsensitively(t *testing.T) {
 	testData := []struct {
 		Input    string
 		Error    bool
-		Expected *FleetId
+		Expected *KubernetesFleetId
 	}{
 		{
 			// Incomplete URI
@@ -210,7 +210,7 @@ func TestParseFleetIDInsensitively(t *testing.T) {
 		{
 			// Valid URI
 			Input: "/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/example-resource-group/providers/Microsoft.ContainerService/fleets/fleetValue",
-			Expected: &FleetId{
+			Expected: &KubernetesFleetId{
 				SubscriptionId:    "12345678-1234-9876-4563-123456789012",
 				ResourceGroupName: "example-resource-group",
 				FleetName:         "fleetValue",
@@ -224,7 +224,7 @@ func TestParseFleetIDInsensitively(t *testing.T) {
 		{
 			// Valid URI (mIxEd CaSe since this is insensitive)
 			Input: "/sUbScRiPtIoNs/12345678-1234-9876-4563-123456789012/rEsOuRcEgRoUpS/eXaMpLe-rEsOuRcE-GrOuP/pRoViDeRs/mIcRoSoFt.cOnTaInErSeRvIcE/fLeEtS/fLeEtVaLuE",
-			Expected: &FleetId{
+			Expected: &KubernetesFleetId{
 				SubscriptionId:    "12345678-1234-9876-4563-123456789012",
 				ResourceGroupName: "eXaMpLe-rEsOuRcE-GrOuP",
 				FleetName:         "fLeEtVaLuE",
@@ -239,7 +239,7 @@ func TestParseFleetIDInsensitively(t *testing.T) {
 	for _, v := range testData {
 		t.Logf("[DEBUG] Testing %q", v.Input)
 
-		actual, err := ParseFleetIDInsensitively(v.Input)
+		actual, err := ParseKubernetesFleetIDInsensitively(v.Input)
 		if err != nil {
 			if v.Error {
 				continue
@@ -266,10 +266,10 @@ func TestParseFleetIDInsensitively(t *testing.T) {
 	}
 }
 
-func TestSegmentsForFleetId(t *testing.T) {
-	segments := FleetId{}.Segments()
+func TestSegmentsForKubernetesFleetId(t *testing.T) {
+	segments := KubernetesFleetId{}.Segments()
 	if len(segments) == 0 {
-		t.Fatalf("FleetId has no segments")
+		t.Fatalf("KubernetesFleetId has no segments")
 	}
 
 	uniqueNames := make(map[string]struct{}, 0)

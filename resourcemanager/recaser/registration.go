@@ -14,14 +14,9 @@ var resourceIdsWriteLock = &sync.Mutex{}
 
 func init() {
 	//register common ids
-	resourceIdsWriteLock.Lock()
 	for _, id := range commonids.CommonIds() {
-		key := strings.ToLower(id.ID())
-		if _, ok := knownResourceIds[key]; !ok {
-			knownResourceIds[key] = id
-		}
+		RegisterResourceId(id)
 	}
-	resourceIdsWriteLock.Unlock()
 }
 
 // RegisterResourceId adds ResourceIds to a list of known ids
