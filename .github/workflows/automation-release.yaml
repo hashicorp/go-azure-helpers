@@ -1,0 +1,130 @@
+name: Conditionally Release the SDK
+on:
+  pull_request:
+    types: ['closed']
+
+concurrency:
+  group: 'release-${{ github.head_ref }}'
+  cancel-in-progress: true
+
+jobs:
+  release-go-azure-helpers:
+    if: ${{ github.event.pull_request.merged == true && contains( github.event.pull_request.labels.*.name, 'release-once-merged') }}
+    runs-on: custom-linux-medium
+    permissions:
+      contents: write
+    outputs:
+      latest_tag: ${{ steps.results.outputs.latest_tag }}
+      should_update_azurerm: ${{ steps.results.outputs.should_update_azurerm }}
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+
+      - name: run the unit tests
+        run: |
+          make test
+
+      - name: "determine and publish the Git Tag"
+        run: |
+          ./scripts/determine-and-publish-git-tag.sh
+
+      - id: results
+        name: "collecting outputs"
+        run: |
+          latestTag=$(git describe --tags $(git rev-list --tags --max-count=1))
+          echo "latest_tag=$latestTag" >> "$GITHUB_OUTPUT"
+          echo "should_update_azurerm=${{ github.event.pull_request.merged == true && contains( github.event.pull_request.labels.*.name, 'update-azurerm-after-release') }}" >> "$GITHUB_OUTPUT"
+        shell: bash
+
+  conditionally-update-azurerm:
+    needs: [release-go-azure-helpers]
+    if: ${{github.event.pull_request.merged == true && contains( github.event.pull_request.labels.*.name, 'update-azurerm-after-release') }}
+    runs-on: custom-linux-xl
+    outputs:
+      has_changes_to_push: ${{ steps.update-azurerm-provider.outputs.has_changes_to_push }}
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491 # v5.0.0
+        with:
+          go-version-file: ./.go-version
+
+      - name: "Launch SSH Agent"
+        run: |
+          # launch an ssh agent and export it's env vars
+          ssh-agent -a $SSH_AUTH_SOCK > /dev/null
+        env:
+          SSH_AUTH_SOCK: /tmp/azurerm_ssh_agent.sock
+
+      - name: "Load SSH Key"
+        run: |
+          # load the Deployment Write Key for the AzureRM repository
+          echo "${{ secrets.AZURERM_DEPLOYMENT_WRITE_KEY }}" | ssh-add -
+        env:
+          SSH_AUTH_SOCK: /tmp/azurerm_ssh_agent.sock
+
+      - id: update-azurerm-provider
+        name: "Update then push the AzureRM Provider"
+        run: |
+          # update the provider
+          ./scripts/update-azurerm-provider.sh ${{ needs.release-go-azure-helpers.outputs.latest_tag }}
+          # then read the result out
+          has_changes_to_push="$(cat ./tmp/has-changes-to-push.txt)"
+          echo "Has Changes to Push: ${has_changes_to_push}"
+          echo "has_changes_to_push=$has_changes_to_push" >> "$GITHUB_OUTPUT"
+
+        shell: bash
+        env:
+          GIT_COMMIT_USERNAME: "hc-github-team-tf-azure"
+          RUNNING_IN_AUTOMATION: "yep"
+          SSH_AUTH_SOCK: /tmp/azurerm_ssh_agent.sock
+
+      - name: "Remove the Key from the SSH Agent"
+        if: always()
+        run: |
+          # remove the ssh key
+          ssh-add -D
+        env:
+          SSH_AUTH_SOCK: /tmp/azurerm_ssh_agent.sock
+
+      - name: "Terminate the SSH Agent"
+        if: always()
+        run: |
+          pkill -9 ssh-agent
+
+      - name: Wait 60s for the other Github Action to open the PR
+        if: success()
+        run: |
+          echo "Sleeping 60s to give Github time to create the PR.."
+          sleep 60
+
+      - id: comment-on-the-pr
+        name: Comment on the PR
+        uses: nick-fields/retry@14672906e672a08bd6eeb15720e9ed3ce869cdd4 # v2.9.0
+        with:
+          max_attempts: 20
+          polling_interval_seconds: 15
+          retry_on: any
+          shell: bash
+          timeout_seconds: 30
+          command: |
+            echo "Determining if has changes to push.."
+            has_changes_to_push="${{ steps.update-azurerm-provider.outputs.has_changes_to_push }}"
+            echo "Has Changes to Push: ${has_changes_to_push}"
+            if [[ "${has_changes_to_push}" == "yes" ]]; then
+              echo "Finding the PR number.."
+              pr_number=$(gh pr list --repo="hashicorp/terraform-provider-azurerm" --search "author:hc-github-team-tf-azure sort:created-desc is:pr is:open" --json "headRefName,number" | jq '.[] | select(.headRefName=="auto-deps-pr/updating-go-azure-helpers-to-${{ needs.release-go-azure-helpers.outputs.latest_tag }}") | .number')
+              if [[ "${pr_number}" == "" ]]; then
+                # not ready yet
+                echo "PR Number not found, not available yet?"
+                exit 1
+              fi
+            
+              echo "PR Number was ${pr_number}"
+              gh issue comment $pr_number --repo "hashicorp/terraform-provider-azurerm" --body-file ./tmp/pr-description.txt
+            fi
+
+        env:
+          GH_TOKEN: "${{ secrets.AZURERM_COMMENT_KEY }}"
+
