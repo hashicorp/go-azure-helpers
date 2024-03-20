@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/resourceids"
 )
 
-var KnownResourceIds = make(map[string]resourceids.ResourceId)
+var knownResourceIds = make(map[string]resourceids.ResourceId)
 
 var resourceIdsWriteLock = &sync.Mutex{}
 
@@ -24,8 +24,8 @@ func RegisterResourceId(id resourceids.ResourceId) {
 	key := strings.ToLower(id.ID())
 
 	resourceIdsWriteLock.Lock()
-	if _, ok := KnownResourceIds[key]; !ok {
-		KnownResourceIds[key] = id
+	if _, ok := knownResourceIds[key]; !ok {
+		knownResourceIds[key] = id
 	}
 	resourceIdsWriteLock.Unlock()
 }

@@ -10,7 +10,7 @@ import (
 
 // ReCase tries to determine the type of Resource ID defined in `input` to be able to re-case it from
 func ReCase(input string) string {
-	return reCaseWithIds(input, KnownResourceIds)
+	return reCaseWithIds(input, knownResourceIds)
 }
 
 // reCaseWithIds tries to determine the type of Resource ID defined in `input` to be able to re-case it from based on an input list of Resource IDs
@@ -75,7 +75,7 @@ func fixSegment(input, segment string) string {
 }
 
 // buildInputKey takes an input id string and removes user-specified values from it
-// so it can be used as a key to extract the correct id from KnownResourceIds
+// so it can be used as a key to extract the correct id from knownResourceIds
 func buildInputKey(input string) (*string, bool) {
 
 	// don't attempt to build a key if this isn't a standard resource id
