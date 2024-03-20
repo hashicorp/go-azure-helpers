@@ -12,6 +12,7 @@ type CompositeResourceID[T1 resourceids.ResourceId, T2 resourceids.ResourceId] s
 	// First specifies the first component of this Resource ID.
 	// This is in the format `{first}|{second}`.
 	First T1
+
 	// Second specifies the second component of this Resource ID
 	// This is in the format `{first}|{second}`.
 	Second T2
