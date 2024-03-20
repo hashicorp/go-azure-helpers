@@ -10,7 +10,7 @@ import (
 
 // ReCase tries to determine the type of Resource ID defined in `input` to be able to re-case it from
 func ReCase(input string) string {
-	return reCaseWithIds(input, knownResourceIds)
+	return reCaseWithIds(input, KnownResourceIds)
 }
 
 // reCaseWithIds tries to determine the type of Resource ID defined in `input` to be able to re-case it from based on an input list of Resource IDs
@@ -18,9 +18,9 @@ func reCaseWithIds(input string, ids map[string]resourceids.ResourceId) string {
 	output := input
 	recased := false
 
-	idKey := buildInputKey(input)
-	if idKey != "" {
-		id := ids[idKey]
+	key, ok := buildInputKey(input)
+	if ok {
+		id := ids[*key]
 		if id != nil {
 			output, recased = parseId(id, input)
 		}
@@ -75,21 +75,29 @@ func fixSegment(input, segment string) string {
 }
 
 // buildInputKey takes an input id string and removes user-specified values from it
-// so it can be used as a key to extract the correct id from knownResourceIds
-func buildInputKey(input string) string {
-	output := ""
+// so it can be used as a key to extract the correct id from KnownResourceIds
+func buildInputKey(input string) (*string, bool) {
 
 	// don't attempt to build a key if this isn't a standard resource id
 	if !strings.HasPrefix(input, "/") {
-		return output
+		return nil, false
 	}
 
+	output := ""
+
 	segments := strings.Split(input, "/")
+	// iterate through the segments extracting any that are not user inputs
+	// and append them together to make a key
+	// eg "/subscriptions/1111/resourceGroups/group1/providers/Microsoft.BotService/botServices/botServiceValue" will become:
+	// "/subscriptions//resourceGroups//providers/Microsoft.BotService/botServices/"
 	if len(segments)%2 != 0 {
 		for i := 1; len(segments) > i; i++ {
 			if i%2 != 0 {
 				key := segments[i]
 				output = fmt.Sprintf("%s/%s/", output, key)
+
+				// if the current segment is a providers segment, then we should append the next segment to the key
+				// as this is not a user input segment
 				if strings.EqualFold(key, "providers") && len(segments) >= i+2 {
 					value := segments[i+1]
 					output = fmt.Sprintf("%s%s", output, value)
@@ -97,5 +105,6 @@ func buildInputKey(input string) string {
 			}
 		}
 	}
-	return strings.ToLower(output)
+	output = strings.ToLower(output)
+	return &output, true
 }
