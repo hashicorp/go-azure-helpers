@@ -63,6 +63,9 @@ const (
 
 	// UserSpecifiedSegmentType specifies that this Segment is User-Specifiable
 	UserSpecifiedSegmentType SegmentType = "UserSpecified"
+
+	// DataPlaneHostSegmentType sepcifies that this Segment is a Data Plane Host
+	DataPlaneHostSegmentType SegmentType = "DataPlaneHost"
 )
 
 // ConstantSegment is a helper which returns a Segment for a Constant
@@ -127,6 +130,15 @@ func UserSpecifiedSegment(name, exampleValue string) Segment {
 	return Segment{
 		Name:         name,
 		Type:         UserSpecifiedSegmentType,
+		ExampleValue: exampleValue,
+	}
+}
+
+// DataPlaneHostSegment is a helper which returns a Segment for a Data Plane Host
+func DataPlaneHostSegment(name, exampleValue string) Segment {
+	return Segment{
+		Name:         name,
+		Type:         DataPlaneHostSegmentType,
 		ExampleValue: exampleValue,
 	}
 }
