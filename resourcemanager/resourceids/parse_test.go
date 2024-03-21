@@ -1016,6 +1016,50 @@ func TestParseIdContainingJustAScope(t *testing.T) {
 	}
 }
 
+func TestParseIdDataPlane(t *testing.T) {
+	segments := []resourceids.Segment{
+		resourceids.DataPlaneHostSegment("domainName", "domainValue"),
+		resourceids.StaticSegment("staticExample", "example", "example"),
+		resourceids.UserSpecifiedSegment("fooName", "fooValue"),
+		resourceids.UserSpecifiedSegment("barName", "barValue"),
+	}
+	testData := []struct {
+		name        string
+		input       string
+		expected    *resourceids.ParseResult
+		insensitive bool
+	}{
+		{
+			name:        "empty",
+			input:       "",
+			insensitive: false,
+		},
+		{
+			name:        "with https",
+			input:       "https://example.com/example/foo/bar",
+			insensitive: false,
+			expected: &resourceids.ParseResult{
+				Parsed: map[string]string{
+					"domainName":    "https://example.com",
+					"staticExample": "example",
+					"fooName":       "foo",
+					"barName":       "bar",
+				},
+				RawInput: "https://example.com/example/foo/bar",
+			},
+		},
+	}
+	for _, test := range testData {
+		t.Logf("Test %q..", test.name)
+		rid := fakeIdParser{
+			segments,
+		}
+		parser := resourceids.NewParserFromResourceIdType(rid)
+		actual, err := parser.Parse(test.input, test.insensitive)
+		validateResult(t, actual, test.expected, err)
+	}
+}
+
 var _ resourceids.ResourceId = fakeIdParser{}
 
 type fakeIdParser struct {

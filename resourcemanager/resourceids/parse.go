@@ -5,6 +5,7 @@ package resourceids
 
 import (
 	"fmt"
+	"net/url"
 	"regexp"
 	"strings"
 )
@@ -100,6 +101,10 @@ func (p Parser) Parse(input string, insensitively bool) (*ParseResult, error) {
 		}
 
 		switch segment.Type {
+		case DataPlaneHostSegmentType:
+			if i != 0 {
+				return nil, fmt.Errorf("internal error: data plane host segment %q is not at the start of the Resource ID", segment.Name)
+			}
 		case ConstantSegmentType:
 			{
 				if segment.PossibleValues == nil {
@@ -155,8 +160,22 @@ func (p Parser) Parse(input string, insensitively bool) (*ParseResult, error) {
 		uri = fmt.Sprintf("fakestart/%s", uri)
 	}
 
+	var domain string
+	if p.segments[0].Type == DataPlaneHostSegmentType {
+		if u, err := url.Parse(uri); err != nil {
+			return nil, fmt.Errorf("parsing data plane host segment: %+v", err)
+		} else {
+			domain = fmt.Sprintf("%s://%s", u.Scheme, u.Host)
+			uri = u.Path
+		}
+	}
+
 	uri = strings.TrimPrefix(uri, "/")
 	split := strings.Split(uri, "/")
+	if domain != "" {
+		split = append([]string{domain}, split...)
+	}
+
 	segmentCount := len(split)
 	if segmentCount < len(p.segments) {
 		return nil, NewNumberOfSegmentsDidntMatchError(p.resourceId, parseResult)
@@ -270,7 +289,7 @@ func (p Parser) parseSegment(segment Segment, rawValue string, insensitively boo
 			return nil, fmt.Errorf("internal error: scope segments aren't supported unless at the start or the end")
 		}
 
-	case ResourceGroupSegmentType, SubscriptionIdSegmentType, UserSpecifiedSegmentType:
+	case ResourceGroupSegmentType, SubscriptionIdSegmentType, UserSpecifiedSegmentType, DataPlaneHostSegmentType:
 		{
 			return &rawValue, nil
 		}

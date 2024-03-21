@@ -98,6 +98,11 @@ func descriptionForSpecifiedSegment(segment Segment) (*string, error) {
 			msg := fmt.Sprintf("should be the user specified value for this %s [for example %q]", name, segment.ExampleValue)
 			return &msg, nil
 		}
+	case DataPlaneHostSegmentType:
+		{
+			msg := fmt.Sprintf("should be the data plane host for this %s [for example %q]", segment.Name, segment.ExampleValue)
+			return &msg, nil
+		}
 	}
 
 	return nil, fmt.Errorf("internal-error: the Segment Type %q was not implemented for Segment %q", string(segment.Type), segment.Name)
