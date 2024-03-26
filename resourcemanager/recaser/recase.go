@@ -13,7 +13,7 @@ func ReCase(input string) string {
 	return reCaseWithIds(input, knownResourceIds)
 }
 
-// reCaseWithIds tries to determine the type of Resource ID defined in `input` to be able to re-case it from based on an input list of Resource IDs
+// reCaseWithIds tries to determine the type of Resource ID defined in `input` to be able to re-case it based on an input list of Resource IDs
 func reCaseWithIds(input string, ids map[string]resourceids.ResourceId) string {
 	output := input
 	recased := false
