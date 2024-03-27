@@ -10,7 +10,7 @@ concurrency:
 jobs:
   release-go-azure-helpers:
     if: ${{ github.event.pull_request.merged == true && contains( github.event.pull_request.labels.*.name, 'release-once-merged') }}
-    runs-on: custom-linux-medium
+    runs-on: ubuntu-latest
     permissions:
       contents: write
     outputs:
@@ -38,7 +38,7 @@ jobs:
   conditionally-update-azurerm:
     needs: [release-go-azure-helpers]
     if: ${{github.event.pull_request.merged == true && contains( github.event.pull_request.labels.*.name, 'update-azurerm-after-release') }}
-    runs-on: custom-linux-xl
+    runs-on: ubuntu-latest
     outputs:
       has_changes_to_push: ${{ steps.update-azurerm-provider.outputs.has_changes_to_push }}
     steps:
