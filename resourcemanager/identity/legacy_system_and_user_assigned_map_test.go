@@ -163,3 +163,96 @@ func TestLegacySystemUserAssignedMapMarshal(t *testing.T) {
 		}
 	}
 }
+
+func TestLegacySystemAndUserAssignedMapUnmarshal(t *testing.T) {
+	testData := []struct {
+		input                string
+		expectedIdentityType string
+		expectError          bool
+	}{
+		{
+			input: `{
+			  "userAssignedIdentities":{
+				 "/subscriptions/xxx/resourcegroups/testRG/providers/Microsoft.ManagedIdentity/userAssignedIdentities/testUAI1":{
+					"principalId":"00000000-00000-0000-0000-000000000000",
+					"clientId":"00000000-00000-0000-0000-000000000000"
+				 }
+			  },
+			  "principalId":"00000000-00000-0000-0000-000000000000",
+			  "type":"SystemAssigned, UserAssigned",
+			  "tenantId":"00000000-00000-0000-0000-000000000000"
+			}`,
+			expectedIdentityType: "SystemAssigned, UserAssigned",
+		},
+		{
+			input: `{
+			  "userAssignedIdentities":{
+				 "/subscriptions/xxx/resourcegroups/testRG/providers/Microsoft.ManagedIdentity/userAssignedIdentities/testUAI1":{
+					"principalId":"00000000-00000-0000-0000-000000000000",
+					"clientId":"00000000-00000-0000-0000-000000000000"
+				 }
+			  },
+			  "principalId":"00000000-00000-0000-0000-000000000000",
+			  "type":"SystemAssigned,UserAssigned",
+			  "tenantId":"00000000-00000-0000-0000-000000000000"
+			}`,
+			expectedIdentityType: "SystemAssigned, UserAssigned",
+		},
+		{
+			input: `{
+			  "principalId":"00000000-00000-0000-0000-000000000000",
+			  "type":"SystemAssigned",
+			  "tenantId":"00000000-00000-0000-0000-000000000000"
+			}`,
+			expectedIdentityType: "SystemAssigned",
+		},
+		{
+			input: `{
+			  "userAssignedIdentities":{
+				 "/subscriptions/xxx/resourcegroups/testRG/providers/Microsoft.ManagedIdentity/userAssignedIdentities/testUAI1":{
+					"principalId":"00000000-00000-0000-0000-000000000000",
+					"clientId":"00000000-00000-0000-0000-000000000000"
+				 }
+			  },
+			  "type":"UserAssigned"
+			}`,
+			expectedIdentityType: "UserAssigned",
+		},
+		{
+			input:                `{"type":"None"}`,
+			expectedIdentityType: "None",
+		},
+		{
+			input:                `{"type":"unknown"}`,
+			expectedIdentityType: "None",
+		},
+		{
+			// input is invalid JSON
+			input:       `{"type": UserAssigned}`,
+			expectError: true,
+		},
+	}
+
+	var s LegacySystemAndUserAssignedMap
+	err := s.UnmarshalJSON(nil)
+	if err != nil {
+		t.Errorf("expected nil error, got: %v", err)
+	}
+
+	for i, v := range testData {
+		t.Logf("step %d..", i)
+
+		err = s.UnmarshalJSON([]byte(v.input))
+		if err != nil {
+			if v.expectError {
+				continue
+			}
+
+			t.Errorf("expected nil error, got: %v", err)
+		}
+
+		if string(s.Type) != v.expectedIdentityType {
+			t.Errorf("expected type to be %s, got: %s", v.expectedIdentityType, string(s.Type))
+		}
+	}
+}
