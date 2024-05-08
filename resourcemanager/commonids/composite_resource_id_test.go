@@ -8,6 +8,37 @@ import (
 	"testing"
 )
 
+func TestNewCompositeResourceID(t *testing.T) {
+	botIdString := "/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/example-resource-group/providers/Microsoft.BotService/botServices/botServiceValue"
+	appIdString := "/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/example-resource-group/providers/Microsoft.Web/sites/siteValue"
+
+	botId, err := ParseBotServiceID(botIdString)
+	if err != nil {
+		t.Fatalf("parsing resource ID for composite resource ID test: %+v", err)
+	}
+
+	appId, err := ParseAppServiceID(appIdString)
+	if err != nil {
+		t.Fatalf("parsing resource ID for composite resource ID test: %+v", err)
+	}
+
+	id := NewCompositeResourceID(botId, appId)
+
+	if id.First.ID() != botIdString {
+		t.Fatalf("expected First ID string to be %q but got %q", botIdString, id.First.ID())
+	}
+
+	if id.Second.ID() != appIdString {
+		t.Fatalf("expected Second ID string to be %q but got %q", appIdString, id.Second.ID())
+	}
+
+	expectedIdString := "/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/example-resource-group/providers/Microsoft.BotService/botServices/botServiceValue|/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/example-resource-group/providers/Microsoft.Web/sites/siteValue"
+
+	if id.ID() != expectedIdString {
+		t.Fatalf("Expected ID string to be %q but got %q", expectedIdString, id.ID())
+	}
+}
+
 func TestCompositeResourceID(t *testing.T) {
 	idString := "/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/example-resource-group/providers/Microsoft.BotService/botServices/botServiceValue|/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/example-resource-group/providers/Microsoft.Web/sites/siteValue"
 
