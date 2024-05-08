@@ -5,7 +5,6 @@ package commonids
 
 import (
 	"fmt"
-	"strings"
 	"testing"
 )
 
@@ -25,17 +24,17 @@ func TestNewCompositeResourceID(t *testing.T) {
 
 	id := NewCompositeResourceID(botId, appId)
 
-	if !strings.EqualFold(id.First.ID(), botIdString) {
+	if id.First.ID() != botIdString {
 		t.Fatalf("expected First ID string to be %q but got %q", botIdString, id.First.ID())
 	}
 
-	if !strings.EqualFold(id.Second.ID(), appIdString) {
+	if id.Second.ID() != appIdString {
 		t.Fatalf("expected Second ID string to be %q but got %q", appIdString, id.Second.ID())
 	}
 
 	expectedIdString := "/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/example-resource-group/providers/Microsoft.BotService/botServices/botServiceValue|/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/example-resource-group/providers/Microsoft.Web/sites/siteValue"
 
-	if !strings.EqualFold(id.ID(), expectedIdString) {
+	if id.ID() != expectedIdString {
 		t.Fatalf("Expected ID string to be %q but got %q", expectedIdString, id.ID())
 	}
 }
