@@ -14,7 +14,10 @@ import (
 func TestReCaserWithIncorrectCasing(t *testing.T) {
 	expected := "/subscriptions/11111/resourceGroups/bobby/providers/Microsoft.Compute/availabilitySets/HeYO"
 
-	actual := reCaseWithIds("/Subscriptions/11111/resourcegroups/bobby/Providers/Microsoft.Compute/AvailabilitySets/HeYO", getTestIds())
+	actual, err := reCaseWithIds("/Subscriptions/11111/resourcegroups/bobby/Providers/Microsoft.Compute/AvailabilitySets/HeYO", getTestIds(), true)
+	if err != nil {
+		t.Fatalf("Expected no error but got %q", err)
+	}
 	if actual != expected {
 		t.Fatalf("Expected %q but got %q", expected, actual)
 	}
@@ -22,8 +25,10 @@ func TestReCaserWithIncorrectCasing(t *testing.T) {
 
 func TestReCaserWithCorrectCasing(t *testing.T) {
 	expected := "/subscriptions/11111/resourceGroups/bobby/providers/Microsoft.Compute/availabilitySets/HeYO"
-	actual := reCaseWithIds("/subscriptions/11111/resourceGroups/bobby/providers/Microsoft.Compute/availabilitySets/HeYO", getTestIds())
-
+	actual, err := reCaseWithIds("/subscriptions/11111/resourceGroups/bobby/providers/Microsoft.Compute/availabilitySets/HeYO", getTestIds(), true)
+	if err != nil {
+		t.Fatalf("Expected no error but got %q", err)
+	}
 	if actual != expected {
 		t.Fatalf("Expected %q but got %q", expected, actual)
 	}
@@ -32,8 +37,10 @@ func TestReCaserWithCorrectCasing(t *testing.T) {
 
 func TestReCaserWithCorrectCasingResourceGroupId(t *testing.T) {
 	expected := "/subscriptions/11111/resourceGroups/bobby"
-	actual := reCaseWithIds("/subscriptions/11111/resourceGroups/bobby", getTestIds())
-
+	actual, err := reCaseWithIds("/subscriptions/11111/resourceGroups/bobby", getTestIds(), true)
+	if err != nil {
+		t.Fatalf("Expected no error but got %q", err)
+	}
 	if actual != expected {
 		t.Fatalf("Expected %q but got %q", expected, actual)
 	}
@@ -41,8 +48,10 @@ func TestReCaserWithCorrectCasingResourceGroupId(t *testing.T) {
 
 func TestReCaserWithIncorrectCasingResourceGroupId(t *testing.T) {
 	expected := "/subscriptions/11111/resourceGroups/bobby"
-	actual := reCaseWithIds("/Subscriptions/11111/resourcegroups/bobby", getTestIds())
-
+	actual, err := reCaseWithIds("/Subscriptions/11111/resourcegroups/bobby", getTestIds(), true)
+	if err != nil {
+		t.Fatalf("Expected no error but got %q", err)
+	}
 	if actual != expected {
 		t.Fatalf("Expected %q but got %q", expected, actual)
 	}
@@ -51,8 +60,10 @@ func TestReCaserWithIncorrectCasingResourceGroupId(t *testing.T) {
 func TestReCaserWithUnknownId(t *testing.T) {
 	// should return string without recasing
 	expected := "/blah/11111/Blah"
-	actual := reCaseWithIds("/blah/11111/Blah", getTestIds())
-
+	actual, err := reCaseWithIds("/blah/11111/Blah", getTestIds(), true)
+	if err != nil {
+		t.Fatalf("Expected no error but got %q", err)
+	}
 	if actual != expected {
 		t.Fatalf("Expected %q but got %q", expected, actual)
 	}
@@ -61,8 +72,10 @@ func TestReCaserWithUnknownId(t *testing.T) {
 func TestReCaserWithUnkownIdContainingSubscriptions(t *testing.T) {
 
 	expected := "/subscriptions/11111/Blah"
-	actual := reCaseWithIds("/suBsCrIpTiOnS/11111/Blah", getTestIds())
-
+	actual, err := reCaseWithIds("/suBsCrIpTiOnS/11111/Blah", getTestIds(), true)
+	if err != nil {
+		t.Fatalf("Expected no error but got %q", err)
+	}
 	if actual != expected {
 		t.Fatalf("Expected %q but got %q", expected, actual)
 	}
@@ -70,8 +83,10 @@ func TestReCaserWithUnkownIdContainingSubscriptions(t *testing.T) {
 
 func TestReCaserWithUnkownIdContainingSubscriptionsAndResourceGroups(t *testing.T) {
 	expected := "/subscriptions/11111/resourceGroups/group1/blah/"
-	actual := reCaseWithIds("/suBscriptions/11111/ReSoUrCeGRoUps/group1/blah/", getTestIds())
-
+	actual, err := reCaseWithIds("/suBscriptions/11111/ReSoUrCeGRoUps/group1/blah/", getTestIds(), true)
+	if err != nil {
+		t.Fatalf("Expected no error but got %q", err)
+	}
 	if actual != expected {
 		t.Fatalf("Expected %q but got %q", expected, actual)
 	}
@@ -79,8 +94,10 @@ func TestReCaserWithUnkownIdContainingSubscriptionsAndResourceGroups(t *testing.
 
 func TestReCaserWithEmptyString(t *testing.T) {
 	expected := ""
-	actual := reCaseWithIds("", getTestIds())
-
+	actual, err := reCaseWithIds("", getTestIds(), true)
+	if err != nil {
+		t.Fatalf("Expected no error but got %q", err)
+	}
 	if actual != expected {
 		t.Fatalf("Expected %q but got %q", expected, actual)
 	}
@@ -88,8 +105,10 @@ func TestReCaserWithEmptyString(t *testing.T) {
 
 func TestReCaserWithMultipleProviderSegmentsAndCorrectCasing(t *testing.T) {
 	expected := "/subscriptions/11111/resourceGroups/bobby/providers/Microsoft.Compute/availabilitySets/HeYO/providers/Microsoft.Compute"
-	actual := reCaseWithIds("/subscriptions/11111/resourceGroups/bobby/providers/Microsoft.Compute/availabilitySets/HeYO/providers/Microsoft.Compute", getTestIds())
-
+	actual, err := reCaseWithIds("/subscriptions/11111/resourceGroups/bobby/providers/Microsoft.Compute/availabilitySets/HeYO/providers/Microsoft.Compute", getTestIds(), true)
+	if err != nil {
+		t.Fatalf("Expected no error but got %q", err)
+	}
 	if actual != expected {
 		t.Fatalf("Expected %q but got %q", expected, actual)
 	}
@@ -97,8 +116,10 @@ func TestReCaserWithMultipleProviderSegmentsAndCorrectCasing(t *testing.T) {
 
 func TestReCaserWithMultipleProviderSegmentsAndIncorrectCasing(t *testing.T) {
 	expected := "/subscriptions/11111/resourceGroups/bobby/providers/Microsoft.Compute/availabilitySets/HeYO/providers/Microsoft.Compute"
-	actual := reCaseWithIds("/Subscriptions/11111/resourcegroups/bobby/providers/Microsoft.Compute/availabilitySets/HeYO/providers/Microsoft.Compute", getTestIds())
-
+	actual, err := reCaseWithIds("/Subscriptions/11111/resourcegroups/bobby/providers/Microsoft.Compute/availabilitySets/HeYO/providers/Microsoft.Compute", getTestIds(), true)
+	if err != nil {
+		t.Fatalf("Expected no error but got %q", err)
+	}
 	if actual != expected {
 		t.Fatalf("Expected %q but got %q", expected, actual)
 	}
@@ -106,8 +127,10 @@ func TestReCaserWithMultipleProviderSegmentsAndIncorrectCasing(t *testing.T) {
 
 func TestReCaserWithIncompleteProviderSegments(t *testing.T) {
 	expected := "/subscriptions/11111/resourceGroups/bobby/providers/"
-	actual := reCaseWithIds("/Subscriptions/11111/resourcegroups/bobby/providers/", getTestIds())
-
+	actual, err := reCaseWithIds("/Subscriptions/11111/resourcegroups/bobby/providers/", getTestIds(), true)
+	if err != nil {
+		t.Fatalf("Expected no error but got %q", err)
+	}
 	if actual != expected {
 		t.Fatalf("Expected %q but got %q", expected, actual)
 	}
@@ -115,8 +138,10 @@ func TestReCaserWithIncompleteProviderSegments(t *testing.T) {
 
 func TestReCaserWithOddNumberOfSegmentsAndCorrectCasing(t *testing.T) {
 	expected := "/subscriptions/11111/resourceGroups/bobby/providers/Microsoft.Compute/availabilitySets/"
-	actual := reCaseWithIds("/subscriptions/11111/resourceGroups/bobby/providers/Microsoft.Compute/availabilitySets/", getTestIds())
-
+	actual, err := reCaseWithIds("/subscriptions/11111/resourceGroups/bobby/providers/Microsoft.Compute/availabilitySets/", getTestIds(), true)
+	if err != nil {
+		t.Fatalf("Expected no error but got %q", err)
+	}
 	if actual != expected {
 		t.Fatalf("Expected %q but got %q", expected, actual)
 	}
@@ -125,8 +150,10 @@ func TestReCaserWithOddNumberOfSegmentsAndCorrectCasing(t *testing.T) {
 func TestReCaserWithOddNumberOfSegmentsAndIncorrectCasing(t *testing.T) {
 	// expect /subscriptions/ and /resourceGroups/ to be recased but not /AvaiLabilitySets/
 	expected := "/subscriptions/11111/resourceGroups/bobby/providers/Microsoft.Compute/AvaiLabilitySets/"
-	actual := reCaseWithIds("/SubsCriptions/11111/ResourceGroups/bobby/providers/Microsoft.Compute/AvaiLabilitySets/", getTestIds())
-
+	actual, err := reCaseWithIds("/SubsCriptions/11111/ResourceGroups/bobby/providers/Microsoft.Compute/AvaiLabilitySets/", getTestIds(), true)
+	if err != nil {
+		t.Fatalf("Expected no error but got %q", err)
+	}
 	if actual != expected {
 		t.Fatalf("Expected %q but got %q", expected, actual)
 	}
@@ -134,8 +161,10 @@ func TestReCaserWithOddNumberOfSegmentsAndIncorrectCasing(t *testing.T) {
 
 func TestReCaserWithURIAndCorrectCasing(t *testing.T) {
 	expected := "https://management.azure.com:80/subscriptions/12345"
-	actual := reCaseWithIds("https://management.azure.com:80/subscriptions/12345", getTestIds())
-
+	actual, err := reCaseWithIds("https://management.azure.com:80/subscriptions/12345", getTestIds(), true)
+	if err != nil {
+		t.Fatalf("Expected no error but got %q", err)
+	}
 	if actual != expected {
 		t.Fatalf("Expected %q but got %q", expected, actual)
 	}
@@ -143,8 +172,10 @@ func TestReCaserWithURIAndCorrectCasing(t *testing.T) {
 
 func TestReCaserWithURIAndIncorrectCasing(t *testing.T) {
 	expected := "https://management.azure.com:80/subscriptions/12345"
-	actual := reCaseWithIds("https://management.azure.com:80/SuBsCriPTions/12345", getTestIds())
-
+	actual, err := reCaseWithIds("https://management.azure.com:80/SuBsCriPTions/12345", getTestIds(), true)
+	if err != nil {
+		t.Fatalf("Expected no error but got %q", err)
+	}
 	if actual != expected {
 		t.Fatalf("Expected %q but got %q", expected, actual)
 	}
@@ -152,8 +183,10 @@ func TestReCaserWithURIAndIncorrectCasing(t *testing.T) {
 
 func TestReCaserWithDataPlaneURI(t *testing.T) {
 	expected := "https://example.blob.storage.azure.com/container1"
-	actual := reCaseWithIds("https://example.blob.storage.azure.com/container1", getTestIds())
-
+	actual, err := reCaseWithIds("https://example.blob.storage.azure.com/container1", getTestIds(), true)
+	if err != nil {
+		t.Fatalf("Expected no error but got %q", err)
+	}
 	if actual != expected {
 		t.Fatalf("Expected %q but got %q", expected, actual)
 	}
