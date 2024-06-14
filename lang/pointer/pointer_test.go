@@ -86,4 +86,15 @@ func TestFrom_MapOfInterface(t *testing.T) {
 	}
 }
 
+func TestFromSliceOrOmitEmpty(t *testing.T) {
+	var empty [0]int64
+	var full := []int64{"0", "1", "2"}
+	if actual := pointer.FromSliceOrOmitEmpty(empty); actual != nil {
+		t.Fatal("empty")
+	}
+	if actual := pointer.FromSliceOrOmitEmpty(full); !reflect.DeepEqual(actual, full) {
+		t.Fatal("full")
+	}
+}
+
 // TODO - More comprehensive type coverage?

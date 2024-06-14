@@ -17,3 +17,11 @@ func From[T any](input *T) (output T) {
 func To[T any](input T) *T {
 	return &input
 }
+
+// From a generic list that returns a pointer of the list or nil if the emptylist is empty.
+func FromSliceOrOmitEmpty[T any](input []T) *[]T {
+	if len(input) == 0 {
+		return nil
+	}
+	return &input
+}
