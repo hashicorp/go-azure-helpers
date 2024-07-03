@@ -5,6 +5,7 @@ package recaser
 
 import (
 	"fmt"
+	"github.com/hashicorp/go-azure-helpers/lang/pointer"
 	"regexp"
 	"strings"
 
@@ -17,35 +18,25 @@ func ReCase(input string) string {
 }
 
 // reCaseWithIds tries to determine the type of Resource ID defined in `input` to be able to re-case it based on an input list of Resource IDs
+// this is a "best-effort" function and cn return the input unmodified.
 func reCaseWithIds(input string, ids map[string]resourceids.ResourceId) string {
-	output := input
-	reCased := false
-	var parseError error
-
-	key, ok := buildInputKey(input)
-	if ok {
-		id := ids[*key]
-		if id != nil {
-			output, parseError = parseId(id, input)
-			if parseError == nil {
-				reCased = true
-			}
-		}
+	result, err := reCaseKnownId(input, ids)
+	if err == nil {
+		return pointer.From(result)
 	}
 
-	// if we can't find a matching id re-case these known segments
-	if !reCased {
+	output := input
 
-		segmentsToFix := []string{
-			"/subscriptions/",
-			"/resourceGroups/",
-			"/managementGroups/",
-			"/tenants/",
-		}
+	// if we didn't find a matching id then re-case these known segments for best effort
+	segmentsToFix := []string{
+		"/subscriptions/",
+		"/resourceGroups/",
+		"/managementGroups/",
+		"/tenants/",
+	}
 
-		for _, segment := range segmentsToFix {
-			output = fixSegment(output, segment)
-		}
+	for _, segment := range segmentsToFix {
+		output = fixSegment(output, segment)
 	}
 
 	return output
@@ -57,7 +48,7 @@ func RecaseKnownId(input string) (*string, error) {
 
 func reCaseKnownId(input string, ids map[string]resourceids.ResourceId) (*string, error) {
 	output := input
-
+	parsed := false
 	key, ok := buildInputKey(input)
 	if ok {
 		id := ids[*key]
@@ -67,6 +58,7 @@ func reCaseKnownId(input string, ids map[string]resourceids.ResourceId) (*string
 			if parseError != nil {
 				return &output, fmt.Errorf("fixing case for ID '%s': %+v", input, parseError)
 			}
+			parsed = true
 		} else {
 			for _, v := range PotentialScopeValues() {
 				trimmedKey := strings.TrimPrefix(*key, v)
@@ -75,22 +67,30 @@ func reCaseKnownId(input string, ids map[string]resourceids.ResourceId) (*string
 					output, parseError = parseId(id, input)
 					if parseError != nil {
 						return &output, fmt.Errorf("fixing case for ID '%s': %+v", input, parseError)
+					} else {
+						parsed = true
+						break
 					}
 				}
-				// We have some cases where an erroneous trailing '/' causes problems. These may
+				// We have some cases where an erroneous trailing '/' causes problems. These may be data errors in specs, or API responses.
+				// Either way, we can try and compensate for it.
 				if id = knownResourceIds[strings.TrimPrefix(trimmedKey, strings.TrimSuffix(v, "/"))]; id != nil {
 					var parseError error
 					output, parseError = parseId(id, input)
 					if parseError != nil {
 						return &output, fmt.Errorf("fixing case for ID '%s': %+v", input, parseError)
+					} else {
+						parsed = true
+						break
 					}
 				}
 			}
 		}
-	} else {
-		return nil, fmt.Errorf("could not determine ID type for '%s', or ID type not supported", input)
 	}
 
+	if !parsed {
+		return &output, fmt.Errorf("could not determine ID type for '%s', or ID type not supported", input)
+	}
 	return &output, nil
 }
 

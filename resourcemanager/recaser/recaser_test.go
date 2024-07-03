@@ -132,6 +132,15 @@ func TestReCaserWithOddNumberOfSegmentsAndIncorrectCasing(t *testing.T) {
 	}
 }
 
+func TestReCaserWithScopedID(t *testing.T) {
+	expected := "/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/resGroup1/providers/Microsoft.Chaos/targets/target1"
+	actual := reCaseWithIds("/SubsCriptions/12345678-1234-9876-4563-123456789012/resourcegroups/resGroup1/providers/microsoft.chaos/Targets/target1", getTestIds())
+
+	if actual != expected {
+		t.Fatalf("Expected %q but got %q", expected, actual)
+	}
+}
+
 func TestReCaserWithURIAndCorrectCasing(t *testing.T) {
 	expected := "https://management.azure.com:80/subscriptions/12345"
 	actual := reCaseWithIds("https://management.azure.com:80/subscriptions/12345", getTestIds())
@@ -161,8 +170,9 @@ func TestReCaserWithDataPlaneURI(t *testing.T) {
 
 func getTestIds() map[string]resourceids.ResourceId {
 	return map[string]resourceids.ResourceId{
-		strings.ToLower(commonids.AppServiceId{}.ID()):      &commonids.AppServiceId{},
-		strings.ToLower(commonids.AvailabilitySetId{}.ID()): &commonids.AvailabilitySetId{},
-		strings.ToLower(commonids.BotServiceId{}.ID()):      &commonids.BotServiceId{},
+		strings.ToLower(commonids.AppServiceId{}.ID()):        &commonids.AppServiceId{},
+		strings.ToLower(commonids.AvailabilitySetId{}.ID()):   &commonids.AvailabilitySetId{},
+		strings.ToLower(commonids.BotServiceId{}.ID()):        &commonids.BotServiceId{},
+		strings.ToLower(commonids.ChaosStudioTargetId{}.ID()): &commonids.ChaosStudioTargetId{},
 	}
 }
