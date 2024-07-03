@@ -67,6 +67,25 @@ func reCaseKnownId(input string, ids map[string]resourceids.ResourceId) (*string
 			if parseError != nil {
 				return &output, fmt.Errorf("fixing case for ID '%s': %+v", input, parseError)
 			}
+		} else {
+			for _, v := range PotentialScopeValues() {
+				trimmedKey := strings.TrimPrefix(*key, v)
+				if id = knownResourceIds[trimmedKey]; id != nil {
+					var parseError error
+					output, parseError = parseId(id, input)
+					if parseError != nil {
+						return &output, fmt.Errorf("fixing case for ID '%s': %+v", input, parseError)
+					}
+				}
+				// We have some cases where an erroneous trailing '/' causes problems. These may
+				if id = knownResourceIds[strings.TrimPrefix(trimmedKey, strings.TrimSuffix(v, "/"))]; id != nil {
+					var parseError error
+					output, parseError = parseId(id, input)
+					if parseError != nil {
+						return &output, fmt.Errorf("fixing case for ID '%s': %+v", input, parseError)
+					}
+				}
+			}
 		}
 	} else {
 		return nil, fmt.Errorf("could not determine ID type for '%s', or ID type not supported", input)
@@ -85,6 +104,10 @@ func parseId(id resourceids.ResourceId, input string) (string, error) {
 	parsed, err := parser.Parse(input, true)
 	if err != nil {
 		return input, err
+	}
+
+	if scope := parsed.Parsed["scope"]; scope != "" {
+		parsed.Parsed["scope"] = reCaseWithIds(scope, knownResourceIds)
 	}
 
 	if err = id.FromParseResult(*parsed); err != nil {
@@ -142,4 +165,17 @@ func buildInputKey(input string) (*string, bool) {
 	}
 	output = strings.ToLower(output)
 	return &output, true
+}
+
+// PotentialScopeValues returns a list of possible ScopeSegment values from all registered ID types
+// This is a best effort process, limited to scope targets that are prefixed with '/subscriptions/' or '/providers/'
+func PotentialScopeValues() []string {
+	result := make([]string, 0)
+	for k := range knownResourceIds {
+		if strings.HasPrefix(k, "/subscriptions/") || strings.HasPrefix(k, "/providers/") {
+			result = append(result, k)
+		}
+	}
+
+	return result
 }
