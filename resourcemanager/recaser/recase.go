@@ -74,7 +74,7 @@ func reCaseKnownId(input string, ids map[string]resourceids.ResourceId) (*string
 				}
 				// We have some cases where an erroneous trailing '/' causes problems. These may be data errors in specs, or API responses.
 				// Either way, we can try and compensate for it.
-				if id = knownResourceIds[strings.TrimPrefix(trimmedKey, strings.TrimSuffix(v, "/"))]; id != nil {
+				if id = knownResourceIds[strings.TrimPrefix(*key, strings.TrimSuffix(v, "/"))]; id != nil {
 					var parseError error
 					output, parseError = parseId(id, input)
 					if parseError != nil {
@@ -178,4 +178,28 @@ func PotentialScopeValues() []string {
 	}
 
 	return result
+}
+
+// ResourceIdTypeFromResourceId takes a Azure Resource ID as a string and attempts to return the corresponding
+// resourceids.ResourceId type.
+func ResourceIdTypeFromResourceId(input string) resourceids.ResourceId {
+	key, ok := buildInputKey(input)
+	if ok {
+		id := knownResourceIds[*key]
+		if id != nil {
+			return id
+		} else {
+			for _, v := range PotentialScopeValues() {
+				trimmedKey := strings.TrimPrefix(*key, v)
+				if id = knownResourceIds[trimmedKey]; id != nil {
+					return id
+				}
+				if id = knownResourceIds[strings.TrimPrefix(*key, strings.TrimSuffix(v, "/"))]; id != nil {
+					return id
+				}
+			}
+		}
+	}
+
+	return nil
 }
