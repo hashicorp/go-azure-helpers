@@ -4,6 +4,7 @@
 package recaser
 
 import (
+	"reflect"
 	"strings"
 	"testing"
 
@@ -174,5 +175,13 @@ func getTestIds() map[string]resourceids.ResourceId {
 		strings.ToLower(commonids.AvailabilitySetId{}.ID()):   &commonids.AvailabilitySetId{},
 		strings.ToLower(commonids.BotServiceId{}.ID()):        &commonids.BotServiceId{},
 		strings.ToLower(commonids.ChaosStudioTargetId{}.ID()): &commonids.ChaosStudioTargetId{},
+	}
+}
+
+func TestResourceIdTypeFromResourceId(t *testing.T) {
+	for k, v := range getTestIds() {
+		if actual := ResourceIdTypeFromResourceId(k); !reflect.DeepEqual(v, actual) {
+			t.Fatalf("Expected %q but got %q", v, actual)
+		}
 	}
 }
