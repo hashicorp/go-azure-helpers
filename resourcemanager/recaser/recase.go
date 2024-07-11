@@ -18,7 +18,9 @@ func ReCase(input string) string {
 }
 
 // reCaseWithIds tries to determine the type of Resource ID defined in `input` to be able to re-case it based on an input list of Resource IDs
-// this is a "best-effort" function and cn return the input unmodified.
+// this is a "best-effort" function and can return the input unmodified. Functionality of this method is intended to be
+// limited to resource IDs that have been registered with the package via the RegisterResourceId() function at init.
+// However, some common static segments are corrected even when a corresponding ID type is not present.
 func reCaseWithIds(input string, ids map[string]resourceids.ResourceId) string {
 	result, err := reCaseKnownId(input, ids)
 	if err == nil {
@@ -42,7 +44,10 @@ func reCaseWithIds(input string, ids map[string]resourceids.ResourceId) string {
 	return output
 }
 
-func RecaseKnownId(input string) (*string, error) {
+// ReCaseKnownId attempts to correct the casing on the static segments of an Azure resourceId. Functionality of this
+// method is intended to be limited to resource IDs that have been registered with the package via the
+// RegisterResourceId() function at init.
+func ReCaseKnownId(input string) (*string, error) {
 	return reCaseKnownId(input, knownResourceIds)
 }
 
@@ -181,7 +186,8 @@ func PotentialScopeValues() []string {
 }
 
 // ResourceIdTypeFromResourceId takes a Azure Resource ID as a string and attempts to return the corresponding
-// resourceids.ResourceId type.
+// resourceids.ResourceId type. If a matching resourceId is not found in the supported/registered resourceId types then
+// a `nil` value is returned.
 func ResourceIdTypeFromResourceId(input string) resourceids.ResourceId {
 	key, ok := buildInputKey(input)
 	if ok {
