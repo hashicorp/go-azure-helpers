@@ -5,6 +5,7 @@ package recaser
 
 import (
 	"fmt"
+	"reflect"
 	"regexp"
 	"strings"
 
@@ -193,15 +194,18 @@ func ResourceIdTypeFromResourceId(input string) resourceids.ResourceId {
 	if ok {
 		id := knownResourceIds[*key]
 		if id != nil {
-			return id
+			result := reflect.New(reflect.TypeOf(id).Elem())
+			return result.Interface().(resourceids.ResourceId)
 		} else {
 			for _, v := range PotentialScopeValues() {
 				trimmedKey := strings.TrimPrefix(*key, v)
 				if id = knownResourceIds[trimmedKey]; id != nil {
-					return id
+					result := reflect.New(reflect.TypeOf(id).Elem())
+					return result.Interface().(resourceids.ResourceId)
 				}
 				if id = knownResourceIds[strings.TrimPrefix(*key, strings.TrimSuffix(v, "/"))]; id != nil {
-					return id
+					result := reflect.New(reflect.TypeOf(id).Elem())
+					return result.Interface().(resourceids.ResourceId)
 				}
 			}
 		}
