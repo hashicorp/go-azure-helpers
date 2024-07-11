@@ -12,25 +12,20 @@ import (
 )
 
 // ReCase tries to determine the type of Resource ID defined in `input` to be able to re-case it from
-func ReCase(input string, insensitively bool) string {
-	recasedId, _ := reCaseWithIds(input, knownResourceIds, insensitively)
-	return recasedId
+func ReCase(input string) string {
+	return reCaseWithIds(input, knownResourceIds)
 }
 
 // reCaseWithIds tries to determine the type of Resource ID defined in `input` to be able to re-case it based on an input list of Resource IDs
-func reCaseWithIds(input string, ids map[string]resourceids.ResourceId, insensitively bool) (string, error) {
+func reCaseWithIds(input string, ids map[string]resourceids.ResourceId) string {
 	output := input
 	recased := false
-	var err error
 
 	key, ok := buildInputKey(input)
 	if ok {
 		id := ids[*key]
 		if id != nil {
-			output, recased, err = parseId(id, input, insensitively)
-			if err != nil {
-				return output, err
-			}
+			output, recased, _ = parseId(id, input, true)
 		}
 	}
 
@@ -45,15 +40,11 @@ func reCaseWithIds(input string, ids map[string]resourceids.ResourceId, insensit
 		}
 
 		for _, segment := range segmentsToFix {
-			fixedSegment, err := fixSegment(output, segment, insensitively)
-			output = fixedSegment
-			if !insensitively {
-				return output, err
-			}
+			output = fixSegment(output, segment)
 		}
 	}
 
-	return output, nil
+	return output
 }
 
 // parseId uses the specified ResourceId to parse the input and returns the id string with correct casing
@@ -78,15 +69,12 @@ func parseId(id resourceids.ResourceId, input string, insensitively bool) (strin
 
 // fixSegment searches the input id string for a specified segment case-insensitively
 // and returns the input string with the casing corrected on the segment
-func fixSegment(input, segment string, insensitively bool) (string, error) {
+func fixSegment(input, segment string) string {
 	if strings.Contains(strings.ToLower(input), strings.ToLower(segment)) {
 		re := regexp.MustCompile(fmt.Sprintf("(?i)%s", segment))
-		if !insensitively && !strings.Contains(input, segment) {
-			return input, fmt.Errorf("expected %s but got %s", segment, re.FindAllStringSubmatch(input, 0)[0])
-		}
 		input = re.ReplaceAllString(input, segment)
 	}
-	return input, nil
+	return input
 }
 
 // buildInputKey takes an input id string and removes user-specified values from it
