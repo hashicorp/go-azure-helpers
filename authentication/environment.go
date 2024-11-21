@@ -106,7 +106,7 @@ func AzureEnvironmentByNameFromEndpoint(ctx context.Context, endpoint string, en
 	}
 
 	if endpoint == "" {
-		return nil, fmt.Errorf("unable to locate metadata for environment %q from the built in `public`, `usgoverment`, `china` and no custom metadata host has been specified", environmentName)
+		return nil, fmt.Errorf("unable to locate metadata for environment %q from the built in `public`, `usgovernment`, `china` and no custom metadata host has been specified", environmentName)
 	}
 
 	environments, err := getSupportedEnvironments(ctx, endpoint)
@@ -147,9 +147,6 @@ func IsEnvironmentAzureStack(ctx context.Context, endpoint string, environmentNa
 
 	// while the array contains values
 	for _, env := range environments {
-		if err != nil {
-			return false, fmt.Errorf("unable to decode environment from %q response: %+v", endpoint, err)
-		}
 		if strings.EqualFold(env.Name, environmentName) {
 			if !strings.EqualFold(env.Authentication.IdentityProvider, "AAD") || !strings.EqualFold(env.Authentication.Tenant, "common") {
 				return true, nil
