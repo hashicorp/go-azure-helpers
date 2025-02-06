@@ -34,9 +34,9 @@ func To[T any](input T) *T {
 
 // ToEnum is a helper function to cast strings as an Enum type where API objects expect a pointer to the Enum value
 // example code simplification:
-// APIModel.SomeValue = pointer.To(someservice.SomeEnumType(d.Get["some_variable"].(string)))
+// APIModel.SomeValue = pointer.To(someservice.SomeEnumType(model.SomeVariable))
 // becomes
-// APIModel.SomeValue = pointer.ToEnum[someservice.SomeEnumType](d.Get["some_variable"].(string))
+// APIModel.SomeValue = pointer.ToEnum[someservice.SomeEnumType](model.SomeVariable)
 func ToEnum[T ~string](input string) *T {
 	result := T(input)
 	return &result
