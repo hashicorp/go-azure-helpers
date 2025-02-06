@@ -86,4 +86,71 @@ func TestFrom_MapOfInterface(t *testing.T) {
 	}
 }
 
-// TODO - More comprehensive type coverage?
+type SomeEnum string
+
+const (
+	SomeEnumFoo SomeEnum = "Foo"
+	SomeEnumBar SomeEnum = "Bar"
+)
+
+func TestToEnum(t *testing.T) {
+	testCases := []struct {
+		Input    string
+		Expected SomeEnum
+	}{
+		{
+			Input:    "Foo",
+			Expected: SomeEnumFoo,
+		},
+		{
+			Input:    "Bar",
+			Expected: SomeEnumBar,
+		},
+		{
+			Input:    "Baz",
+			Expected: SomeEnum("Baz"),
+		},
+		{
+			Input:    "",
+			Expected: SomeEnum(""),
+		},
+	}
+
+	for _, v := range testCases {
+		actual := pointer.ToEnum[SomeEnum](v.Input)
+		if *actual != v.Expected {
+			t.Fatalf("expectd %#v, got %#v", v.Expected, *actual)
+		}
+	}
+}
+
+func TestFromEnum(t *testing.T) {
+	testCases := []struct {
+		Input    *SomeEnum
+		Expected string
+	}{
+		{
+			Input:    pointer.To(SomeEnumFoo),
+			Expected: "Foo",
+		},
+		{
+			Input:    pointer.To(SomeEnumBar),
+			Expected: "Bar",
+		},
+		{
+			Input:    pointer.To(SomeEnum("")),
+			Expected: "",
+		},
+		{
+			Input:    pointer.To(SomeEnum("Baz")),
+			Expected: "Baz",
+		},
+	}
+
+	for _, v := range testCases {
+		actual := pointer.FromEnum(v.Input)
+		if actual != v.Expected {
+			t.Fatalf("expectd %#v, got %#v", v.Expected, actual)
+		}
+	}
+}
