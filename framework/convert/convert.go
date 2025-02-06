@@ -1,3 +1,6 @@
+// Copyright (c) HashiCorp, Inc.
+// SPDX-License-Identifier: MPL-2.0
+
 package convert
 
 import (
@@ -7,23 +10,25 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 )
 
-// convert handles the conversion between Framework types and Go native types used by go-azure-sdk
-// returns reflect.Values for the order from -> to and a diag.Diagnostics for warnings/errors
-func convert(fwType, sdkType any) (reflect.Value, reflect.Value, diag.Diagnostics) {
+// convert handles the conversion between Framework types and Go native types used by go-azure-sdk and
+// returns reflect.Value for each in the order from -> to and diag.Diagnostics for errors where incorrect types are
+// provided. `source` can be a pointer, `target` must be a pointer. It is intended to be used via Expand and Flatten and
+// is intentionally not exported.
+func convert(source, target any) (reflect.Value, reflect.Value, diag.Diagnostics) {
 	diags := diag.Diagnostics{}
-	fwVal := reflect.ValueOf(fwType)
-	sdkVal := reflect.ValueOf(sdkType)
+	sourceVal := reflect.ValueOf(source)
+	targetVal := reflect.ValueOf(target)
 
-	if fwVal.Kind() == reflect.Ptr {
-		fwVal = fwVal.Elem()
+	if sourceVal.Kind() == reflect.Ptr {
+		sourceVal = sourceVal.Elem()
 	}
 
-	if kind := sdkVal.Kind(); kind != reflect.Ptr {
-		diags.AddError("convert", fmt.Sprintf("target (%T): %s is not a pointer", sdkType, kind))
+	if kind := targetVal.Kind(); kind != reflect.Ptr {
+		diags.AddError("convert", fmt.Sprintf("target (%T): %s is not a pointer", target, kind))
 		return reflect.Value{}, reflect.Value{}, diags
 	}
 
-	sdkVal = sdkVal.Elem()
+	targetVal = targetVal.Elem()
 
-	return fwVal, sdkVal, diags
+	return sourceVal, targetVal, diags
 }

@@ -1,3 +1,6 @@
+// Copyright (c) HashiCorp, Inc.
+// SPDX-License-Identifier: MPL-2.0
+
 package typehelpers
 
 import (
@@ -11,10 +14,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-go/tftypes"
 )
 
-var (
-	// MapOfStringType is a custom type used for defining a Map of strings.
-	MapOfStringType = mapTypeOf[basetypes.StringValue]{basetypes.MapType{ElemType: basetypes.StringType{}}}
-)
+// MapOfStringType is a custom type used for defining a Map of strings.
+var MapOfStringType = mapTypeOf[basetypes.StringValue]{basetypes.MapType{ElemType: basetypes.StringType{}}}
 
 type mapTypeOf[T attr.Value] struct {
 	basetypes.MapType
@@ -65,7 +66,6 @@ func (t mapTypeOf[T]) ValueFromMap(ctx context.Context, in basetypes.MapValue) (
 
 func (t mapTypeOf[T]) ValueFromTerraform(ctx context.Context, in tftypes.Value) (attr.Value, error) {
 	attrValue, err := t.MapType.ValueFromTerraform(ctx, in)
-
 	if err != nil {
 		return nil, err
 	}

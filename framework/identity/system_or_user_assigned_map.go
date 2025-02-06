@@ -13,7 +13,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-func ExpandToSystemAndUserAssignedMap(ctx context.Context, input typehelpers.ListNestedObjectValueOf[IdentityModel], result *identity.SystemAndUserAssignedMap, diags *diag.Diagnostics) {
+func ExpandToSystemOrUserAssignedMap(ctx context.Context, input typehelpers.ListNestedObjectValueOf[IdentityModel], result *identity.SystemOrUserAssignedMap, diags *diag.Diagnostics) {
 	if result == nil {
 		diags.AddError("Expanding identity", "could not expand identity as target was a nil pointer")
 		return
@@ -39,7 +39,7 @@ func ExpandToSystemAndUserAssignedMap(ctx context.Context, input typehelpers.Lis
 	if len(identityList) == 1 {
 		ident := identityList[0]
 
-		res := identity.SystemAndUserAssignedMap{}
+		res := identity.SystemOrUserAssignedMap{}
 
 		res.Type = identity.Type(ident.Type.ValueString())
 		res.PrincipalId = ident.PrincipalID.ValueString()
@@ -61,7 +61,7 @@ func ExpandToSystemAndUserAssignedMap(ctx context.Context, input typehelpers.Lis
 	return
 }
 
-func FlattenFromSystemAndUserAssignedMap(ctx context.Context, input *identity.SystemAndUserAssignedMap, result *typehelpers.ListNestedObjectValueOf[IdentityModel], diags *diag.Diagnostics) {
+func FlattenFromSystemOrUserAssignedMap(ctx context.Context, input *identity.SystemOrUserAssignedMap, result *typehelpers.ListNestedObjectValueOf[IdentityModel], diags *diag.Diagnostics) {
 	if input == nil {
 		r := typehelpers.NewListNestedObjectValueOfNull[IdentityModel](ctx)
 		*result = r

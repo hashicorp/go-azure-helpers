@@ -1,3 +1,6 @@
+// Copyright (c) HashiCorp, Inc.
+// SPDX-License-Identifier: MPL-2.0
+
 package fwdiag
 
 import (
@@ -6,6 +9,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 )
 
+// Must - ensures a hard fail if diags contains errors from the supplied function x. This should
+// protect developers from shipping panics from incompatible type conversions /
 func Must[T any](x T, diags diag.Diagnostics) T {
 	return ErrMust(x, DiagAsError(diags))
 }

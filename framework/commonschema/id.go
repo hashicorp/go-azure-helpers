@@ -1,4 +1,7 @@
-package resourceid
+// Copyright (c) HashiCorp, Inc.
+// SPDX-License-Identifier: MPL-2.0
+
+package commonschema
 
 import (
 	datasourceschema "github.com/hashicorp/terraform-plugin-framework/datasource/schema"
