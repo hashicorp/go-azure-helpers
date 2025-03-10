@@ -34,10 +34,12 @@ func AttributeTypes[T any](ctx context.Context) (map[string]attr.Type, diag.Diag
 		if field.PkgPath != "" {
 			continue // Skip unexported fields.
 		}
+
 		tag := field.Tag.Get(`tfsdk`)
 		if tag == "-" {
 			continue // Skip explicitly excluded fields.
 		}
+
 		if tag == "" {
 			diags.Append(diag.NewErrorDiagnostic("Invalid type", fmt.Sprintf(`%T needs a struct tag for "tfsdk" on %s`, t, field.Name)))
 			return nil, diags
