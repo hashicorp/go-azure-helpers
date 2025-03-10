@@ -3,6 +3,7 @@ package convert
 import (
 	"context"
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"reflect"
 
 	"github.com/hashicorp/go-azure-helpers/framework/typehelpers"
@@ -20,18 +21,21 @@ func Expand(ctx context.Context, fwObject any, apiObject any, diags *diag.Diagno
 		return
 	}
 
+	sourcePath := path.Empty()
+	targetPath := path.Empty()
+
 	if source.IsValid() && target.IsValid() {
 		if sourceType, targetType := source.Type(), target.Type(); sourceType.Kind() == reflect.Struct && targetType.Kind() == reflect.Struct {
-			diags.Append(expandStruct(ctx, fwObject, apiObject)...)
+			diags.Append(expandStruct(ctx, sourcePath, fwObject, targetPath, apiObject)...)
 			return
 		}
 	}
 
-	diags.Append(expand(ctx, source, target)...)
+	diags.Append(expand(ctx, sourcePath, source, targetPath, target)...)
 }
 
 // expand does the heavy lifting via reflection to convert the tfObject into Go types for use with go-azure-sdk
-func expand(ctx context.Context, source, target reflect.Value) diag.Diagnostics {
+func expand(ctx context.Context, sourcePath path.Path, source reflect.Value, targetPath path.Path, target reflect.Value) diag.Diagnostics {
 	var diags diag.Diagnostics
 
 	sourceVal, ok := source.Interface().(attr.Value)
@@ -74,18 +78,18 @@ func expand(ctx context.Context, source, target reflect.Value) diag.Diagnostics 
 	// complex / structs
 	case basetypes.ObjectValuable:
 		{
-			diags.Append(expandObject(ctx, t, target)...)
+			diags.Append(expandObject(ctx, sourcePath, t, targetPath, target)...)
 			return diags
 		}
 
 	case basetypes.ListValuable:
 		{
-			diags.Append(expandList(ctx, t, target)...)
+			diags.Append(expandList(ctx, sourcePath, t, targetPath, target)...)
 			return diags
 		}
 	case basetypes.SetValuable:
 		{
-			diags.Append(expandSet(ctx, t, target)...)
+			diags.Append(expandSet(ctx, sourcePath, t, targetPath, target)...)
 			return diags
 		}
 	case basetypes.MapValuable:
@@ -221,7 +225,7 @@ func expandString(ctx context.Context, source basetypes.StringValuable, target r
 	return diags
 }
 
-func expandObject(ctx context.Context, source basetypes.ObjectValuable, target reflect.Value) diag.Diagnostics {
+func expandObject(ctx context.Context, sourcePath path.Path, source basetypes.ObjectValuable, targetPath path.Path, target reflect.Value) diag.Diagnostics {
 	diags := diag.Diagnostics{}
 
 	_, d := source.ToObjectValue(ctx)
@@ -234,15 +238,16 @@ func expandObject(ctx context.Context, source basetypes.ObjectValuable, target r
 	case reflect.Struct:
 		{
 			if nestedObjectSource, ok := source.(typehelpers.NestedObjectValue); ok {
-				diags.Append(expandNestedObjectToStruct(ctx, nestedObjectSource, t, target)...)
+				diags.Append(expandNestedObjectToStruct(ctx, sourcePath, nestedObjectSource, targetPath, t, target)...)
 				return diags
 			}
 		}
+
 	case reflect.Ptr:
 		switch elem := t.Elem(); elem.Kind() {
 		case reflect.Struct:
 			if nestedObjectSource, ok := source.(typehelpers.NestedObjectValue); ok {
-				diags.Append(expandNestedObjectToStruct(ctx, nestedObjectSource, elem, target)...)
+				diags.Append(expandNestedObjectToStruct(ctx, sourcePath, nestedObjectSource, targetPath, elem, target)...)
 				return diags
 			}
 		}
@@ -253,7 +258,7 @@ func expandObject(ctx context.Context, source basetypes.ObjectValuable, target r
 	return diags
 }
 
-func expandList(ctx context.Context, source basetypes.ListValuable, target reflect.Value) diag.Diagnostics {
+func expandList(ctx context.Context, sourcePath path.Path, source basetypes.ListValuable, targetPath path.Path, target reflect.Value) diag.Diagnostics {
 	diags := diag.Diagnostics{}
 
 	v, d := source.ToListValue(ctx)
@@ -271,7 +276,7 @@ func expandList(ctx context.Context, source basetypes.ListValuable, target refle
 	case basetypes.ObjectTypable:
 		{
 			if s, ok := source.(typehelpers.NestedObjectCollectionValue); ok {
-				diags.Append(expandListOfObject(ctx, s, target)...)
+				diags.Append(expandNestedObjectCollection(ctx, sourcePath, s, targetPath, target)...)
 			}
 		}
 	case basetypes.MapTypable:
@@ -318,13 +323,13 @@ func expandListOfPrimitive(ctx context.Context, source basetypes.ListValue, targ
 	return diags
 }
 
-func expandListOfObject(ctx context.Context, source typehelpers.NestedObjectCollectionValue, target reflect.Value) diag.Diagnostics {
+func expandListOfObject(ctx context.Context, sourcePath path.Path, source typehelpers.NestedObjectCollectionValue, targetPath path.Path, target reflect.Value) diag.Diagnostics {
 	diags := diag.Diagnostics{}
 
 	switch t := target.Type(); target.Kind() {
 	case reflect.Struct:
 		{
-			diags.Append(expandNestedObjectToStruct(ctx, source, t, target)...)
+			diags.Append(expandNestedObjectToStruct(ctx, sourcePath, source, targetPath, t, target)...)
 			return diags
 		}
 
@@ -333,7 +338,7 @@ func expandListOfObject(ctx context.Context, source typehelpers.NestedObjectColl
 			switch elem := t.Elem(); elem.Kind() {
 			case reflect.Struct:
 				{
-					diags.Append(expandNestedObjectToStruct(ctx, source, elem, target)...)
+					diags.Append(expandNestedObjectToStruct(ctx, sourcePath, source, targetPath, elem, target)...)
 					return diags
 				}
 			}
@@ -345,7 +350,7 @@ func expandListOfObject(ctx context.Context, source typehelpers.NestedObjectColl
 			case reflect.Struct, reflect.Ptr:
 				// Maps and pointers to maps can be treated the same here
 				{
-					diags.Append(expandNestedObjectToMap(ctx, source, elem, target)...)
+					diags.Append(expandNestedObjectToMap(ctx, sourcePath, source, targetPath, elem, target)...)
 				}
 			}
 		}
@@ -355,7 +360,7 @@ func expandListOfObject(ctx context.Context, source typehelpers.NestedObjectColl
 			switch elem := t.Elem(); elem.Kind() {
 			case reflect.Struct:
 				{
-					diags.Append(expandNestedObjectToSlice(ctx, source, t, elem, target)...)
+					diags.Append(expandNestedObjectToSlice(ctx, sourcePath, source, targetPath, t, elem, target)...)
 				}
 			}
 		}
@@ -364,7 +369,7 @@ func expandListOfObject(ctx context.Context, source typehelpers.NestedObjectColl
 	return diags
 }
 
-func expandSet(ctx context.Context, source basetypes.SetValuable, target reflect.Value) diag.Diagnostics {
+func expandSet(ctx context.Context, sourcePath path.Path, source basetypes.SetValuable, targetPath path.Path, target reflect.Value) diag.Diagnostics {
 	diags := diag.Diagnostics{}
 
 	v, d := source.ToSetValue(ctx)
@@ -382,7 +387,7 @@ func expandSet(ctx context.Context, source basetypes.SetValuable, target reflect
 	case basetypes.ObjectTypable:
 		{
 			if s, ok := source.(typehelpers.NestedObjectCollectionValue); ok {
-				diags.Append(expandListOfObject(ctx, s, target)...)
+				diags.Append(expandListOfObject(ctx, sourcePath, s, targetPath, target)...)
 			}
 		}
 	case basetypes.MapTypable:
@@ -429,7 +434,63 @@ func expandSetOfPrimitive(ctx context.Context, source basetypes.SetValue, target
 	return diags
 }
 
-func expandNestedObjectToStruct(ctx context.Context, source typehelpers.NestedObjectValue, targetType reflect.Type, targetValue reflect.Value) diag.Diagnostics {
+func expandNestedObjectCollection(ctx context.Context, sourcePath path.Path, source typehelpers.NestedObjectCollectionValue, targetPath path.Path, target reflect.Value) diag.Diagnostics {
+	diags := diag.Diagnostics{}
+
+	switch targetType := target.Type(); target.Kind() {
+	case reflect.Struct:
+		pathAtListIndex := sourcePath.AtListIndex(0)
+		diags.Append(expandNestedObjectToStruct(ctx, pathAtListIndex, source, targetPath, targetType, target)...)
+		return diags
+
+	case reflect.Pointer:
+		switch tElem := targetType.Elem(); tElem.Kind() {
+		case reflect.Struct:
+			pathAtListIndex := sourcePath.AtListIndex(0)
+			diags.Append(expandNestedObjectToStruct(ctx, pathAtListIndex, source, targetPath, tElem, target)...)
+			return diags
+		}
+
+	case reflect.Interface:
+		pathAtListIndex := sourcePath.AtListIndex(0)
+		diags.Append(expandNestedObjectToStruct(ctx, pathAtListIndex, source, targetPath, targetType, target)...)
+		return diags
+
+	case reflect.Map:
+		switch tElem := targetType.Elem(); tElem.Kind() {
+		case reflect.Struct:
+			diags.Append(expandNestedObjectToMap(ctx, sourcePath, source, targetPath, tElem, target)...)
+			return diags
+
+		case reflect.Pointer:
+			diags.Append(expandNestedObjectToMap(ctx, sourcePath, source, targetPath, tElem, target)...)
+			return diags
+		}
+
+	case reflect.Slice:
+		switch tElem := targetType.Elem(); tElem.Kind() {
+		case reflect.Struct:
+			diags.Append(expandNestedObjectToSlice(ctx, sourcePath, source, targetPath, targetType, tElem, target)...)
+			return diags
+
+		case reflect.Pointer:
+			switch elem := tElem.Elem(); elem.Kind() {
+			case reflect.Struct:
+				diags.Append(expandNestedObjectToSlice(ctx, sourcePath, source, targetPath, targetType, elem, target)...)
+				return diags
+			}
+
+		case reflect.Interface:
+			diags.Append(expandNestedObjectToSlice(ctx, sourcePath, source, targetPath, targetType, tElem, target)...)
+			return diags
+		}
+	}
+
+	diags.AddError("Incompatible types", fmt.Sprintf("nestedObjectCollection[%s] cannot be expanded to %s", source.Type(ctx).(attr.TypeWithElementType).ElementType(), target.Kind()))
+	return diags
+}
+
+func expandNestedObjectToStruct(ctx context.Context, sourcePath path.Path, source typehelpers.NestedObjectValue, targetPath path.Path, targetType reflect.Type, targetValue reflect.Value) diag.Diagnostics {
 	var diags diag.Diagnostics
 
 	v, d := source.ToObjectPtr(ctx)
@@ -439,7 +500,7 @@ func expandNestedObjectToStruct(ctx context.Context, source typehelpers.NestedOb
 	}
 
 	into := reflect.New(targetType)
-	diags.Append(expandStruct(ctx, v, into.Interface())...)
+	diags.Append(expandStruct(ctx, sourcePath, v, targetPath, into.Interface())...)
 	if diags.HasError() {
 		return diags
 	}
@@ -541,6 +602,42 @@ func expandMapOfPrimitive(ctx context.Context, source basetypes.MapValue, target
 
 						target.Set(reflect.ValueOf(to))
 						return diags
+
+					case reflect.Int64:
+						{
+							var to map[string]*int64
+							diags.Append(source.ElementsAs(ctx, &to, false)...)
+							if diags.HasError() {
+								return diags
+							}
+
+							target.Set(reflect.ValueOf(to))
+							return diags
+						}
+
+					case reflect.Float64:
+						{
+							var to map[string]*float64
+							diags.Append(source.ElementsAs(ctx, &to, false)...)
+							if diags.HasError() {
+								return diags
+							}
+
+							target.Set(reflect.ValueOf(to))
+							return diags
+						}
+
+					case reflect.Bool:
+						{
+							var to map[string]*bool
+							diags.Append(source.ElementsAs(ctx, &to, false)...)
+							if diags.HasError() {
+								return diags
+							}
+
+							target.Set(reflect.ValueOf(to))
+							return diags
+						}
 					}
 				}
 			}
@@ -550,7 +647,8 @@ func expandMapOfPrimitive(ctx context.Context, source basetypes.MapValue, target
 	return diags
 }
 
-func expandNestedObjectToMap(ctx context.Context, source typehelpers.NestedObjectCollectionValue, targetType reflect.Type, targetValue reflect.Value) diag.Diagnostics {
+// protocol v6 only
+func expandNestedObjectToMap(ctx context.Context, sourcePath path.Path, source typehelpers.NestedObjectCollectionValue, targetPath path.Path, targetType reflect.Type, targetValue reflect.Value) diag.Diagnostics {
 	diags := diag.Diagnostics{}
 
 	from, d := source.ToObjectSlice(ctx)
@@ -569,7 +667,7 @@ func expandNestedObjectToMap(ctx context.Context, source typehelpers.NestedObjec
 	for i := 0; i < f.Len(); i++ {
 		// Create a new target structure and walk its fields.
 		target := reflect.New(targetType)
-		diags.Append(expandStruct(ctx, f.Index(i).Interface(), target.Interface())...)
+		diags.Append(expandStruct(ctx, sourcePath, f.Index(i).Interface(), targetPath, target.Interface())...)
 		if diags.HasError() {
 			return diags
 		}
@@ -592,7 +690,7 @@ func expandNestedObjectToMap(ctx context.Context, source typehelpers.NestedObjec
 	return diags
 }
 
-func expandNestedObjectToSlice(ctx context.Context, source typehelpers.NestedObjectCollectionValue, targetType reflect.Type, targetElemType reflect.Type, targetValue reflect.Value) diag.Diagnostics {
+func expandNestedObjectToSlice(ctx context.Context, sourcePath path.Path, source typehelpers.NestedObjectCollectionValue, targetPath path.Path, targetType reflect.Type, targetElemType reflect.Type, targetValue reflect.Value) diag.Diagnostics {
 	diags := diag.Diagnostics{}
 	from, d := source.ToObjectSlice(ctx)
 	diags.Append(d...)
@@ -605,7 +703,7 @@ func expandNestedObjectToSlice(ctx context.Context, source typehelpers.NestedObj
 	t := reflect.MakeSlice(targetType, n, n)
 	for i := 0; i < n; i++ {
 		target := reflect.New(targetElemType)
-		diags.Append(expandStruct(ctx, f.Index(i).Interface(), target.Interface())...)
+		diags.Append(expandStruct(ctx, sourcePath, f.Index(i).Interface(), targetPath, target.Interface())...)
 		if diags.HasError() {
 			return diags
 		}
@@ -621,7 +719,7 @@ func expandNestedObjectToSlice(ctx context.Context, source typehelpers.NestedObj
 	return diags
 }
 
-func expandStruct(ctx context.Context, source any, target any) diag.Diagnostics {
+func expandStruct(ctx context.Context, sourcePath path.Path, source any, targetPath path.Path, target any) diag.Diagnostics {
 	diags := diag.Diagnostics{}
 
 	sourceVal, targetVal, d := convert(source, target)
@@ -649,19 +747,24 @@ func expandStruct(ctx context.Context, source any, target any) diag.Diagnostics 
 			continue
 		}
 
-		diags.Append(expand(ctx, sourceVal.Field(i), targetFieldVal)...)
+		diags.Append(expand(ctx, sourcePath, sourceVal.Field(i), targetPath, targetFieldVal)...)
 		if diags.HasError() {
 			diags.AddError("Expanding", fmt.Sprintf("could not expand (%s)", fieldName))
 			return diags
 		}
 	}
+
 	return diags
 }
 
+// func expandConvertStruct(ctx context.Context, sourcePath path.Path, source any, targetPath path.Path, target any) diag.Diagnostics {
+//
+// }
+
 // findField looks for the matching API struct name in the target struct
-func findField(ctx context.Context, fieldName string, _ reflect.Value, target reflect.Value, apiName string) reflect.Value {
+func findField(ctx context.Context, fieldName string, _ reflect.Value, target reflect.Value, tagHint string) reflect.Value {
 	// specific apiName struct tag take precedence
-	if v := target.FieldByName(apiName); v.IsValid() {
+	if v := target.FieldByName(tagHint); v.IsValid() {
 		return v
 	}
 
@@ -686,7 +789,7 @@ func extractMapKeyValue(source any) (reflect.Value, diag.Diagnostics) {
 	for i, typFrom := 0, valFrom.Type(); i < typFrom.NumField(); i++ {
 		field := typFrom.Field(i)
 		if field.PkgPath != "" {
-			continue // Skip unexported fields.
+			continue // unexported fields shouldn't be considered.
 		}
 
 		if field.Name == "MapBlockKey" {
