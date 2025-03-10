@@ -3,7 +3,6 @@ package typehelpers
 import (
 	"context"
 	"fmt"
-
 	"github.com/hashicorp/go-azure-helpers/framework/fwdiag"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -42,7 +41,7 @@ func (t listNestedObjectTypeOf[T]) String() string {
 }
 
 func (t listNestedObjectTypeOf[T]) ValueFromList(ctx context.Context, in basetypes.ListValue) (basetypes.ListValuable, diag.Diagnostics) {
-	var diags diag.Diagnostics
+	diags := diag.Diagnostics{}
 
 	if in.IsNull() {
 		return NewListNestedObjectValueOfNull[T](ctx), diags
@@ -101,13 +100,13 @@ func (t listNestedObjectTypeOf[T]) NewObjectSlice(ctx context.Context, len, cap 
 }
 
 func (t listNestedObjectTypeOf[T]) NullValue(ctx context.Context) (attr.Value, diag.Diagnostics) {
-	var diags diag.Diagnostics
+	diags := diag.Diagnostics{}
 
 	return NewListNestedObjectValueOfNull[T](ctx), diags
 }
 
 func (t listNestedObjectTypeOf[T]) ValueFromObjectPtr(ctx context.Context, ptr any) (attr.Value, diag.Diagnostics) {
-	var diags diag.Diagnostics
+	diags := diag.Diagnostics{}
 
 	if v, ok := ptr.(*T); ok {
 		v, d := NewListNestedObjectValueOfPtr(ctx, v)
@@ -120,12 +119,10 @@ func (t listNestedObjectTypeOf[T]) ValueFromObjectPtr(ctx context.Context, ptr a
 }
 
 func (t listNestedObjectTypeOf[T]) ValueFromObjectSlice(ctx context.Context, slice any) (attr.Value, diag.Diagnostics) {
-	var diags diag.Diagnostics
+	diags := diag.Diagnostics{}
 
 	if v, ok := slice.([]*T); ok {
-		v, d := NewListNestedObjectValueOfSlice(ctx, v)
-		diags.Append(d...)
-		return v, d
+		return NewListNestedObjectValueOfSlice(ctx, v)
 	}
 
 	diags.Append(diag.NewErrorDiagnostic("Invalid slice value", fmt.Sprintf("incorrect type: want %T, got %T", (*[]T)(nil), slice)))
@@ -170,7 +167,7 @@ func (v ListNestedObjectValueOf[T]) ToSlice(ctx context.Context) ([]*T, diag.Dia
 }
 
 func nestedObjectValueObjectPtr[T any](ctx context.Context, val valueWithElements) (*T, diag.Diagnostics) {
-	var diags diag.Diagnostics
+	diags := diag.Diagnostics{}
 
 	elements := val.Elements()
 	switch n := len(elements); n {
@@ -190,7 +187,7 @@ func nestedObjectValueObjectPtr[T any](ctx context.Context, val valueWithElement
 }
 
 func nestedObjectValueObjectSlice[T any](ctx context.Context, val valueWithElements) ([]*T, diag.Diagnostics) {
-	var diags diag.Diagnostics
+	diags := diag.Diagnostics{}
 
 	elements := val.Elements()
 	n := len(elements)
@@ -220,6 +217,10 @@ func NewListNestedObjectValueOfPtr[T any](ctx context.Context, t *T) (ListNested
 	return NewListNestedObjectValueOfSlice(ctx, []*T{t})
 }
 
+func NewListNestedObjectValueOfPtrMust[T any](ctx context.Context, t *T) ListNestedObjectValueOf[T] {
+	return fwdiag.Must(NewListNestedObjectValueOfPtr(ctx, t))
+}
+
 func NewListNestedObjectValueOfSlice[T any](ctx context.Context, ts []*T) (ListNestedObjectValueOf[T], diag.Diagnostics) {
 	return newListNestedObjectValueOf[T](ctx, ts)
 }
@@ -229,11 +230,11 @@ func NewListNestedObjectValueOfValueSlice[T any](ctx context.Context, ts []T) (L
 }
 
 func NewListNestedObjectValueOfValueSliceMust[T any](ctx context.Context, ts []T) ListNestedObjectValueOf[T] {
-	return fwdiag.Must(newListNestedObjectValueOf[T](ctx, ts))
+	return fwdiag.Must(NewListNestedObjectValueOfValueSlice[T](ctx, ts))
 }
 
 func newListNestedObjectValueOf[T any](ctx context.Context, elements any) (ListNestedObjectValueOf[T], diag.Diagnostics) {
-	var diags diag.Diagnostics
+	diags := diag.Diagnostics{}
 
 	typ, d := newObjectTypeOf[T](ctx)
 	diags.Append(d...)
