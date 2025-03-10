@@ -55,3 +55,12 @@ func ZoneSingleComputed() *schema.Schema {
 		Computed: true,
 	}
 }
+
+// ZoneSingleComputedOptional returns the schema used when a single Zones can be returned
+func ZoneSingleComputedOptional() *schema.Schema {
+	return &schema.Schema{
+		Type:     schema.TypeString,
+		Computed: true,
+		Optional: true,
+	}
+}
