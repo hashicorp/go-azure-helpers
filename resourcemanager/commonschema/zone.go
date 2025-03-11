@@ -8,8 +8,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
-// NOTE: we intentionally don't have an Optional & Computed here for behavioural consistency.
-
 // ZoneSingleRequired returns the schema used when a single Zone must be specified
 func ZoneSingleRequired() *schema.Schema {
 	return &schema.Schema{
