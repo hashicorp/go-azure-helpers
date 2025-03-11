@@ -4,6 +4,6 @@ This repository contains various helpers and wrappers for working with Azure - a
 
 ### Release Process
 
-If you would like your changes to be built into a release once merged, add the `release-once-merged` label to your PR.
+If you would NOT like your changes to be built into a release once merged, remove the automatically added `release-once-merged` label from your PR.
 
-If you would like the AzureRM Terraform Provider to be updated, add the `update-azurerm-after-release` label to your PR.
+If you would like the AzureRM Terraform Provider to be updated once your PR is merged and released, add the `update-azurerm-after-release` label to your PR.
