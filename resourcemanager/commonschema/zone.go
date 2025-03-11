@@ -56,7 +56,7 @@ func ZoneSingleComputed() *schema.Schema {
 	}
 }
 
-// ZoneSingleOptionalComputed returns the schema used when a single Zones can be returned
+// ZoneSingleOptionalComputed returns the schema used when a single Zone can be specified or a single Zone is returned when omitted
 func ZoneSingleOptionalComputed() *schema.Schema {
 	return &schema.Schema{
 		Type:     schema.TypeString,
