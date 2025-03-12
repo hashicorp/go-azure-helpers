@@ -1,6 +1,11 @@
 # Copyright (c) HashiCorp, Inc.
 # SPDX-License-Identifier: MPL-2.0
 
+# This file configures the "actions/labeler@v3" GitHub Action
+# https://github.com/actions/labeler
+
+# TODO: when the automatic build and push to provider tasks are working, the labeler action can be re-activated
+
 release-once-merged:
   - changed-files:
       - any-glob-to-any-file:
