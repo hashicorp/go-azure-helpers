@@ -102,7 +102,7 @@ func flattenStruct(ctx context.Context, sourcePath path.Path, source any, target
 		}
 		fieldName := field.Name
 
-		targetFieldVal := findField(ctx, fieldName, sourceVal, targetVal, field.Tag.Get("fwname"))
+		targetFieldVal := findField(ctx, fieldName, sourceVal, targetVal, field.Tag.Get("convert"))
 		if !targetFieldVal.IsValid() {
 			continue
 		}
@@ -408,7 +408,7 @@ func flattenSlice(ctx context.Context, sourcePath path.Path, source reflect.Valu
 				for i := 0; i < source.Len(); i++ {
 					elements[i] = types.Float64Value(source.Index(i).Float())
 				}
-				list, d := types.ListValue(types.Int64Type, elements)
+				list, d := types.ListValue(types.Float64Type, elements)
 				diags.Append(d...)
 				if diags.HasError() {
 					return diags
@@ -506,7 +506,7 @@ func flattenSlice(ctx context.Context, sourcePath path.Path, source reflect.Valu
 				for i := 0; i < source.Len(); i++ {
 					elements[i] = types.BoolValue(source.Index(i).Bool())
 				}
-				set, d := types.SetValue(types.Float64Type, elements)
+				set, d := types.SetValue(types.BoolType, elements)
 				diags.Append(d...)
 				if diags.HasError() {
 					return diags
@@ -674,7 +674,7 @@ func flattenSlice(ctx context.Context, sourcePath path.Path, source reflect.Valu
 					for i := 0; i < source.Len(); i++ {
 						elements[i] = types.Float64Value(source.Index(i).Float())
 					}
-					list, d := types.ListValue(types.Int64Type, elements)
+					list, d := types.ListValue(types.Float64Type, elements)
 					diags.Append(d...)
 					if diags.HasError() {
 						return diags
@@ -772,7 +772,7 @@ func flattenSlice(ctx context.Context, sourcePath path.Path, source reflect.Valu
 					for i := 0; i < source.Len(); i++ {
 						elements[i] = types.BoolValue(source.Index(i).Bool())
 					}
-					set, d := types.SetValue(types.Float64Type, elements)
+					set, d := types.SetValue(types.BoolType, elements)
 					diags.Append(d...)
 					if diags.HasError() {
 						return diags

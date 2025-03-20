@@ -1,6 +1,7 @@
 package identity
 
 import (
+	"context"
 	"github.com/hashicorp/go-azure-helpers/framework/typehelpers"
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/commonids"
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/identity"
@@ -14,8 +15,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-func IdentitySchemaAttribute() schema.ListNestedAttribute {
+func IdentitySchemaAttribute(ctx context.Context) schema.ListNestedAttribute {
 	return schema.ListNestedAttribute{
+		CustomType: typehelpers.NewListNestedObjectTypeOf[Identity](ctx),
 		NestedObject: schema.NestedAttributeObject{
 			Attributes: map[string]schema.Attribute{
 				"type": schema.StringAttribute{
@@ -65,8 +67,9 @@ func IdentitySchemaAttribute() schema.ListNestedAttribute {
 	}
 }
 
-func IdentitySchemaBlock() schema.ListNestedBlock {
+func IdentitySchemaBlock(ctx context.Context) schema.ListNestedBlock {
 	return schema.ListNestedBlock{
+		CustomType: typehelpers.NewListNestedObjectTypeOf[Identity](ctx),
 		NestedObject: schema.NestedBlockObject{
 			Attributes: map[string]schema.Attribute{
 				"type": schema.StringAttribute{
