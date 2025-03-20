@@ -1048,6 +1048,647 @@ func TestExpand_mapOfFloatOptional(t *testing.T) {
 	}
 }
 
+func TestExpand_listOfBool(t *testing.T) {
+	ctx := context.Background()
+	cases := []struct {
+		name        string
+		input       *TestListOfBoolFWModel
+		expect      *TestListOfBoolModel
+		expectError bool
+	}{
+		{
+			name:   "null",
+			input:  &TestListOfBoolFWModel{},
+			expect: &TestListOfBoolModel{},
+		},
+		{
+			name: "explicit null list",
+			input: &TestListOfBoolFWModel{
+				ListBoolProperty: typehelpers.NewListValueOfNull[types.Bool](ctx),
+			},
+			expect: &TestListOfBoolModel{},
+		},
+		{
+			name: "empty list",
+			input: &TestListOfBoolFWModel{
+				ListBoolProperty: typehelpers.NewListValueOfMust[types.Bool](ctx, []attr.Value{}),
+			},
+			expect: &TestListOfBoolModel{
+				ListBoolProperty: []bool{},
+			},
+		},
+		{
+			name: "single element",
+			input: &TestListOfBoolFWModel{
+				ListBoolProperty: typehelpers.NewListValueOfMust[types.Bool](ctx, []attr.Value{
+					types.BoolValue(true),
+				}),
+			},
+			expect: &TestListOfBoolModel{
+				ListBoolProperty: []bool{
+					true,
+				},
+			},
+		},
+		{
+			name: "multiple elements",
+			input: &TestListOfBoolFWModel{
+				ListBoolProperty: typehelpers.NewListValueOfMust[types.Bool](ctx, []attr.Value{
+					types.BoolValue(true),
+					types.BoolValue(true),
+					types.BoolValue(false),
+				}),
+			},
+			expect: &TestListOfBoolModel{
+				ListBoolProperty: []bool{
+					true,
+					true,
+					false,
+				},
+			},
+		},
+	}
+
+	for _, testCase := range cases {
+		result := &TestListOfBoolModel{}
+
+		diags := &diag.Diagnostics{}
+
+		t.Logf("testing expand list of string: %s", testCase.name)
+		convert.Expand(context.Background(), testCase.input, result, diags)
+		if diags.HasError() && !testCase.expectError {
+			t.Errorf("Expand failed: %+v", diags.Errors())
+		}
+		if !diags.HasError() && testCase.expectError {
+			t.Errorf("Expand failed, expected error but didn't get one")
+		}
+		if !reflect.DeepEqual(result, testCase.expect) {
+			t.Errorf("Expand failed, expected: %+v \n Got: %+v", testCase.expect, result)
+		}
+	}
+}
+
+func TestExpand_listOfString(t *testing.T) {
+	ctx := context.Background()
+	cases := []struct {
+		name        string
+		input       *TestListOfStringFWModel
+		expect      *TestListOfStringModel
+		expectError bool
+	}{
+		{
+			name:   "null",
+			input:  &TestListOfStringFWModel{},
+			expect: &TestListOfStringModel{},
+		},
+		{
+			name: "explicit null list",
+			input: &TestListOfStringFWModel{
+				ListStringProperty: typehelpers.NewListValueOfNull[types.String](ctx),
+			},
+			expect: &TestListOfStringModel{},
+		},
+		{
+			name: "empty list",
+			input: &TestListOfStringFWModel{
+				ListStringProperty: typehelpers.NewListValueOfMust[types.String](ctx, []attr.Value{}),
+			},
+			expect: &TestListOfStringModel{
+				ListStringProperty: []string{},
+			},
+		},
+		{
+			name: "single element",
+			input: &TestListOfStringFWModel{
+				ListStringProperty: typehelpers.NewListValueOfMust[types.String](ctx, []attr.Value{
+					types.StringValue("foo"),
+				}),
+			},
+			expect: &TestListOfStringModel{
+				ListStringProperty: []string{
+					"foo",
+				},
+			},
+		},
+		{
+			name: "multiple elements",
+			input: &TestListOfStringFWModel{
+				ListStringProperty: typehelpers.NewListValueOfMust[types.String](ctx, []attr.Value{
+					types.StringValue("foo"),
+					types.StringValue("bar"),
+					types.StringValue("peb"),
+				}),
+			},
+			expect: &TestListOfStringModel{
+				ListStringProperty: []string{
+					"foo",
+					"bar",
+					"peb",
+				},
+			},
+		},
+	}
+
+	for _, testCase := range cases {
+		result := &TestListOfStringModel{}
+
+		diags := &diag.Diagnostics{}
+
+		t.Logf("testing expand list of string: %s", testCase.name)
+		convert.Expand(context.Background(), testCase.input, result, diags)
+		if diags.HasError() && !testCase.expectError {
+			t.Errorf("Expand failed: %+v", diags.Errors())
+		}
+		if !diags.HasError() && testCase.expectError {
+			t.Errorf("Expand failed, expected error but didn't get one")
+		}
+		if !reflect.DeepEqual(result, testCase.expect) {
+			t.Errorf("Expand failed, expected: %+v \n Got: %+v", testCase.expect, result)
+		}
+	}
+}
+
+func TestExpand_listOfFloat(t *testing.T) {
+	ctx := context.Background()
+	cases := []struct {
+		name        string
+		input       *TestListOfFloatFWModel
+		expect      *TestListOfFloatModel
+		expectError bool
+	}{
+		{
+			name:   "null",
+			input:  &TestListOfFloatFWModel{},
+			expect: &TestListOfFloatModel{},
+		},
+		{
+			name: "explicit null list",
+			input: &TestListOfFloatFWModel{
+				ListFloatProperty: typehelpers.NewListValueOfNull[types.Float64](ctx),
+			},
+			expect: &TestListOfFloatModel{},
+		},
+		{
+			name: "empty list",
+			input: &TestListOfFloatFWModel{
+				ListFloatProperty: typehelpers.NewListValueOfMust[types.Float64](ctx, []attr.Value{}),
+			},
+			expect: &TestListOfFloatModel{
+				ListFloatProperty: []float64{},
+			},
+		},
+		{
+			name: "single element",
+			input: &TestListOfFloatFWModel{
+				ListFloatProperty: typehelpers.NewListValueOfMust[types.Float64](ctx, []attr.Value{
+					types.Float64Value(3.142),
+				}),
+			},
+			expect: &TestListOfFloatModel{
+				ListFloatProperty: []float64{
+					3.142,
+				},
+			},
+		},
+		{
+			name: "multiple elements",
+			input: &TestListOfFloatFWModel{
+				ListFloatProperty: typehelpers.NewListValueOfMust[types.Float64](ctx, []attr.Value{
+					types.Float64Value(3.142),
+					types.Float64Value(1.1),
+					types.Float64Value(9.009),
+				}),
+			},
+			expect: &TestListOfFloatModel{
+				ListFloatProperty: []float64{
+					3.142,
+					1.1,
+					9.009,
+				},
+			},
+		},
+	}
+
+	for _, testCase := range cases {
+		result := &TestListOfFloatModel{}
+
+		diags := &diag.Diagnostics{}
+
+		t.Logf("testing expand list of string: %s", testCase.name)
+		convert.Expand(context.Background(), testCase.input, result, diags)
+		if diags.HasError() && !testCase.expectError {
+			t.Errorf("Expand failed: %+v", diags.Errors())
+		}
+		if !diags.HasError() && testCase.expectError {
+			t.Errorf("Expand failed, expected error but didn't get one")
+		}
+		if !reflect.DeepEqual(result, testCase.expect) {
+			t.Errorf("Expand failed, expected: %+v \n Got: %+v", testCase.expect, result)
+		}
+	}
+}
+
+func TestExpand_listOfInt(t *testing.T) {
+	ctx := context.Background()
+	cases := []struct {
+		name        string
+		input       *TestListOfIntFWModel
+		expect      *TestListOfIntModel
+		expectError bool
+	}{
+		{
+			name:   "null",
+			input:  &TestListOfIntFWModel{},
+			expect: &TestListOfIntModel{},
+		},
+		{
+			name: "explicit null list",
+			input: &TestListOfIntFWModel{
+				ListIntProperty: typehelpers.NewListValueOfNull[types.Int64](ctx),
+			},
+			expect: &TestListOfIntModel{},
+		},
+		{
+			name: "empty list",
+			input: &TestListOfIntFWModel{
+				ListIntProperty: typehelpers.NewListValueOfMust[types.Int64](ctx, []attr.Value{}),
+			},
+			expect: &TestListOfIntModel{
+				ListIntProperty: []int64{},
+			},
+		},
+		{
+			name: "single element",
+			input: &TestListOfIntFWModel{
+				ListIntProperty: typehelpers.NewListValueOfMust[types.Int64](ctx, []attr.Value{
+					types.Int64Value(101),
+				}),
+			},
+			expect: &TestListOfIntModel{
+				ListIntProperty: []int64{
+					101,
+				},
+			},
+		},
+		{
+			name: "multiple elements",
+			input: &TestListOfIntFWModel{
+				ListIntProperty: typehelpers.NewListValueOfMust[types.Int64](ctx, []attr.Value{
+					types.Int64Value(101),
+					types.Int64Value(202),
+					types.Int64Value(303),
+				}),
+			},
+			expect: &TestListOfIntModel{
+				ListIntProperty: []int64{
+					101,
+					202,
+					303,
+				},
+			},
+		},
+	}
+
+	for _, testCase := range cases {
+		result := &TestListOfIntModel{}
+
+		diags := &diag.Diagnostics{}
+
+		t.Logf("testing expand list of string: %s", testCase.name)
+		convert.Expand(context.Background(), testCase.input, result, diags)
+		if diags.HasError() && !testCase.expectError {
+			t.Errorf("Expand failed: %+v", diags.Errors())
+		}
+		if !diags.HasError() && testCase.expectError {
+			t.Errorf("Expand failed, expected error but didn't get one")
+		}
+		if !reflect.DeepEqual(result, testCase.expect) {
+			t.Errorf("Expand failed, expected: %+v \n Got: %+v", testCase.expect, result)
+		}
+	}
+}
+
+// TODO - Sets
+func TestExpand_setOfBool(t *testing.T) {
+	ctx := context.Background()
+	cases := []struct {
+		name        string
+		input       *TestSetOfBoolFWModel
+		expect      *TestSetOfBoolModel
+		expectError bool
+	}{
+		{
+			name:   "null",
+			input:  &TestSetOfBoolFWModel{},
+			expect: &TestSetOfBoolModel{},
+		},
+		{
+			name: "explicit null set",
+			input: &TestSetOfBoolFWModel{
+				SetBoolProperty: typehelpers.NewSetValueOfNull[types.Bool](ctx),
+			},
+			expect: &TestSetOfBoolModel{},
+		},
+		{
+			name: "empty set",
+			input: &TestSetOfBoolFWModel{
+				SetBoolProperty: typehelpers.NewSetValueOfMust[types.Bool](ctx, []attr.Value{}),
+			},
+			expect: &TestSetOfBoolModel{
+				SetBoolProperty: []bool{},
+			},
+		},
+		{
+			name: "single element",
+			input: &TestSetOfBoolFWModel{
+				SetBoolProperty: typehelpers.NewSetValueOfMust[types.Bool](ctx, []attr.Value{
+					types.BoolValue(true),
+				}),
+			},
+			expect: &TestSetOfBoolModel{
+				SetBoolProperty: []bool{
+					true,
+				},
+			},
+		},
+		{
+			name: "multiple elements",
+			input: &TestSetOfBoolFWModel{
+				SetBoolProperty: typehelpers.NewSetValueOfMust[types.Bool](ctx, []attr.Value{
+					types.BoolValue(true),
+					types.BoolValue(true),
+					types.BoolValue(false),
+				}),
+			},
+			expect: &TestSetOfBoolModel{
+				SetBoolProperty: []bool{
+					true,
+					true,
+					false,
+				},
+			},
+		},
+	}
+
+	for _, testCase := range cases {
+		result := &TestSetOfBoolModel{}
+
+		diags := &diag.Diagnostics{}
+
+		t.Logf("testing expand set of string: %s", testCase.name)
+		convert.Expand(context.Background(), testCase.input, result, diags)
+		if diags.HasError() && !testCase.expectError {
+			t.Errorf("Expand failed: %+v", diags.Errors())
+		}
+		if !diags.HasError() && testCase.expectError {
+			t.Errorf("Expand failed, expected error but didn't get one")
+		}
+		if !reflect.DeepEqual(result, testCase.expect) {
+			t.Errorf("Expand failed, expected: %+v \n Got: %+v", testCase.expect, result)
+		}
+	}
+}
+
+func TestExpand_setOfString(t *testing.T) {
+	ctx := context.Background()
+	cases := []struct {
+		name        string
+		input       *TestSetOfStringFWModel
+		expect      *TestSetOfStringModel
+		expectError bool
+	}{
+		{
+			name:   "null",
+			input:  &TestSetOfStringFWModel{},
+			expect: &TestSetOfStringModel{},
+		},
+		{
+			name: "explicit null set",
+			input: &TestSetOfStringFWModel{
+				SetStringProperty: typehelpers.NewSetValueOfNull[types.String](ctx),
+			},
+			expect: &TestSetOfStringModel{},
+		},
+		{
+			name: "empty set",
+			input: &TestSetOfStringFWModel{
+				SetStringProperty: typehelpers.NewSetValueOfMust[types.String](ctx, []attr.Value{}),
+			},
+			expect: &TestSetOfStringModel{
+				SetStringProperty: []string{},
+			},
+		},
+		{
+			name: "single element",
+			input: &TestSetOfStringFWModel{
+				SetStringProperty: typehelpers.NewSetValueOfMust[types.String](ctx, []attr.Value{
+					types.StringValue("foo"),
+				}),
+			},
+			expect: &TestSetOfStringModel{
+				SetStringProperty: []string{
+					"foo",
+				},
+			},
+		},
+		{
+			name: "multiple elements",
+			input: &TestSetOfStringFWModel{
+				SetStringProperty: typehelpers.NewSetValueOfMust[types.String](ctx, []attr.Value{
+					types.StringValue("foo"),
+					types.StringValue("bar"),
+					types.StringValue("peb"),
+				}),
+			},
+			expect: &TestSetOfStringModel{
+				SetStringProperty: []string{
+					"foo",
+					"bar",
+					"peb",
+				},
+			},
+		},
+	}
+
+	for _, testCase := range cases {
+		result := &TestSetOfStringModel{}
+
+		diags := &diag.Diagnostics{}
+
+		t.Logf("testing expand set of string: %s", testCase.name)
+		convert.Expand(context.Background(), testCase.input, result, diags)
+		if diags.HasError() && !testCase.expectError {
+			t.Errorf("Expand failed: %+v", diags.Errors())
+		}
+		if !diags.HasError() && testCase.expectError {
+			t.Errorf("Expand failed, expected error but didn't get one")
+		}
+		if !reflect.DeepEqual(result, testCase.expect) {
+			t.Errorf("Expand failed, expected: %+v \n Got: %+v", testCase.expect, result)
+		}
+	}
+}
+
+func TestExpand_setOfFloat(t *testing.T) {
+	ctx := context.Background()
+	cases := []struct {
+		name        string
+		input       *TestSetOfFloatFWModel
+		expect      *TestSetOfFloatModel
+		expectError bool
+	}{
+		{
+			name:   "null",
+			input:  &TestSetOfFloatFWModel{},
+			expect: &TestSetOfFloatModel{},
+		},
+		{
+			name: "explicit null set",
+			input: &TestSetOfFloatFWModel{
+				SetFloatProperty: typehelpers.NewSetValueOfNull[types.Float64](ctx),
+			},
+			expect: &TestSetOfFloatModel{},
+		},
+		{
+			name: "empty set",
+			input: &TestSetOfFloatFWModel{
+				SetFloatProperty: typehelpers.NewSetValueOfMust[types.Float64](ctx, []attr.Value{}),
+			},
+			expect: &TestSetOfFloatModel{
+				SetFloatProperty: []float64{},
+			},
+		},
+		{
+			name: "single element",
+			input: &TestSetOfFloatFWModel{
+				SetFloatProperty: typehelpers.NewSetValueOfMust[types.Float64](ctx, []attr.Value{
+					types.Float64Value(3.142),
+				}),
+			},
+			expect: &TestSetOfFloatModel{
+				SetFloatProperty: []float64{
+					3.142,
+				},
+			},
+		},
+		{
+			name: "multiple elements",
+			input: &TestSetOfFloatFWModel{
+				SetFloatProperty: typehelpers.NewSetValueOfMust[types.Float64](ctx, []attr.Value{
+					types.Float64Value(3.142),
+					types.Float64Value(1.1),
+					types.Float64Value(9.009),
+				}),
+			},
+			expect: &TestSetOfFloatModel{
+				SetFloatProperty: []float64{
+					3.142,
+					1.1,
+					9.009,
+				},
+			},
+		},
+	}
+
+	for _, testCase := range cases {
+		result := &TestSetOfFloatModel{}
+
+		diags := &diag.Diagnostics{}
+
+		t.Logf("testing expand set of string: %s", testCase.name)
+		convert.Expand(context.Background(), testCase.input, result, diags)
+		if diags.HasError() && !testCase.expectError {
+			t.Errorf("Expand failed: %+v", diags.Errors())
+		}
+		if !diags.HasError() && testCase.expectError {
+			t.Errorf("Expand failed, expected error but didn't get one")
+		}
+		if !reflect.DeepEqual(result, testCase.expect) {
+			t.Errorf("Expand failed, expected: %+v \n Got: %+v", testCase.expect, result)
+		}
+	}
+}
+
+func TestExpand_setOfInt(t *testing.T) {
+	ctx := context.Background()
+	cases := []struct {
+		name        string
+		input       *TestSetOfIntFWModel
+		expect      *TestSetOfIntModel
+		expectError bool
+	}{
+		{
+			name:   "null",
+			input:  &TestSetOfIntFWModel{},
+			expect: &TestSetOfIntModel{},
+		},
+		{
+			name: "explicit null set",
+			input: &TestSetOfIntFWModel{
+				SetIntProperty: typehelpers.NewSetValueOfNull[types.Int64](ctx),
+			},
+			expect: &TestSetOfIntModel{},
+		},
+		{
+			name: "empty set",
+			input: &TestSetOfIntFWModel{
+				SetIntProperty: typehelpers.NewSetValueOfMust[types.Int64](ctx, []attr.Value{}),
+			},
+			expect: &TestSetOfIntModel{
+				SetIntProperty: []int64{},
+			},
+		},
+		{
+			name: "single element",
+			input: &TestSetOfIntFWModel{
+				SetIntProperty: typehelpers.NewSetValueOfMust[types.Int64](ctx, []attr.Value{
+					types.Int64Value(101),
+				}),
+			},
+			expect: &TestSetOfIntModel{
+				SetIntProperty: []int64{
+					101,
+				},
+			},
+		},
+		{
+			name: "multiple elements",
+			input: &TestSetOfIntFWModel{
+				SetIntProperty: typehelpers.NewSetValueOfMust[types.Int64](ctx, []attr.Value{
+					types.Int64Value(101),
+					types.Int64Value(202),
+					types.Int64Value(303),
+				}),
+			},
+			expect: &TestSetOfIntModel{
+				SetIntProperty: []int64{
+					101,
+					202,
+					303,
+				},
+			},
+		},
+	}
+
+	for _, testCase := range cases {
+		result := &TestSetOfIntModel{}
+
+		diags := &diag.Diagnostics{}
+
+		t.Logf("testing expand set of string: %s", testCase.name)
+		convert.Expand(context.Background(), testCase.input, result, diags)
+		if diags.HasError() && !testCase.expectError {
+			t.Errorf("Expand failed: %+v", diags.Errors())
+		}
+		if !diags.HasError() && testCase.expectError {
+			t.Errorf("Expand failed, expected error but didn't get one")
+		}
+		if !reflect.DeepEqual(result, testCase.expect) {
+			t.Errorf("Expand failed, expected: %+v \n Got: %+v", testCase.expect, result)
+		}
+	}
+}
+
 func TestExpand_nestedOneLevel(t *testing.T) {
 	ctx := context.Background()
 	cases := []struct {
@@ -1385,6 +2026,7 @@ func TestExpand_complexModel(t *testing.T) {
 						IntProperty:    types.Int64Value(1),
 						FloatProperty:  types.Float64Value(3.142),
 						StringProperty: types.StringValue("foo"),
+						// ListOfPrimitives: typehelpers.NewListValueOfNull[types.String](ctx),
 						ListProperty: typehelpers.NewListNestedObjectValueOfValueSliceMust[TestFrameworkNestedModel](ctx, []TestFrameworkNestedModel{
 							{
 								SubPropertyBool:   types.BoolValue(true),

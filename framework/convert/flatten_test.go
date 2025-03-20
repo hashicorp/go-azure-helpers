@@ -843,6 +843,615 @@ func TestFlatten_mapOfBool(t *testing.T) {
 	}
 }
 
+func TestFlatten_listOfBool(t *testing.T) {
+	ctx := context.Background()
+	emptyList := make([]bool, 0)
+	cases := []struct {
+		name        string
+		input       *TestListOfBoolModel
+		expected    *TestListOfBoolFWModel
+		expectError bool
+	}{
+		{
+			name:  "omitted property",
+			input: &TestListOfBoolModel{},
+			expected: &TestListOfBoolFWModel{
+				ListBoolProperty: typehelpers.NewListValueOfNull[types.Bool](ctx),
+			},
+		},
+		{
+			name: "zero length input",
+			input: &TestListOfBoolModel{
+				ListBoolProperty: emptyList,
+			},
+			expected: &TestListOfBoolFWModel{
+				ListBoolProperty: typehelpers.NewListValueOfMust[types.Bool](ctx, []attr.Value{}),
+			},
+		},
+		{
+			name: "single Element",
+			input: &TestListOfBoolModel{
+				ListBoolProperty: []bool{
+					true,
+				},
+			},
+			expected: &TestListOfBoolFWModel{
+				ListBoolProperty: typehelpers.NewListValueOfMust[types.Bool](ctx, []attr.Value{
+					types.BoolValue(true),
+				}),
+			},
+		},
+		{
+			name: "multiple elements",
+			input: &TestListOfBoolModel{
+				ListBoolProperty: []bool{
+					true,
+					false,
+					true,
+				},
+			},
+			expected: &TestListOfBoolFWModel{
+				ListBoolProperty: typehelpers.NewListValueOfMust[types.Bool](ctx, []attr.Value{
+					types.BoolValue(true),
+					types.BoolValue(false),
+					types.BoolValue(true),
+				}),
+			},
+		},
+	}
+
+	for _, c := range cases {
+		diags := &diag.Diagnostics{}
+		result := &TestListOfBoolFWModel{}
+
+		convert.Flatten(context.Background(), c.input, result, diags)
+
+		if diags.HasError() && !c.expectError {
+			t.Errorf("Test: %s \ndiags: %+v", c.name, diags)
+		}
+
+		if !reflect.DeepEqual(result, c.expected) && !c.expectError {
+			t.Errorf("\nTest: %s\nexpected:\n %+v\ngot:\n %+v", c.name, c.expected, result)
+		}
+
+	}
+}
+
+func TestFlatten_listOfFloat(t *testing.T) {
+	ctx := context.Background()
+	emptyList := make([]float64, 0)
+	cases := []struct {
+		name        string
+		input       *TestListOfFloatModel
+		expected    *TestListOfFloatFWModel
+		expectError bool
+	}{
+		{
+			name:  "omitted property",
+			input: &TestListOfFloatModel{},
+			expected: &TestListOfFloatFWModel{
+				ListFloatProperty: typehelpers.NewListValueOfNull[types.Float64](ctx),
+			},
+		},
+		{
+			name: "zero length input",
+			input: &TestListOfFloatModel{
+				ListFloatProperty: emptyList,
+			},
+			expected: &TestListOfFloatFWModel{
+				ListFloatProperty: typehelpers.NewListValueOfMust[types.Float64](ctx, []attr.Value{}),
+			},
+		},
+		{
+			name: "single Element",
+			input: &TestListOfFloatModel{
+				ListFloatProperty: []float64{
+					floatVal,
+				},
+			},
+			expected: &TestListOfFloatFWModel{
+				ListFloatProperty: typehelpers.NewListValueOfMust[types.Float64](ctx, []attr.Value{
+					types.Float64Value(floatVal),
+				}),
+			},
+		},
+		{
+			name: "multiple elements",
+			input: &TestListOfFloatModel{
+				ListFloatProperty: []float64{
+					floatVal + 1,
+					floatVal + 2,
+					floatVal + 3,
+				},
+			},
+			expected: &TestListOfFloatFWModel{
+				ListFloatProperty: typehelpers.NewListValueOfMust[types.Float64](ctx, []attr.Value{
+					types.Float64Value(floatVal + 1),
+					types.Float64Value(floatVal + 2),
+					types.Float64Value(floatVal + 3),
+				}),
+			},
+		},
+	}
+
+	for _, c := range cases {
+		diags := &diag.Diagnostics{}
+		result := &TestListOfFloatFWModel{}
+
+		convert.Flatten(context.Background(), c.input, result, diags)
+
+		if diags.HasError() && !c.expectError {
+			t.Errorf("Test: %s \ndiags: %+v", c.name, diags)
+		}
+
+		if !reflect.DeepEqual(result, c.expected) && !c.expectError {
+			t.Errorf("\nTest: %s\nexpected:\n %+v\ngot:\n %+v", c.name, c.expected, result)
+		}
+
+	}
+}
+
+func TestFlatten_listOfInt(t *testing.T) {
+	ctx := context.Background()
+	emptyList := make([]int64, 0)
+	cases := []struct {
+		name        string
+		input       *TestListOfIntModel
+		expected    *TestListOfIntFWModel
+		expectError bool
+	}{
+		{
+			name:  "omitted property",
+			input: &TestListOfIntModel{},
+			expected: &TestListOfIntFWModel{
+				ListIntProperty: typehelpers.NewListValueOfNull[types.Int64](ctx),
+			},
+		},
+		{
+			name: "zero length input",
+			input: &TestListOfIntModel{
+				ListIntProperty: emptyList,
+			},
+			expected: &TestListOfIntFWModel{
+				ListIntProperty: typehelpers.NewListValueOfMust[types.Int64](ctx, []attr.Value{}),
+			},
+		},
+		{
+			name: "single Element",
+			input: &TestListOfIntModel{
+				ListIntProperty: []int64{
+					intVal,
+				},
+			},
+			expected: &TestListOfIntFWModel{
+				ListIntProperty: typehelpers.NewListValueOfMust[types.Int64](ctx, []attr.Value{
+					types.Int64Value(intVal),
+				}),
+			},
+		},
+		{
+			name: "multiple elements",
+			input: &TestListOfIntModel{
+				ListIntProperty: []int64{
+					intVal + 1,
+					intVal + 2,
+					intVal + 3,
+				},
+			},
+			expected: &TestListOfIntFWModel{
+				ListIntProperty: typehelpers.NewListValueOfMust[types.Int64](ctx, []attr.Value{
+					types.Int64Value(intVal + 1),
+					types.Int64Value(intVal + 2),
+					types.Int64Value(intVal + 3),
+				}),
+			},
+		},
+	}
+
+	for _, c := range cases {
+		diags := &diag.Diagnostics{}
+		result := &TestListOfIntFWModel{}
+
+		convert.Flatten(context.Background(), c.input, result, diags)
+
+		if diags.HasError() && !c.expectError {
+			t.Errorf("Test: %s \ndiags: %+v", c.name, diags)
+		}
+
+		if !reflect.DeepEqual(result, c.expected) && !c.expectError {
+			t.Errorf("\nTest: %s\nexpected:\n %+v\ngot:\n %+v", c.name, c.expected, result)
+		}
+
+	}
+}
+
+func TestFlatten_listOfString(t *testing.T) {
+	ctx := context.Background()
+	emptyList := make([]string, 0)
+	cases := []struct {
+		name        string
+		input       *TestListOfStringModel
+		expected    *TestListOfStringFWModel
+		expectError bool
+	}{
+		{
+			name:  "omitted property",
+			input: &TestListOfStringModel{},
+			expected: &TestListOfStringFWModel{
+				ListStringProperty: typehelpers.NewListValueOfNull[types.String](ctx),
+			},
+		},
+		{
+			name: "zero length input",
+			input: &TestListOfStringModel{
+				ListStringProperty: emptyList,
+			},
+			expected: &TestListOfStringFWModel{
+				ListStringProperty: typehelpers.NewListValueOfMust[types.String](ctx, []attr.Value{}),
+			},
+		},
+		{
+			name: "single Element",
+			input: &TestListOfStringModel{
+				ListStringProperty: []string{
+					strVal,
+				},
+			},
+			expected: &TestListOfStringFWModel{
+				ListStringProperty: typehelpers.NewListValueOfMust[types.String](ctx, []attr.Value{
+					types.StringValue(strVal),
+				}),
+			},
+		},
+		{
+			name: "multiple elements",
+			input: &TestListOfStringModel{
+				ListStringProperty: []string{
+					strVal + "1",
+					strVal + "2",
+					strVal + "3",
+				},
+			},
+			expected: &TestListOfStringFWModel{
+				ListStringProperty: typehelpers.NewListValueOfMust[types.String](ctx, []attr.Value{
+					types.StringValue(strVal + "1"),
+					types.StringValue(strVal + "2"),
+					types.StringValue(strVal + "3"),
+				}),
+			},
+		},
+	}
+
+	for _, c := range cases {
+		diags := &diag.Diagnostics{}
+		result := &TestListOfStringFWModel{}
+
+		convert.Flatten(context.Background(), c.input, result, diags)
+
+		if diags.HasError() && !c.expectError {
+			t.Errorf("Test: %s \ndiags: %+v", c.name, diags)
+		}
+
+		if !reflect.DeepEqual(result, c.expected) && !c.expectError {
+			t.Errorf("\nTest: %s\nexpected:\n %+v\ngot:\n %+v", c.name, c.expected, result)
+		}
+
+	}
+}
+
+func TestFlatten_setOfBool(t *testing.T) {
+	ctx := context.Background()
+	emptySet := make([]bool, 0)
+	cases := []struct {
+		name        string
+		input       *TestSetOfBoolModel
+		expected    *TestSetOfBoolFWModel
+		expectError bool
+	}{
+		{
+			name:  "omitted property",
+			input: &TestSetOfBoolModel{},
+			expected: &TestSetOfBoolFWModel{
+				SetBoolProperty: typehelpers.NewSetValueOfNull[types.Bool](ctx),
+			},
+		},
+		{
+			name: "zero length input",
+			input: &TestSetOfBoolModel{
+				SetBoolProperty: emptySet,
+			},
+			expected: &TestSetOfBoolFWModel{
+				SetBoolProperty: typehelpers.NewSetValueOfMust[types.Bool](ctx, []attr.Value{}),
+			},
+		},
+		{
+			name: "single Element",
+			input: &TestSetOfBoolModel{
+				SetBoolProperty: []bool{
+					true,
+				},
+			},
+			expected: &TestSetOfBoolFWModel{
+				SetBoolProperty: typehelpers.NewSetValueOfMust[types.Bool](ctx, []attr.Value{
+					types.BoolValue(true),
+				}),
+			},
+		},
+		{
+			name: "multiple elements",
+			input: &TestSetOfBoolModel{
+				SetBoolProperty: []bool{
+					true,
+					false,
+					true,
+				},
+			},
+			expected: &TestSetOfBoolFWModel{
+				SetBoolProperty: typehelpers.NewSetValueOfMust[types.Bool](ctx, []attr.Value{
+					types.BoolValue(true),
+					types.BoolValue(false),
+					types.BoolValue(true),
+				}),
+			},
+		},
+	}
+
+	for _, c := range cases {
+		diags := &diag.Diagnostics{}
+		result := &TestSetOfBoolFWModel{}
+
+		convert.Flatten(context.Background(), c.input, result, diags)
+
+		if diags.HasError() && !c.expectError {
+			t.Errorf("Test: %s \ndiags: %+v", c.name, diags)
+		}
+
+		if !reflect.DeepEqual(result, c.expected) && !c.expectError {
+			t.Errorf("\nTest: %s\nexpected:\n %+v\ngot:\n %+v", c.name, c.expected, result)
+		}
+
+	}
+}
+
+func TestFlatten_setOfFloat(t *testing.T) {
+	ctx := context.Background()
+	emptySet := make([]float64, 0)
+	cases := []struct {
+		name        string
+		input       *TestSetOfFloatModel
+		expected    *TestSetOfFloatFWModel
+		expectError bool
+	}{
+		{
+			name:  "omitted property",
+			input: &TestSetOfFloatModel{},
+			expected: &TestSetOfFloatFWModel{
+				SetFloatProperty: typehelpers.NewSetValueOfNull[types.Float64](ctx),
+			},
+		},
+		{
+			name: "zero length input",
+			input: &TestSetOfFloatModel{
+				SetFloatProperty: emptySet,
+			},
+			expected: &TestSetOfFloatFWModel{
+				SetFloatProperty: typehelpers.NewSetValueOfMust[types.Float64](ctx, []attr.Value{}),
+			},
+		},
+		{
+			name: "single Element",
+			input: &TestSetOfFloatModel{
+				SetFloatProperty: []float64{
+					floatVal,
+				},
+			},
+			expected: &TestSetOfFloatFWModel{
+				SetFloatProperty: typehelpers.NewSetValueOfMust[types.Float64](ctx, []attr.Value{
+					types.Float64Value(floatVal),
+				}),
+			},
+		},
+		{
+			name: "multiple elements",
+			input: &TestSetOfFloatModel{
+				SetFloatProperty: []float64{
+					floatVal + 1,
+					floatVal + 2,
+					floatVal + 3,
+				},
+			},
+			expected: &TestSetOfFloatFWModel{
+				SetFloatProperty: typehelpers.NewSetValueOfMust[types.Float64](ctx, []attr.Value{
+					types.Float64Value(floatVal + 1),
+					types.Float64Value(floatVal + 2),
+					types.Float64Value(floatVal + 3),
+				}),
+			},
+		},
+	}
+
+	for _, c := range cases {
+		diags := &diag.Diagnostics{}
+		result := &TestSetOfFloatFWModel{}
+
+		convert.Flatten(context.Background(), c.input, result, diags)
+
+		if diags.HasError() && !c.expectError {
+			t.Errorf("Test: %s \ndiags: %+v", c.name, diags)
+		}
+
+		if !reflect.DeepEqual(result, c.expected) && !c.expectError {
+			t.Errorf("\nTest: %s\nexpected:\n %+v\ngot:\n %+v", c.name, c.expected, result)
+		}
+
+	}
+}
+
+func TestFlatten_setOfInt(t *testing.T) {
+	ctx := context.Background()
+	emptySet := make([]int64, 0)
+	cases := []struct {
+		name        string
+		input       *TestSetOfIntModel
+		expected    *TestSetOfIntFWModel
+		expectError bool
+	}{
+		{
+			name:  "omitted property",
+			input: &TestSetOfIntModel{},
+			expected: &TestSetOfIntFWModel{
+				SetIntProperty: typehelpers.NewSetValueOfNull[types.Int64](ctx),
+			},
+		},
+		{
+			name: "zero length input",
+			input: &TestSetOfIntModel{
+				SetIntProperty: emptySet,
+			},
+			expected: &TestSetOfIntFWModel{
+				SetIntProperty: typehelpers.NewSetValueOfMust[types.Int64](ctx, []attr.Value{}),
+			},
+		},
+		{
+			name: "single Element",
+			input: &TestSetOfIntModel{
+				SetIntProperty: []int64{
+					intVal,
+				},
+			},
+			expected: &TestSetOfIntFWModel{
+				SetIntProperty: typehelpers.NewSetValueOfMust[types.Int64](ctx, []attr.Value{
+					types.Int64Value(intVal),
+				}),
+			},
+		},
+		{
+			name: "multiple elements",
+			input: &TestSetOfIntModel{
+				SetIntProperty: []int64{
+					intVal + 1,
+					intVal + 2,
+					intVal + 3,
+				},
+			},
+			expected: &TestSetOfIntFWModel{
+				SetIntProperty: typehelpers.NewSetValueOfMust[types.Int64](ctx, []attr.Value{
+					types.Int64Value(intVal + 1),
+					types.Int64Value(intVal + 2),
+					types.Int64Value(intVal + 3),
+				}),
+			},
+		},
+	}
+
+	for _, c := range cases {
+		diags := &diag.Diagnostics{}
+		result := &TestSetOfIntFWModel{}
+
+		convert.Flatten(context.Background(), c.input, result, diags)
+
+		if diags.HasError() && !c.expectError {
+			t.Errorf("Test: %s \ndiags: %+v", c.name, diags)
+		}
+
+		if !reflect.DeepEqual(result, c.expected) && !c.expectError {
+			t.Errorf("\nTest: %s\nexpected:\n %+v\ngot:\n %+v", c.name, c.expected, result)
+		}
+
+	}
+}
+
+func TestFlatten_setOfString(t *testing.T) {
+	ctx := context.Background()
+	emptySet := make([]string, 0)
+	cases := []struct {
+		name        string
+		input       *TestSetOfStringModel
+		expected    *TestSetOfStringFWModel
+		expectError bool
+	}{
+		{
+			name:  "omitted property",
+			input: &TestSetOfStringModel{},
+			expected: &TestSetOfStringFWModel{
+				SetStringProperty: typehelpers.NewSetValueOfNull[types.String](ctx),
+			},
+		},
+		{
+			name: "zero length input",
+			input: &TestSetOfStringModel{
+				SetStringProperty: emptySet,
+			},
+			expected: &TestSetOfStringFWModel{
+				SetStringProperty: typehelpers.NewSetValueOfMust[types.String](ctx, []attr.Value{}),
+			},
+		},
+		{
+			name: "single Element",
+			input: &TestSetOfStringModel{
+				SetStringProperty: []string{
+					strVal,
+				},
+			},
+			expected: &TestSetOfStringFWModel{
+				SetStringProperty: typehelpers.NewSetValueOfMust[types.String](ctx, []attr.Value{
+					types.StringValue(strVal),
+				}),
+			},
+		},
+		{
+			name: "multiple elements",
+			input: &TestSetOfStringModel{
+				SetStringProperty: []string{
+					strVal + "1",
+					strVal + "2",
+					strVal + "3",
+				},
+			},
+			expected: &TestSetOfStringFWModel{
+				SetStringProperty: typehelpers.NewSetValueOfMust[types.String](ctx, []attr.Value{
+					types.StringValue(strVal + "1"),
+					types.StringValue(strVal + "2"),
+					types.StringValue(strVal + "3"),
+				}),
+			},
+		},
+		{
+			name: "multiple elements",
+			input: &TestSetOfStringModel{
+				SetStringProperty: []string{
+					strVal + "1",
+					strVal + "2",
+					strVal + "3",
+				},
+			},
+			expected: &TestSetOfStringFWModel{
+				SetStringProperty: typehelpers.NewSetValueOfMust[types.String](ctx, []attr.Value{
+					types.StringValue(strVal + "1"),
+					types.StringValue(strVal + "2"),
+					types.StringValue(strVal + "3"),
+				}),
+			},
+		},
+	}
+
+	for _, c := range cases {
+		diags := &diag.Diagnostics{}
+		result := &TestSetOfStringFWModel{}
+
+		convert.Flatten(context.Background(), c.input, result, diags)
+
+		if diags.HasError() && !c.expectError {
+			t.Errorf("Test: %s \ndiags: %+v", c.name, diags)
+		}
+
+		if !reflect.DeepEqual(result, c.expected) && !c.expectError {
+			t.Errorf("\nTest: %s\nexpected:\n %+v\ngot:\n %+v", c.name, c.expected, result)
+		}
+
+	}
+}
+
 func TestFlatten_mapOfBoolPtr(t *testing.T) {
 	ctx := context.Background()
 	cases := []struct {

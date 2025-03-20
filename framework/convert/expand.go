@@ -298,24 +298,28 @@ func expandListOfPrimitive(ctx context.Context, source basetypes.ListValue, targ
 			{
 				s := make([]string, 0)
 				diags.Append(source.ElementsAs(ctx, &s, false)...)
+				target.Set(reflect.ValueOf(s))
 			}
 
 		case reflect.Bool:
 			{
 				b := make([]bool, 0)
 				diags.Append(source.ElementsAs(ctx, &b, false)...)
+				target.Set(reflect.ValueOf(b))
 			}
 
 		case reflect.Float64:
 			{
 				f := make([]float64, 0)
 				diags.Append(source.ElementsAs(ctx, &f, false)...)
+				target.Set(reflect.ValueOf(f))
 			}
 
 		case reflect.Int64:
 			{
 				i := make([]int64, 0)
 				diags.Append(source.ElementsAs(ctx, &i, false)...)
+				target.Set(reflect.ValueOf(i))
 			}
 		}
 	}
@@ -409,24 +413,28 @@ func expandSetOfPrimitive(ctx context.Context, source basetypes.SetValue, target
 			{
 				s := make([]string, 0)
 				diags.Append(source.ElementsAs(ctx, &s, false)...)
+				target.Set(reflect.ValueOf(s))
 			}
 
 		case reflect.Bool:
 			{
 				b := make([]bool, 0)
 				diags.Append(source.ElementsAs(ctx, &b, false)...)
+				target.Set(reflect.ValueOf(b))
 			}
 
 		case reflect.Float64:
 			{
 				f := make([]float64, 0)
 				diags.Append(source.ElementsAs(ctx, &f, false)...)
+				target.Set(reflect.ValueOf(f))
 			}
 
 		case reflect.Int64:
 			{
 				i := make([]int64, 0)
 				diags.Append(source.ElementsAs(ctx, &i, false)...)
+				target.Set(reflect.ValueOf(i))
 			}
 		}
 	}
@@ -738,7 +746,7 @@ func expandStruct(ctx context.Context, sourcePath path.Path, source any, targetP
 			continue
 		}
 
-		targetFieldVal := findField(ctx, fieldName, sourceVal, targetVal, field.Tag.Get("apiName"))
+		targetFieldVal := findField(ctx, fieldName, sourceVal, targetVal, field.Tag.Get("convert"))
 		if !targetFieldVal.IsValid() {
 			continue
 		}
