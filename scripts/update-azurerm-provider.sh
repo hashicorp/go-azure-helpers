@@ -34,7 +34,7 @@ function runUpdaterTool {
   git checkout -b "${branch}"
 
   echo "Building the updater tool.."
-  cd ./internal/tools/update-go-azure-sdk
+  cd ./internal/tools/update-go-azure-helpers
   go build .
 
   echo "Configuring Git in the AzureRM repository.."
