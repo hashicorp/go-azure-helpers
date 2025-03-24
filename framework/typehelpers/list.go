@@ -6,6 +6,7 @@ package typehelpers
 import (
 	"context"
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/defaults"
 	"reflect"
 
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -152,3 +153,33 @@ func (w WrappedListValidator) ValidateList(ctx context.Context, request validato
 }
 
 var _ validator.List = &WrappedListValidator{}
+
+type WrappedListDefault struct {
+	Desc     *string
+	Markdown *string
+	Value    []interface{}
+}
+
+var _ defaults.List = &WrappedListDefault{}
+
+func NewWrappedListDefaultOf[T any](input []T) WrappedListDefault {
+	var v []T
+	return WrappedListDefault{
+		Value: v,
+	}
+}
+
+func (w WrappedListDefault) Description(ctx context.Context) string {
+	// TODO implement me
+	panic("implement me")
+}
+
+func (w WrappedListDefault) MarkdownDescription(ctx context.Context) string {
+	// TODO implement me
+	panic("implement me")
+}
+
+func (w WrappedListDefault) DefaultList(ctx context.Context, request defaults.ListRequest, response *defaults.ListResponse) {
+	// TODO implement me
+	panic("implement me")
+}
