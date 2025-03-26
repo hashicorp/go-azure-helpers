@@ -795,7 +795,7 @@ func flattenSlice(ctx context.Context, sourcePath path.Path, source reflect.Valu
 			return diags
 		}
 	default:
-		diags.AddError("Flatten Error", fmt.Sprintf("unsupported type: %T", target))
+		diags.AddError("Flatten Slice Error", fmt.Sprintf("unsupported type: %T", target))
 	}
 
 	return diags
