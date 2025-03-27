@@ -8,7 +8,6 @@ import (
 )
 
 func CommonIds() []resourceids.ResourceId {
-
 	return []resourceids.ResourceId{
 		&AppServiceId{},
 		&AppServiceEnvironmentId{},
@@ -21,6 +20,7 @@ func CommonIds() []resourceids.ResourceId {
 		&ChaosStudioTargetId{},
 		&CloudServicesIPConfigurationId{},
 		&CloudServicesPublicIPAddressId{},
+		&CosmosDBAccountId{},
 		&DedicatedHostId{},
 		&DedicatedHostGroupId{},
 		&DevCenterId{},
