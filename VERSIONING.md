@@ -12,7 +12,7 @@ This repository follows [Semantic Versioning 2.0.0](https://semver.org/) (SemVer
 
 ## Current Versioning Status
 
-The project is currently in the pre-1.0 phase (0.x.y), which according to SemVer means the API is not considered stable and breaking changes could technically occur in minor versions. However, our practices show we tend to follow conservative versioning even in this development phase.
+The project is currently in the pre-1.0 phase (0.x.y), which according to SemVer means the API is not considered stable and breaking changes could technically occur in minor versions. However, we tend to follow conservative versioning even in this development phase.
 
 ## Version Change Types
 
@@ -27,8 +27,6 @@ While the repository hasn't yet had a major version bump (still in 0.x.x series)
   - Significant restructuring of the package organization
   - Changes to the minimum required Go version that would force users to upgrade
 
-**Theoretical Example**: If the project were to reach v1.0.0, any subsequent changes that break backward compatibility would trigger a major version increment (e.g., to v2.0.0).
-
 **Future Major Release Scenarios**:
 - Complete refactoring of resource ID handling paradigm
 - Redesigning authentication interfaces
@@ -40,7 +38,7 @@ While the repository hasn't yet had a major version bump (still in 0.x.x series)
 Minor version increases are used for new functionality added in a backward-compatible manner.
 
 **Real Examples**:
-- v0.70.0: Added support for recaser scoped IDs and new functionality for resource ID type handling
+- v0.70.0: Added new functionality to recaser for better resource ID type handling
 - v0.71.0: Added logic app ID functionality for differentiation in app service
 - v0.69.0: Added new common IDs
 - v0.67.0: Added new schema functions
