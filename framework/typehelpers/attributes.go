@@ -1,3 +1,6 @@
+// Copyright (c) HashiCorp, Inc.
+// SPDX-License-Identifier: MPL-2.0
+
 package typehelpers
 
 import (
@@ -55,6 +58,7 @@ func AttributeTypes[T any](ctx context.Context) (map[string]attr.Type, diag.Diag
 
 func newAttrTypeOf[T attr.Value](ctx context.Context) attr.Type {
 	var zero T
+
 	return zero.Type(ctx)
 }
 

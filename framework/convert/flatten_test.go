@@ -1,3 +1,6 @@
+// Copyright (c) HashiCorp, Inc.
+// SPDX-License-Identifier: MPL-2.0
+
 package convert_test
 
 import (
@@ -6,8 +9,6 @@ import (
 	"math/rand"
 	"reflect"
 	"strings"
-
-	// "strings"
 	"testing"
 
 	"github.com/hashicorp/go-azure-helpers/framework/convert"
