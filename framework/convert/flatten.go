@@ -80,7 +80,7 @@ func flatten(ctx context.Context, sourcePath path.Path, source reflect.Value, ta
 		return diags
 
 	default:
-		diags.AddError("FlattenError", fmt.Sprintf("%s is not a supported type", source.Kind()))
+		diags.AddError("FlattenError", fmt.Sprintf("%s is not a supported type for %s", source.Kind(), targetPath.String()))
 	}
 
 	return diags
@@ -789,13 +789,13 @@ func flattenSlice(ctx context.Context, sourcePath path.Path, source reflect.Valu
 			}
 		}
 
-	case reflect.Struct:
+	case reflect.Struct: // TODO - will this "just work" for []interface{} list/set types?
 		if t, ok := targetType.(typehelpers.NestedObjectCollectionType); ok {
 			diags.Append(flattenSliceOfStructNestedObjectCollection(ctx, sourcePath, source, targetPath, t, target)...)
 			return diags
 		}
 	default:
-		diags.AddError("Flatten Slice Error", fmt.Sprintf("unsupported type: %T", target))
+		diags.AddError("Flatten Slice Error", fmt.Sprintf("unsupported source type: %T", elementType.String()))
 	}
 
 	return diags

@@ -11,9 +11,7 @@ import (
 
 func LocationAttribute() schema.StringAttribute {
 	return schema.StringAttribute{
-		Required:            true,
-		Description:         "",
-		MarkdownDescription: "",
+		Required: true,
 		Validators: []validator.String{
 			typehelpers.WrappedStringValidator{
 				Func: location.EnhancedValidate,
@@ -21,6 +19,17 @@ func LocationAttribute() schema.StringAttribute {
 		},
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.RequiresReplace(),
+		},
+	}
+}
+
+func LocationRelocatableAttribute() schema.StringAttribute {
+	return schema.StringAttribute{
+		Required: true,
+		Validators: []validator.String{
+			typehelpers.WrappedStringValidator{
+				Func: location.EnhancedValidate,
+			},
 		},
 	}
 }
