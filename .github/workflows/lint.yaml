@@ -15,5 +15,6 @@ jobs:
           go-version-file: ./.go-version
 
       - name: Run golangci-lint
-        run: make tools
+        run:
+          make tools
           make lint
