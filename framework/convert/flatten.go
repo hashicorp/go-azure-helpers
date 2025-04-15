@@ -960,7 +960,6 @@ func flattenMap(ctx context.Context, sourcePath path.Path, source reflect.Value,
 
 					target.Set(reflect.ValueOf(result))
 					return diags
-
 				}
 			}
 
@@ -999,7 +998,6 @@ func flattenMap(ctx context.Context, sourcePath path.Path, source reflect.Value,
 
 					target.Set(reflect.ValueOf(result))
 					return diags
-
 				}
 			}
 
@@ -1038,7 +1036,6 @@ func flattenMap(ctx context.Context, sourcePath path.Path, source reflect.Value,
 
 					target.Set(reflect.ValueOf(result))
 					return diags
-
 				}
 			}
 
@@ -1077,7 +1074,6 @@ func flattenMap(ctx context.Context, sourcePath path.Path, source reflect.Value,
 
 					target.Set(reflect.ValueOf(result))
 					return diags
-
 				}
 			}
 

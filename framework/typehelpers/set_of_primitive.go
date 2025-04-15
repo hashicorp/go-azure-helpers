@@ -74,7 +74,6 @@ func (t setTypeOf[T]) ValueFromSet(ctx context.Context, in basetypes.SetValue) (
 
 func (t setTypeOf[T]) ValueFromTerraform(ctx context.Context, in tftypes.Value) (attr.Value, error) {
 	attrValue, err := t.SetType.ValueFromTerraform(ctx, in)
-
 	if err != nil {
 		return nil, err
 	}

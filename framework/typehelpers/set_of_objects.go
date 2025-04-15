@@ -104,7 +104,6 @@ func (s setNestedObjectTypeOf[T]) ValueFromSet(ctx context.Context, in basetypes
 
 func (s setNestedObjectTypeOf[T]) ValueFromTerraform(ctx context.Context, in tftypes.Value) (attr.Value, error) {
 	attrValue, err := s.SetType.ValueFromTerraform(ctx, in)
-
 	if err != nil {
 		return nil, err
 	}

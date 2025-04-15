@@ -58,7 +58,6 @@ func (o objectTypeOf[T]) String() string {
 
 func (o objectTypeOf[T]) ValueFromTerraform(ctx context.Context, in tftypes.Value) (attr.Value, error) {
 	attrValue, err := o.ObjectType.ValueFromTerraform(ctx, in)
-
 	if err != nil {
 		return nil, err
 	}
@@ -181,7 +180,6 @@ func NullOutObjectPtrFields[T any](ctx context.Context, t *T) diag.Diagnostics {
 		}
 
 		attrValue, err := NullValueOf(ctx, val.Interface())
-
 		if err != nil {
 			diags.Append(diag.NewErrorDiagnostic("attr.Type.ValueFromTerraform", err.Error()))
 			return diags

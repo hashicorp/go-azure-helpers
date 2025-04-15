@@ -6,6 +6,7 @@ package typehelpers
 import (
 	"context"
 	"fmt"
+
 	"github.com/hashicorp/go-azure-helpers/framework/fwdiag"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -70,7 +71,6 @@ func (t listNestedObjectTypeOf[T]) ValueFromList(ctx context.Context, in basetyp
 
 func (t listNestedObjectTypeOf[T]) ValueFromTerraform(ctx context.Context, in tftypes.Value) (attr.Value, error) {
 	attrValue, err := t.ListType.ValueFromTerraform(ctx, in)
-
 	if err != nil {
 		return nil, err
 	}

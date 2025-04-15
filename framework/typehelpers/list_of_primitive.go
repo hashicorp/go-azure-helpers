@@ -68,7 +68,6 @@ func (t listTypeOf[T]) ValueFromList(ctx context.Context, in basetypes.ListValue
 
 func (t listTypeOf[T]) ValueFromTerraform(ctx context.Context, in tftypes.Value) (attr.Value, error) {
 	attrValue, err := t.ListType.ValueFromTerraform(ctx, in)
-
 	if err != nil {
 		return nil, err
 	}

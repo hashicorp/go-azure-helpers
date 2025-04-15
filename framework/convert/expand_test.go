@@ -2162,7 +2162,6 @@ func TestExpand_complexModel(t *testing.T) {
 		}
 		if !reflect.DeepEqual(result, testCase.expect) {
 			t.Errorf("Expand failed, expected: \n%+v \n Got: \n%+v", testCase.expect, result)
-
 		}
 	}
 }
