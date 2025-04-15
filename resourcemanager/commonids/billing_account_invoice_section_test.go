@@ -19,7 +19,6 @@ func TestNewBillingAccountInvoiceSectionID(t *testing.T) {
 	if id.InvoiceSectionName != "invoiceSectionNameValue" {
 		t.Fatalf("Expected %q but got %q for Segment 'InvoiceSectionName'", "invoiceSectionNameValue", id.InvoiceSectionName)
 	}
-
 }
 
 func TestFormatBillingAccountInvoiceSectionID(t *testing.T) {

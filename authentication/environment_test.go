@@ -48,7 +48,6 @@ func TestAccAzureEnvironmentByName(t *testing.T) {
 	if !strings.EqualFold(env.Name, "AzureChinaCloud") {
 		t.Fatalf("Incorrect environment name returned. Expected: %q. Received: %q", "AzureChinaCloud", env.Name)
 	}
-
 }
 
 func TestAccAzureEnvironmentByNameFromEndpoint(t *testing.T) {

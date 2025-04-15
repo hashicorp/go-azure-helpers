@@ -28,7 +28,6 @@ func TestReCaserWithCorrectCasing(t *testing.T) {
 	if actual != expected {
 		t.Fatalf("Expected %q but got %q", expected, actual)
 	}
-
 }
 
 func TestReCaserWithCorrectCasingResourceGroupId(t *testing.T) {
@@ -60,7 +59,6 @@ func TestReCaserWithUnknownId(t *testing.T) {
 }
 
 func TestReCaserWithUnkownIdContainingSubscriptions(t *testing.T) {
-
 	expected := "/subscriptions/11111/Blah"
 	actual := reCaseWithIds("/suBsCrIpTiOnS/11111/Blah", getTestIds())
 
