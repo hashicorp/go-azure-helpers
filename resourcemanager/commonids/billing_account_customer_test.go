@@ -15,7 +15,6 @@ func TestNewBillingAccountCustomerID(t *testing.T) {
 	if id.CustomerName != "customerNameValue" {
 		t.Fatalf("Expected %q but got %q for Segment 'CustomerName'", "customerNameValue", id.CustomerName)
 	}
-
 }
 
 func TestFormatBillingAccountCustomerID(t *testing.T) {

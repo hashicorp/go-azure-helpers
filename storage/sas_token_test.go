@@ -130,7 +130,6 @@ func TestComputeAccountSASToken(t *testing.T) {
 			test.signedVersion,
 			test.signedEncryptionScope,
 		)
-
 		if err != nil {
 			t.Fatalf("Test Failed: Error computing storage account Sas: %q", err)
 		}
@@ -214,7 +213,6 @@ func TestComputeContainerSASToken(t *testing.T) {
 			test.contentEncoding,
 			test.contentLanguage,
 			test.contentType)
-
 		if err != nil {
 			t.Fatalf("Test Failed: Error computing blob container Sas: %q", err)
 		}

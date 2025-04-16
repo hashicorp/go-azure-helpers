@@ -67,17 +67,17 @@ func TestParseDevCenterID(t *testing.T) {
 			Error: true,
 		},
 		{
-			//Incomplete URI
+			// Incomplete URI
 			Input: "/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/example-resource-group/providers",
 			Error: true,
 		},
 		{
-			//Incomplete URI
+			// Incomplete URI
 			Input: "/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/example-resource-group/providers/Microsoft.DevCenter",
 			Error: true,
 		},
 		{
-			//Incomplete URI
+			// Incomplete URI
 			Input: "/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/example-resource-group/providers/Microsoft.DevCenter/devCenters",
 			Error: true,
 		},

@@ -87,7 +87,6 @@ func TestComputeEventHubSASToken(t *testing.T) {
 			test.sharedAccessKey,
 			test.eventHubUri,
 			test.expiry)
-
 		if err != nil {
 			t.Fatalf("Test Failed: Error computing Event Hub Sas: %q", err)
 		}

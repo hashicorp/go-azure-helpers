@@ -37,7 +37,6 @@ func TestNewVirtualMachineScaleSetIPConfigurationID(t *testing.T) {
 	if id.IpConfigurationName != "ipConfigurationValue" {
 		t.Fatalf("Expected %q but got %q for Segment 'IpConfigurationName'", id.IpConfigurationName, "ipConfigurationValue")
 	}
-
 }
 
 func TestFormatVirtualMachineScaleSetIPConfigurationID(t *testing.T) {

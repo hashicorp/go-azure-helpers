@@ -171,7 +171,6 @@ func TestCompositeResourceIDNumberOfIDsErrors(t *testing.T) {
 }
 
 func TestCompositeResourceIDInvalidIDs(t *testing.T) {
-
 	id1 := BotServiceId{}
 	id2 := AppServiceId{}
 
