@@ -7,7 +7,6 @@ import (
 
 	"github.com/hashicorp/go-azure-helpers/framework/identity"
 	"github.com/hashicorp/go-azure-helpers/framework/typehelpers"
-	"github.com/hashicorp/go-azure-helpers/lang/pointer"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -223,10 +222,10 @@ func TestFlattenSystemAndUserAssignedMap(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		result := pointer.To(typehelpers.ListNestedObjectValueOf[identity.IdentityModel]{})
-		identity.FlattenFromSystemAndUserAssignedMap(ctx, tc.Input, result, &diags)
+		result := typehelpers.ListNestedObjectValueOf[identity.IdentityModel]{}
+		identity.FlattenFromSystemAndUserAssignedMap(ctx, tc.Input, &result, &diags)
 
-		if !reflect.DeepEqual(*result, tc.Expected) {
+		if !tc.Expected.Equal(result) {
 			t.Errorf("\nTesting: %s\nExpected: %+v\nGot: %+v\nDiags: %+v", tc.Name, tc.Expected, result, diags.Errors())
 		}
 	}

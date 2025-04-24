@@ -225,7 +225,7 @@ func TestFlattenSystemAndUserAssignedList(t *testing.T) {
 		result := typehelpers.ListNestedObjectValueOf[identity.IdentityModel]{}
 		identity.FlattenFromSystemAndUserAssignedList(ctx, tc.Input, &result, &diags)
 
-		if !reflect.DeepEqual(result, tc.Expected) {
+		if !tc.Expected.Equal(result) {
 			t.Errorf("\nTesting: %s\nExpected: %+v\nGot: %+v\nDiags: %+v", tc.Name, tc.Expected, result, diags.Errors())
 		}
 	}
