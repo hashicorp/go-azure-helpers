@@ -266,7 +266,6 @@ func flattenPtr(ctx context.Context, sourcePath path.Path, source reflect.Value,
 func flattenSlice(ctx context.Context, sourcePath path.Path, source reflect.Value, targetPath path.Path, targetType attr.Type, target reflect.Value) diag.Diagnostics {
 	diags := diag.Diagnostics{}
 
-	// TODO - can probably refactor this to have a common function for lists of Primitives?
 	switch elementType := source.Type().Elem(); elementType.Kind() {
 	case reflect.String:
 		switch t := targetType.(type) {
@@ -800,7 +799,7 @@ func flattenSlice(ctx context.Context, sourcePath path.Path, source reflect.Valu
 			}
 		}
 
-	case reflect.Struct: // TODO - will this "just work" for []interface{} list/set types?
+	case reflect.Struct:
 		if t, ok := targetType.(typehelpers.NestedObjectCollectionType); ok {
 			diags.Append(flattenSliceOfStructNestedObjectCollection(ctx, sourcePath, source, targetPath, t, target)...)
 			return diags
@@ -866,8 +865,6 @@ func flattenObject(ctx context.Context, sourcePath path.Path, source reflect.Val
 	if t, ok := targetType.(typehelpers.NestedObjectType); ok {
 		return flattenStructToNestedObject(ctx, sourcePath, source, targetPath, t, target, returnNull)
 	}
-
-	// TODO - Are there other object types we need to handle here?
 
 	return diags
 }
@@ -1322,6 +1319,7 @@ func flattenStructMapToObjectList(ctx context.Context, sourcePath path.Path, sou
 	return diags
 }
 
+// ProtoV6 construct - future use
 func setMapKey(target any, key reflect.Value) diag.Diagnostics {
 	diags := diag.Diagnostics{}
 

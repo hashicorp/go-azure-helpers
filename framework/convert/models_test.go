@@ -10,18 +10,17 @@ import (
 )
 
 type TestFrameworkModelComplex struct {
-	BoolProperty   types.Bool                                                    `tfsdk:"bool_property"`
-	FloatProperty  types.Float64                                                 `tfsdk:"float_property"`
-	IntProperty    types.Int64                                                   `tfsdk:"int_property"`
-	StringProperty types.String                                                  `tfsdk:"string_property"`
-	ListProperty   typehelpers.ListNestedObjectValueOf[TestFrameworkNestedModel] `tfsdk:"list_property"`
-	// ListOfPrimitives  typehelpers.ListValueOf[types.String]                         `tfsdk:"list_of_primitives"`
-	MapBoolProperty   typehelpers.MapValueOf[basetypes.BoolValue]                  `tfsdk:"map_bool_property"`
-	MapFloatProperty  typehelpers.MapValueOf[basetypes.Float64Value]               `tfsdk:"map_float_property"`
-	MapInt64Property  typehelpers.MapValueOf[basetypes.Int64Value]                 `tfsdk:"map_int64_property"`
-	MapStringProperty typehelpers.MapValueOf[basetypes.StringValue]                `tfsdk:"map_string_property"`
-	SetProperty       typehelpers.SetNestedObjectValueOf[TestFrameworkNestedModel] `tfsdk:"set_property"`
-	// MapObjectProperty   types.Map     `tfsdk:"map_property"` // TODO? - Protocol V6 only?
+	BoolProperty      types.Bool                                                    `tfsdk:"bool_property"`
+	FloatProperty     types.Float64                                                 `tfsdk:"float_property"`
+	IntProperty       types.Int64                                                   `tfsdk:"int_property"`
+	StringProperty    types.String                                                  `tfsdk:"string_property"`
+	ListProperty      typehelpers.ListNestedObjectValueOf[TestFrameworkNestedModel] `tfsdk:"list_property"`
+	ListOfPrimitives  typehelpers.ListValueOf[types.String]                         `tfsdk:"list_of_primitives"`
+	MapBoolProperty   typehelpers.MapValueOf[basetypes.BoolValue]                   `tfsdk:"map_bool_property"`
+	MapFloatProperty  typehelpers.MapValueOf[basetypes.Float64Value]                `tfsdk:"map_float_property"`
+	MapInt64Property  typehelpers.MapValueOf[basetypes.Int64Value]                  `tfsdk:"map_int64_property"`
+	MapStringProperty typehelpers.MapValueOf[basetypes.StringValue]                 `tfsdk:"map_string_property"`
+	SetProperty       typehelpers.SetNestedObjectValueOf[TestFrameworkNestedModel]  `tfsdk:"set_property"`
 }
 
 type TestAPIModelComplex struct {
@@ -29,6 +28,7 @@ type TestAPIModelComplex struct {
 	FloatProperty     float64
 	IntProperty       int64
 	StringProperty    string
+	ListOfPrimitives  []string
 	ListProperty      []TestAPINestedModel
 	MapBoolProperty   map[string]bool
 	MapFloatProperty  map[string]float64

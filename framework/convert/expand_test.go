@@ -1926,6 +1926,9 @@ func TestExpand_complexModel(t *testing.T) {
 						IntProperty:    types.Int64Value(1),
 						FloatProperty:  types.Float64Value(3.142),
 						StringProperty: types.StringValue("foo"),
+						ListOfPrimitives: typehelpers.NewListValueOfMust[types.String](ctx, []attr.Value{
+							types.StringValue("bar"),
+						}),
 						ListProperty: typehelpers.NewListNestedObjectValueOfValueSliceMust[TestFrameworkNestedModel](ctx, []TestFrameworkNestedModel{
 							{
 								SubPropertyBool:   types.BoolValue(true),
@@ -1971,6 +1974,9 @@ func TestExpand_complexModel(t *testing.T) {
 						IntProperty:    int64(1),
 						FloatProperty:  3.142,
 						StringProperty: "foo",
+						ListOfPrimitives: []string{
+							"bar",
+						},
 						ListProperty: []TestAPINestedModel{
 							{
 								SubPropertyBool:   true,
@@ -2029,7 +2035,11 @@ func TestExpand_complexModel(t *testing.T) {
 						IntProperty:    types.Int64Value(1),
 						FloatProperty:  types.Float64Value(3.142),
 						StringProperty: types.StringValue("foo"),
-						// ListOfPrimitives: typehelpers.NewListValueOfNull[types.String](ctx),
+						ListOfPrimitives: typehelpers.NewListValueOfMust[types.String](ctx, []attr.Value{
+							types.StringValue("food"),
+							types.StringValue("is"),
+							types.StringValue("life"),
+						}),
 						ListProperty: typehelpers.NewListNestedObjectValueOfValueSliceMust[TestFrameworkNestedModel](ctx, []TestFrameworkNestedModel{
 							{
 								SubPropertyBool:   types.BoolValue(true),
@@ -2097,6 +2107,11 @@ func TestExpand_complexModel(t *testing.T) {
 						IntProperty:    int64(1),
 						FloatProperty:  3.142,
 						StringProperty: "foo",
+						ListOfPrimitives: []string{
+							"food",
+							"is",
+							"life",
+						},
 						ListProperty: []TestAPINestedModel{
 							{
 								SubPropertyBool:   true,

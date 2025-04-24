@@ -12,8 +12,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 )
 
-// Expand converts a terraform-plugin-framework object into a go-azure-sdk (native Go) object
-// it will write any diagnostics back to the supplied diag.Diagnostics pointer
+// Expand converts a terraform-plugin-framework object into a go-azure-sdk (i.e native Go) object.
+// It will write any diagnostics back to the supplied diag.Diagnostics pointer
 func Expand(ctx context.Context, fwObject any, apiObject any, diags *diag.Diagnostics) {
 	source, target, d := convert(fwObject, apiObject)
 	if d.HasError() {
@@ -129,8 +129,6 @@ func expandBool(ctx context.Context, source basetypes.BoolValuable, target refle
 		}
 	}
 
-	// TODO handle unsupported types
-
 	return diags
 }
 
@@ -160,8 +158,6 @@ func expandFloat64(ctx context.Context, source basetypes.Float64Valuable, target
 		}
 	}
 
-	// TODO handle unsupported types?
-
 	return diags
 }
 
@@ -190,8 +186,6 @@ func expandInt64(ctx context.Context, source basetypes.Int64Valuable, target ref
 			}
 		}
 	}
-
-	// TODO handle unsupported types?
 
 	return diags
 }
@@ -282,6 +276,7 @@ func expandList(ctx context.Context, sourcePath path.Path, source basetypes.List
 	case basetypes.MapTypable:
 		{
 			// TODO?
+			diags.AddError("unsupported list type", "lists of maps are not currently supported")
 		}
 	}
 
@@ -397,6 +392,7 @@ func expandSet(ctx context.Context, sourcePath path.Path, source basetypes.SetVa
 	case basetypes.MapTypable:
 		{
 			// TODO?
+			diags.AddError("unsupported set type", "sets of maps are not currently supported")
 		}
 	}
 
@@ -780,7 +776,7 @@ func findField(ctx context.Context, fieldName string, _ reflect.Value, target re
 		return v
 	}
 
-	// TODO - Case insensitive matching? (
+	// TODO - Can we do case-insensitive matching? (And should we?)
 
 	// TODO - resource manager suffix trimming find? e.g. ThingProperties == Thing
 
