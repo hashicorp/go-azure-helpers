@@ -28,12 +28,6 @@ type listNestedObjectTypeOf[T any] struct {
 // NewListNestedObjectTypeOf returns a wrapped `ListType` of a given type `T`
 // This can be used in provider resource implementations for Custom Types (i.e. lists of objects, which is to say
 // "blocks")
-// For Example:
-// func MySchema(ctx context.Context) schema.ListNestedBlock {
-//	return schema.ListNestedBlock{
-//		CustomType: typehelpers.NewListNestedObjectTypeOf[MySubBlockModel](ctx),
-//		NestedObject: schema.NestedBlockObject{
-//			Attributes: map[string]schema.Attribute{
 func NewListNestedObjectTypeOf[T any](ctx context.Context) listNestedObjectTypeOf[T] {
 	return listNestedObjectTypeOf[T]{basetypes.ListType{ElemType: NewObjectTypeOf[T](ctx)}}
 }
@@ -107,8 +101,8 @@ func (t listNestedObjectTypeOf[T]) NewObjectPtr(ctx context.Context) (any, diag.
 	return objectTypeNewObjectPtr[T](ctx)
 }
 
-func (t listNestedObjectTypeOf[T]) NewObjectSlice(ctx context.Context, len, cap int) (any, diag.Diagnostics) {
-	return nestedObjectTypeNewObjectSlice[T](ctx, len, cap)
+func (t listNestedObjectTypeOf[T]) NewObjectSlice(ctx context.Context, l, cap int) (any, diag.Diagnostics) {
+	return nestedObjectTypeNewObjectSlice[T](ctx, l, cap)
 }
 
 func (t listNestedObjectTypeOf[T]) NullValue(ctx context.Context) (attr.Value, diag.Diagnostics) {

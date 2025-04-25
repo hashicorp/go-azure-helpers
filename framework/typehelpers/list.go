@@ -107,7 +107,7 @@ func (w WrappedListValidator) ValidateList(ctx context.Context, request validato
 		request.ConfigValue.ElementsAs(ctx, &items, false)
 		for _, v := range items {
 			_, errors := w.Func(v, path)
-			if errors != nil && len(errors) > 0 {
+			if len(errors) > 0 {
 				response.Diagnostics.AddError(fmt.Sprintf("invalid value for %s", path), fmt.Sprintf("%+v", errors[0]))
 				return
 			}
@@ -118,7 +118,7 @@ func (w WrappedListValidator) ValidateList(ctx context.Context, request validato
 		request.ConfigValue.ElementsAs(ctx, &items, false)
 		for _, v := range items {
 			_, errors := w.Func(v, path)
-			if errors != nil && len(errors) > 0 {
+			if len(errors) > 0 {
 				response.Diagnostics.AddError(fmt.Sprintf("invalid value for %s", path), fmt.Sprintf("%+v", errors[0]))
 				return
 			}
@@ -129,7 +129,7 @@ func (w WrappedListValidator) ValidateList(ctx context.Context, request validato
 		request.ConfigValue.ElementsAs(ctx, &items, false)
 		for _, v := range items {
 			_, errors := w.Func(v, path)
-			if errors != nil && len(errors) > 0 {
+			if len(errors) > 0 {
 				response.Diagnostics.AddError(fmt.Sprintf("invalid value for %s", path), fmt.Sprintf("%+v", errors[0]))
 				return
 			}
@@ -140,7 +140,7 @@ func (w WrappedListValidator) ValidateList(ctx context.Context, request validato
 		request.ConfigValue.ElementsAs(ctx, &items, false)
 		for _, v := range items {
 			_, errors := w.Func(v, path)
-			if errors != nil && len(errors) > 0 {
+			if len(errors) > 0 {
 				response.Diagnostics.AddError(fmt.Sprintf("invalid value for %s", path), fmt.Sprintf("%+v", errors[0]))
 				return
 			}

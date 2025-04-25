@@ -818,7 +818,7 @@ func extractMapKeyValue(source any) (reflect.Value, diag.Diagnostics) {
 		}
 	}
 
-	diags.AddError("convert", fmt.Sprint("unable to find map block key"))
+	diags.AddError("convert", "unable to find map block key")
 
 	return reflect.Zero(reflect.TypeOf("")), diags
 }

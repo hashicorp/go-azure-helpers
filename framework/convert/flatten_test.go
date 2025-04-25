@@ -5,6 +5,7 @@ package convert_test
 
 import (
 	"context"
+	cryptoRand "crypto/rand"
 	"encoding/base64"
 	"math/rand"
 	"reflect"
@@ -27,7 +28,7 @@ var (
 
 func randomString(length int) string {
 	b := make([]byte, length)
-	_, err := rand.Read(b)
+	_, err := cryptoRand.Read(b)
 	if err != nil {
 		panic(err)
 	}

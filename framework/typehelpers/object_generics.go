@@ -247,8 +247,8 @@ func NewObjectValueOf[T any](ctx context.Context, t *T) (ObjectValueOf[T], diag.
 	return ObjectValueOf[T]{ObjectValue: v}, diags
 }
 
-func nestedObjectTypeNewObjectSlice[T any](_ context.Context, len, cap int) ([]*T, diag.Diagnostics) { //nolint:unparam
+func nestedObjectTypeNewObjectSlice[T any](_ context.Context, l, cap int) ([]*T, diag.Diagnostics) { //nolint:unparam
 	var diags diag.Diagnostics
 
-	return make([]*T, len, cap), diags
+	return make([]*T, l, cap), diags
 }

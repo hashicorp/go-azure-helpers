@@ -57,8 +57,6 @@ func ExpandToSystemAndUserAssignedMap(ctx context.Context, input typehelpers.Lis
 		res.IdentityIds = identities
 		*result = res
 	}
-
-	return
 }
 
 func FlattenFromSystemAndUserAssignedMap(ctx context.Context, input *identity.SystemAndUserAssignedMap, result *typehelpers.ListNestedObjectValueOf[IdentityModel], diags *diag.Diagnostics) {

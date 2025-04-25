@@ -52,9 +52,9 @@ type MapObjectCollectionValue interface {
 	ToObjectMap(context.Context) (map[string]any, diag.Diagnostics)
 }
 
-// mapValueWithElements extends the Value interface for values that have an Elements method.
-type mapValueWithElements interface {
-	attr.Value
-
-	Elements() map[string]attr.Value
-}
+// // mapValueWithElements extends the Value interface for values that have an Elements method.
+// type mapValueWithElements interface {
+// 	attr.Value
+//
+// 	Elements() map[string]attr.Value
+// }

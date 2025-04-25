@@ -6,8 +6,8 @@ package typehelpers
 import "time"
 
 type Timeouts struct {
-	defaultCreateTimeout time.Duration
-	defaultReadTimeout   time.Duration
-	defaultUpdateTimeout time.Duration
-	defaultDeleteTimeout time.Duration
+	DefaultCreateTimeout time.Duration
+	DefaultReadTimeout   time.Duration
+	DefaultUpdateTimeout time.Duration
+	DefaultDeleteTimeout time.Duration
 }
