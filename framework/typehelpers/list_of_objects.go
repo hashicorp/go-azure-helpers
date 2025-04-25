@@ -154,8 +154,8 @@ func (v ListNestedObjectValueOf[T]) Type(ctx context.Context) attr.Type {
 	return NewListNestedObjectTypeOf[T](ctx)
 }
 
-func (v ListNestedObjectValueOf[T]) ElementType() attr.Type {
-	return v.ElementType()
+func (v ListNestedObjectValueOf[T]) ElementType(ctx context.Context) attr.Type {
+	return v.ListValue.ElementType(ctx)
 }
 
 func (v ListNestedObjectValueOf[T]) ToObjectPtr(ctx context.Context) (any, diag.Diagnostics) {
