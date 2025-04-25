@@ -49,10 +49,11 @@ func TestFlatten_complex(t *testing.T) {
 	}
 
 	expected := &TestFrameworkModelComplex{
-		BoolProperty:   types.BoolValue(true),
-		StringProperty: types.StringValue("foo"),
-		IntProperty:    types.Int64Value(365),
-		FloatProperty:  types.Float64Value(3.14),
+		BoolProperty:     types.BoolValue(true),
+		StringProperty:   types.StringValue("foo"),
+		IntProperty:      types.Int64Value(365),
+		FloatProperty:    types.Float64Value(3.14),
+		ListOfPrimitives: typehelpers.NewListValueOfNull[types.String](ctx),
 		ListProperty: typehelpers.NewListNestedObjectValueOfValueSliceMust(ctx, []TestFrameworkNestedModel{
 			{
 				SubPropertyBool:   types.BoolValue(true),
@@ -1717,6 +1718,9 @@ func TestFlatten_complexNested(t *testing.T) {
 						StringProperty: strVal,
 						IntProperty:    intVal,
 						FloatProperty:  floatVal,
+						ListOfPrimitives: []string{
+							strVal,
+						},
 						ListProperty: []TestAPINestedModel{
 							{
 								SubPropertyBool:   true,
@@ -1785,6 +1789,9 @@ func TestFlatten_complexNested(t *testing.T) {
 						StringProperty: types.StringValue(strVal),
 						IntProperty:    types.Int64Value(intVal),
 						FloatProperty:  types.Float64Value(floatVal),
+						ListOfPrimitives: typehelpers.NewListValueOfMust[types.String](ctx, []attr.Value{
+							types.StringValue(strVal),
+						}),
 						ListProperty: typehelpers.NewListNestedObjectValueOfValueSliceMust(ctx, []TestFrameworkNestedModel{
 							{
 								SubPropertyBool:   types.BoolValue(true),

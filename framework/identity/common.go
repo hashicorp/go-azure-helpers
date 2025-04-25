@@ -20,10 +20,10 @@ import (
 )
 
 type IdentityModel struct {
-	Type        types.String                          `tfsdk:"type"`
-	IdentityIDs typehelpers.ListValueOf[types.String] `tfsdk:"identity_ids" convert:"IdentityIds"`
-	PrincipalID types.String                          `tfsdk:"principal_id" convert:"PrincipalId"`
-	TenantID    types.String                          `tfsdk:"tenant_id" convert:"TenantId"`
+	Type        types.String                         `tfsdk:"type"`
+	IdentityIDs typehelpers.SetValueOf[types.String] `tfsdk:"identity_ids" convert:"IdentityIds"`
+	PrincipalID types.String                         `tfsdk:"principal_id" convert:"PrincipalId"`
+	TenantID    types.String                         `tfsdk:"tenant_id" convert:"TenantId"`
 }
 
 type SystemIdentityModel struct {

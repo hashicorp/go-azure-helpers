@@ -83,12 +83,12 @@ func FlattenFromSystemAndUserAssignedMap(ctx context.Context, input *identity.Sy
 			ids = append(ids, types.StringValue(id))
 		}
 
-		ident.IdentityIDs, *diags = typehelpers.NewListValueOf[types.String](ctx, ids)
+		ident.IdentityIDs, *diags = typehelpers.NewSetValueOf[types.String](ctx, ids)
 		if diags.HasError() {
 			return
 		}
 	} else {
-		ident.IdentityIDs = typehelpers.NewListValueOfNull[types.String](ctx)
+		ident.IdentityIDs = typehelpers.NewSetValueOfNull[types.String](ctx)
 	}
 
 	r, d := typehelpers.NewListNestedObjectValueOfValueSlice(ctx, []IdentityModel{ident})

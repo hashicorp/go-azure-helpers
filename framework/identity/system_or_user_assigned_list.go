@@ -51,7 +51,7 @@ func FlattenFromSystemOrUserAssignedList(ctx context.Context, input *identity.Sy
 	}
 
 	flat := IdentityModel{
-		IdentityIDs: typehelpers.NewListValueOfNull[types.String](ctx),
+		IdentityIDs: typehelpers.NewSetValueOfNull[types.String](ctx),
 	}
 
 	convert.Flatten(ctx, input, &flat, diags)

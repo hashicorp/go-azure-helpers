@@ -40,7 +40,7 @@ func TestExpandSystemAndUserAssignedList(t *testing.T) {
 					Type:        types.StringValue(string(identity.TypeNone)),
 					PrincipalID: types.StringNull(),
 					TenantID:    types.StringNull(),
-					IdentityIDs: typehelpers.NewListValueOfNull[types.String](ctx),
+					IdentityIDs: typehelpers.NewSetValueOfNull[types.String](ctx),
 				},
 			}),
 			Expected: &rmidentity.SystemAndUserAssignedList{
@@ -57,7 +57,7 @@ func TestExpandSystemAndUserAssignedList(t *testing.T) {
 					Type:        types.StringValue(string(identity.TypeSystemAssigned)),
 					PrincipalID: types.StringValue("000000-0000-0000-0000-000000000000"),
 					TenantID:    types.StringValue("000000-0000-0000-0000-000000000001"),
-					IdentityIDs: typehelpers.NewListValueOfNull[types.String](ctx),
+					IdentityIDs: typehelpers.NewSetValueOfNull[types.String](ctx),
 				},
 			}),
 			Expected: &rmidentity.SystemAndUserAssignedList{
@@ -74,7 +74,7 @@ func TestExpandSystemAndUserAssignedList(t *testing.T) {
 					Type:        types.StringValue(string(identity.TypeSystemAssignedUserAssigned)),
 					PrincipalID: types.StringValue("000000-0000-0000-0000-000000000002"),
 					TenantID:    types.StringValue("000000-0000-0000-0000-000000000003"),
-					IdentityIDs: typehelpers.NewListValueOfMust[types.String](ctx, []attr.Value{
+					IdentityIDs: typehelpers.NewSetValueOfMust[types.String](ctx, []attr.Value{
 						types.StringValue("100000-0000-0000-0000-000000000000"),
 					}),
 				},
@@ -95,7 +95,7 @@ func TestExpandSystemAndUserAssignedList(t *testing.T) {
 					Type:        types.StringValue(string(identity.TypeSystemAssignedUserAssigned)),
 					PrincipalID: types.StringValue("000000-0000-0000-0000-000000000002"),
 					TenantID:    types.StringValue("000000-0000-0000-0000-000000000003"),
-					IdentityIDs: typehelpers.NewListValueOfMust[types.String](ctx, []attr.Value{
+					IdentityIDs: typehelpers.NewSetValueOfMust[types.String](ctx, []attr.Value{
 						types.StringValue("100000-0000-0000-0000-000000000000"),
 						types.StringValue("200000-0000-0000-0000-000000000000"),
 						types.StringValue("300000-0000-0000-0000-000000000000"),
@@ -152,7 +152,7 @@ func TestFlattenSystemAndUserAssignedList(t *testing.T) {
 					Type:        types.StringValue(string(identity.TypeNone)),
 					PrincipalID: types.StringValue(""),
 					TenantID:    types.StringValue(""),
-					IdentityIDs: typehelpers.NewListValueOfNull[types.String](ctx),
+					IdentityIDs: typehelpers.NewSetValueOfNull[types.String](ctx),
 				},
 			}),
 		},
@@ -169,7 +169,7 @@ func TestFlattenSystemAndUserAssignedList(t *testing.T) {
 					Type:        types.StringValue(string(identity.TypeSystemAssigned)),
 					PrincipalID: types.StringValue("000000-0000-0000-0000-000000000000"),
 					TenantID:    types.StringValue("000000-0000-0000-0000-000000000001"),
-					IdentityIDs: typehelpers.NewListValueOfNull[types.String](ctx),
+					IdentityIDs: typehelpers.NewSetValueOfNull[types.String](ctx),
 				},
 			}),
 		},
@@ -188,7 +188,7 @@ func TestFlattenSystemAndUserAssignedList(t *testing.T) {
 					Type:        types.StringValue(string(identity.TypeSystemAssignedUserAssigned)),
 					PrincipalID: types.StringValue("000000-0000-0000-0000-000000000002"),
 					TenantID:    types.StringValue("000000-0000-0000-0000-000000000003"),
-					IdentityIDs: typehelpers.NewListValueOfMust[types.String](ctx, []attr.Value{
+					IdentityIDs: typehelpers.NewSetValueOfMust[types.String](ctx, []attr.Value{
 						types.StringValue("100000-0000-0000-0000-000000000000"),
 					}),
 				},
@@ -211,7 +211,7 @@ func TestFlattenSystemAndUserAssignedList(t *testing.T) {
 					Type:        types.StringValue(string(identity.TypeSystemAssignedUserAssigned)),
 					PrincipalID: types.StringValue("000000-0000-0000-0000-000000000002"),
 					TenantID:    types.StringValue("000000-0000-0000-0000-000000000003"),
-					IdentityIDs: typehelpers.NewListValueOfMust[types.String](ctx, []attr.Value{
+					IdentityIDs: typehelpers.NewSetValueOfMust[types.String](ctx, []attr.Value{
 						types.StringValue("100000-0000-0000-0000-000000000000"),
 						types.StringValue("200000-0000-0000-0000-000000000000"),
 						types.StringValue("300000-0000-0000-0000-000000000000"),

@@ -40,26 +40,6 @@ func ExpandToSystemAndUserAssignedList(ctx context.Context, input typehelpers.Li
 		ident := identityList[0]
 		convert.Expand(ctx, ident, result, diags)
 	}
-	//
-	// 	res := identity.SystemAndUserAssignedMap{}
-	//
-	// 	res.Type = identity.Type(ident.Type.ValueString())
-	// 	res.PrincipalId = ident.PrincipalID.ValueString()
-	// 	res.TenantId = ident.TenantID.ValueString()
-	//
-	// 	// convert identities from list to map construct
-	// 	identities := map[string]identity.UserAssignedIdentityDetails{}
-	// 	idList := make([]string, 0)
-	// 	ident.IdentityIDs.ElementsAs(ctx, &idList, false)
-	//
-	// 	for _, id := range idList {
-	// 		identities[id] = identity.UserAssignedIdentityDetails{}
-	// 	}
-	//
-	// 	res.IdentityIds = identities
-	// 	*result = res
-	// }
-
 }
 
 func FlattenFromSystemAndUserAssignedList(ctx context.Context, input *identity.SystemAndUserAssignedList, result *typehelpers.ListNestedObjectValueOf[IdentityModel], diags *diag.Diagnostics) {
@@ -70,38 +50,8 @@ func FlattenFromSystemAndUserAssignedList(ctx context.Context, input *identity.S
 		return
 	}
 
-	// i := *input
-	//
-	// ident := IdentityModel{
-	// 	Type:        types.StringValue(string(i.Type)),
-	// 	PrincipalID: types.StringValue(i.PrincipalId),
-	// 	TenantID:    types.StringValue(i.TenantId),
-	// }
-	//
-	// if len(i.IdentityIds) > 0 {
-	// 	ids := make([]attr.Value, 0)
-	// 	for id := range i.IdentityIds {
-	// 		ids = append(ids, types.StringValue(id))
-	// 	}
-	//
-	// 	ident.IdentityIDs, *diags = typehelpers.NewListValueOf[types.String](ctx, ids)
-	// 	if diags.HasError() {
-	// 		return
-	// 	}
-	// } else {
-	// 	ident.IdentityIDs = typehelpers.NewListValueOfNull[types.String](ctx)
-	// }
-	//
-	// r, d := typehelpers.NewListNestedObjectValueOfValueSlice(ctx, []IdentityModel{ident})
-	// if d.HasError() {
-	// 	diags.Append(d...)
-	// 	return
-	// }
-	//
-	// *result = r
-
 	flat := IdentityModel{
-		IdentityIDs: typehelpers.NewListValueOfNull[types.String](ctx),
+		IdentityIDs: typehelpers.NewSetValueOfNull[types.String](ctx),
 	}
 
 	convert.Flatten(ctx, input, &flat, diags)
