@@ -16,7 +16,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 )
 
-func TagsAttributeResource(ctx context.Context) resourceschema.MapAttribute {
+func TagsResourceAttribute(ctx context.Context) resourceschema.MapAttribute {
 	return resourceschema.MapAttribute{
 		CustomType:          typehelpers.NewMapTypeOf[types.String](ctx),
 		ElementType:         basetypes.StringType{},
@@ -29,7 +29,7 @@ func TagsAttributeResource(ctx context.Context) resourceschema.MapAttribute {
 	}
 }
 
-func TagsAttributeDataSource(ctx context.Context) datasourceschema.MapAttribute {
+func TagsDataSourceAttribute(ctx context.Context) datasourceschema.MapAttribute {
 	return datasourceschema.MapAttribute{
 		CustomType:          typehelpers.NewMapTypeOf[types.String](ctx),
 		ElementType:         basetypes.StringType{},

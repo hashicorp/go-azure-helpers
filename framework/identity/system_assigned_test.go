@@ -35,7 +35,7 @@ func TestExpandSystemAssigned(t *testing.T) {
 			Name: "explicit none",
 			Input: typehelpers.NewListNestedObjectValueOfValueSliceMust(ctx, []identity.SystemIdentityModel{
 				{
-					Type:        types.StringValue(string(identity.TypeNone)),
+					Type:        types.StringValue(string(rmidentity.TypeNone)),
 					PrincipalID: types.StringNull(),
 					TenantID:    types.StringNull(),
 				},
@@ -50,7 +50,7 @@ func TestExpandSystemAssigned(t *testing.T) {
 			Name: "SystemAssigned",
 			Input: typehelpers.NewListNestedObjectValueOfValueSliceMust(ctx, []identity.SystemIdentityModel{
 				{
-					Type:        types.StringValue(string(identity.TypeSystemAssigned)),
+					Type:        types.StringValue(string(rmidentity.TypeSystemAssigned)),
 					PrincipalID: types.StringValue("000000-0000-0000-0000-000000000000"),
 					TenantID:    types.StringValue("000000-0000-0000-0000-000000000001"),
 				},
@@ -65,7 +65,7 @@ func TestExpandSystemAssigned(t *testing.T) {
 			Name: "SystemAssigned, UserAssigned",
 			Input: typehelpers.NewListNestedObjectValueOfValueSliceMust(ctx, []identity.SystemIdentityModel{
 				{
-					Type:        types.StringValue(string(identity.TypeSystemAssignedUserAssigned)),
+					Type:        types.StringValue(string(rmidentity.TypeSystemAssignedUserAssigned)),
 					PrincipalID: types.StringValue("000000-0000-0000-0000-000000000002"),
 					TenantID:    types.StringValue("000000-0000-0000-0000-000000000003"),
 				},
@@ -80,7 +80,7 @@ func TestExpandSystemAssigned(t *testing.T) {
 			Name: "SystemAssigned, UserAssigned (multiple)",
 			Input: typehelpers.NewListNestedObjectValueOfValueSliceMust(ctx, []identity.SystemIdentityModel{
 				{
-					Type:        types.StringValue(string(identity.TypeSystemAssignedUserAssigned)),
+					Type:        types.StringValue(string(rmidentity.TypeSystemAssignedUserAssigned)),
 					PrincipalID: types.StringValue("000000-0000-0000-0000-000000000002"),
 					TenantID:    types.StringValue("000000-0000-0000-0000-000000000003"),
 				},
@@ -126,7 +126,7 @@ func TestFlattenSystemAssigned(t *testing.T) {
 			},
 			Expected: typehelpers.NewListNestedObjectValueOfValueSliceMust(ctx, []identity.SystemIdentityModel{
 				{
-					Type:        types.StringValue(string(identity.TypeNone)),
+					Type:        types.StringValue(string(rmidentity.TypeNone)),
 					PrincipalID: types.StringValue(""),
 					TenantID:    types.StringValue(""),
 				},
@@ -141,7 +141,7 @@ func TestFlattenSystemAssigned(t *testing.T) {
 			},
 			Expected: typehelpers.NewListNestedObjectValueOfValueSliceMust(ctx, []identity.SystemIdentityModel{
 				{
-					Type:        types.StringValue(string(identity.TypeSystemAssigned)),
+					Type:        types.StringValue(string(rmidentity.TypeSystemAssigned)),
 					PrincipalID: types.StringValue("000000-0000-0000-0000-000000000000"),
 					TenantID:    types.StringValue("000000-0000-0000-0000-000000000001"),
 				},
@@ -156,7 +156,7 @@ func TestFlattenSystemAssigned(t *testing.T) {
 			},
 			Expected: typehelpers.NewListNestedObjectValueOfValueSliceMust(ctx, []identity.SystemIdentityModel{
 				{
-					Type:        types.StringValue(string(identity.TypeSystemAssignedUserAssigned)),
+					Type:        types.StringValue(string(rmidentity.TypeSystemAssignedUserAssigned)),
 					PrincipalID: types.StringValue("000000-0000-0000-0000-000000000002"),
 					TenantID:    types.StringValue("000000-0000-0000-0000-000000000003"),
 				},

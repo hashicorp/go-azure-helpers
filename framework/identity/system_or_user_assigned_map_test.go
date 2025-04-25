@@ -37,7 +37,7 @@ func TestExpandSystemOrUserAssignedMap(t *testing.T) {
 			Name: "explicit none",
 			Input: typehelpers.NewListNestedObjectValueOfValueSliceMust(ctx, []identity.IdentityModel{
 				{
-					Type:        types.StringValue(string(identity.TypeNone)),
+					Type:        types.StringValue(string(rmidentity.TypeNone)),
 					PrincipalID: types.StringNull(),
 					TenantID:    types.StringNull(),
 					IdentityIDs: typehelpers.NewSetValueOfNull[types.String](ctx),
@@ -54,7 +54,7 @@ func TestExpandSystemOrUserAssignedMap(t *testing.T) {
 			Name: "SystemAssigned",
 			Input: typehelpers.NewListNestedObjectValueOfValueSliceMust(ctx, []identity.IdentityModel{
 				{
-					Type:        types.StringValue(string(identity.TypeSystemAssigned)),
+					Type:        types.StringValue(string(rmidentity.TypeSystemAssigned)),
 					PrincipalID: types.StringValue("000000-0000-0000-0000-000000000000"),
 					TenantID:    types.StringValue("000000-0000-0000-0000-000000000001"),
 					IdentityIDs: typehelpers.NewSetValueOfNull[types.String](ctx),
@@ -71,7 +71,7 @@ func TestExpandSystemOrUserAssignedMap(t *testing.T) {
 			Name: "SystemAssigned, UserAssigned",
 			Input: typehelpers.NewListNestedObjectValueOfValueSliceMust(ctx, []identity.IdentityModel{
 				{
-					Type:        types.StringValue(string(identity.TypeSystemAssignedUserAssigned)),
+					Type:        types.StringValue(string(rmidentity.TypeSystemAssignedUserAssigned)),
 					PrincipalID: types.StringValue("000000-0000-0000-0000-000000000002"),
 					TenantID:    types.StringValue("000000-0000-0000-0000-000000000003"),
 					IdentityIDs: typehelpers.NewSetValueOfMust[types.String](ctx, []attr.Value{
@@ -92,7 +92,7 @@ func TestExpandSystemOrUserAssignedMap(t *testing.T) {
 			Name: "SystemAssigned, UserAssigned (multiple)",
 			Input: typehelpers.NewListNestedObjectValueOfValueSliceMust(ctx, []identity.IdentityModel{
 				{
-					Type:        types.StringValue(string(identity.TypeSystemAssignedUserAssigned)),
+					Type:        types.StringValue(string(rmidentity.TypeSystemAssignedUserAssigned)),
 					PrincipalID: types.StringValue("000000-0000-0000-0000-000000000002"),
 					TenantID:    types.StringValue("000000-0000-0000-0000-000000000003"),
 					IdentityIDs: typehelpers.NewSetValueOfMust[types.String](ctx, []attr.Value{
@@ -149,7 +149,7 @@ func TestFlattenSystemOrUserAssignedMap(t *testing.T) {
 			},
 			Expected: typehelpers.NewListNestedObjectValueOfValueSliceMust(ctx, []identity.IdentityModel{
 				{
-					Type:        types.StringValue(string(identity.TypeNone)),
+					Type:        types.StringValue(string(rmidentity.TypeNone)),
 					PrincipalID: types.StringValue(""),
 					TenantID:    types.StringValue(""),
 					IdentityIDs: typehelpers.NewSetValueOfNull[types.String](ctx),
@@ -166,7 +166,7 @@ func TestFlattenSystemOrUserAssignedMap(t *testing.T) {
 			},
 			Expected: typehelpers.NewListNestedObjectValueOfValueSliceMust(ctx, []identity.IdentityModel{
 				{
-					Type:        types.StringValue(string(identity.TypeSystemAssigned)),
+					Type:        types.StringValue(string(rmidentity.TypeSystemAssigned)),
 					PrincipalID: types.StringValue("000000-0000-0000-0000-000000000000"),
 					TenantID:    types.StringValue("000000-0000-0000-0000-000000000001"),
 					IdentityIDs: typehelpers.NewSetValueOfNull[types.String](ctx),
@@ -185,7 +185,7 @@ func TestFlattenSystemOrUserAssignedMap(t *testing.T) {
 			},
 			Expected: typehelpers.NewListNestedObjectValueOfValueSliceMust(ctx, []identity.IdentityModel{
 				{
-					Type:        types.StringValue(string(identity.TypeSystemAssignedUserAssigned)),
+					Type:        types.StringValue(string(rmidentity.TypeSystemAssignedUserAssigned)),
 					PrincipalID: types.StringValue("000000-0000-0000-0000-000000000002"),
 					TenantID:    types.StringValue("000000-0000-0000-0000-000000000003"),
 					IdentityIDs: typehelpers.NewSetValueOfMust[types.String](ctx, []attr.Value{
@@ -208,7 +208,7 @@ func TestFlattenSystemOrUserAssignedMap(t *testing.T) {
 			},
 			Expected: typehelpers.NewListNestedObjectValueOfValueSliceMust(ctx, []identity.IdentityModel{
 				{
-					Type:        types.StringValue(string(identity.TypeSystemAssignedUserAssigned)),
+					Type:        types.StringValue(string(rmidentity.TypeSystemAssignedUserAssigned)),
 					PrincipalID: types.StringValue("000000-0000-0000-0000-000000000002"),
 					TenantID:    types.StringValue("000000-0000-0000-0000-000000000003"),
 					IdentityIDs: typehelpers.NewSetValueOfMust[types.String](ctx, []attr.Value{

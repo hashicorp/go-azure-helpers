@@ -60,23 +60,19 @@ func IdentityResourceAttributeSchema(ctx context.Context, validTypes ...identity
 						),
 					},
 				},
+
 				"principal_id": schema.StringAttribute{
 					Computed: true,
 					PlanModifiers: []planmodifier.String{
 						stringplanmodifier.UseStateForUnknown(),
 					},
-					// Default: typehelpers.WrappedStringDefault{
-					// 	Value: "",
-					// },
 				},
+
 				"tenant_id": schema.StringAttribute{
 					Computed: true,
 					PlanModifiers: []planmodifier.String{
 						stringplanmodifier.UseStateForUnknown(),
 					},
-					// Default: typehelpers.WrappedStringDefault{
-					// 	Value: "",
-					// },
 				},
 			},
 		},
@@ -150,18 +146,12 @@ func IdentityResourceBlockSchema(ctx context.Context, validTypes ...identity.Typ
 					PlanModifiers: []planmodifier.String{
 						stringplanmodifier.UseStateForUnknown(),
 					},
-					// Default: typehelpers.WrappedStringDefault{
-					// 	Value: "",
-					// },
 				},
 				"tenant_id": schema.StringAttribute{
 					Computed: true,
 					PlanModifiers: []planmodifier.String{
 						stringplanmodifier.UseStateForUnknown(),
 					},
-					// Default: typehelpers.WrappedStringDefault{
-					// 	Value: "",
-					// },
 				},
 			},
 		},
