@@ -49,6 +49,7 @@ func IdentityResourceAttributeSchema(ctx context.Context, validTypes ...identity
 						),
 					},
 				},
+
 				"identity_ids": schema.ListAttribute{
 					ElementType: types.StringType,
 					Optional:    true,
@@ -93,13 +94,16 @@ func IdentityDataSourceAttributeSchema(ctx context.Context) schema.ListNestedAtt
 				"type": schema.StringAttribute{
 					Computed: true,
 				},
+
 				"identity_ids": schema.ListAttribute{
 					ElementType: types.StringType,
 					Computed:    true,
 				},
+
 				"principal_id": schema.StringAttribute{
 					Computed: true,
 				},
+
 				"tenant_id": schema.StringAttribute{
 					Computed: true,
 				},
@@ -130,6 +134,7 @@ func IdentityResourceBlockSchema(ctx context.Context, validTypes ...identity.Typ
 						),
 					},
 				},
+
 				"identity_ids": schema.ListAttribute{
 					ElementType: types.StringType,
 					Optional:    true,
@@ -141,12 +146,14 @@ func IdentityResourceBlockSchema(ctx context.Context, validTypes ...identity.Typ
 						),
 					},
 				},
+
 				"principal_id": schema.StringAttribute{
 					Computed: true,
 					PlanModifiers: []planmodifier.String{
 						stringplanmodifier.UseStateForUnknown(),
 					},
 				},
+
 				"tenant_id": schema.StringAttribute{
 					Computed: true,
 					PlanModifiers: []planmodifier.String{
@@ -172,13 +179,16 @@ func IdentityDataSourceBlockSchema(ctx context.Context) datasourceschema.ListNes
 				"type": schema.StringAttribute{
 					Computed: true,
 				},
+
 				"identity_ids": schema.ListAttribute{
 					ElementType: types.StringType,
 					Computed:    true,
 				},
+
 				"principal_id": schema.StringAttribute{
 					Computed: true,
 				},
+
 				"tenant_id": schema.StringAttribute{
 					Computed: true,
 				},

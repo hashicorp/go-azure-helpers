@@ -1371,7 +1371,6 @@ func TestExpand_listOfInt(t *testing.T) {
 	}
 }
 
-// TODO - Sets
 func TestExpand_setOfBool(t *testing.T) {
 	ctx := context.Background()
 	cases := []struct {
