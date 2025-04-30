@@ -124,7 +124,7 @@ func flattenStruct(ctx context.Context, sourcePath path.Path, source any, target
 
 		diags.Append(flatten(ctx, sourcePath.AtName(fieldName), sourceVal.Field(i), targetPath.AtName(fieldName), targetFieldVal)...)
 		if diags.HasError() {
-			diags.AddError("Expanding", fmt.Sprintf("could not expand (%s)", fieldName))
+			diags.AddError("Flattening", fmt.Sprintf("could not flatten (%s)", fieldName))
 			return diags
 		}
 	}
