@@ -21,8 +21,8 @@ func TagsResourceAttribute(ctx context.Context) resourceschema.MapAttribute {
 		CustomType:          typehelpers.NewMapTypeOf[types.String](ctx),
 		ElementType:         basetypes.StringType{},
 		Optional:            true,
-		Description:         "",
-		MarkdownDescription: "",
+		Description:         "A map of tags to be assigned to the resource",
+		MarkdownDescription: "A map of tags to be assigned to the resource",
 		Validators: []validator.Map{
 			mapvalidator.SizeAtLeast(1),
 		},
@@ -34,8 +34,8 @@ func TagsDataSourceAttribute(ctx context.Context) datasourceschema.MapAttribute 
 		CustomType:          typehelpers.NewMapTypeOf[types.String](ctx),
 		ElementType:         basetypes.StringType{},
 		Optional:            true,
-		Description:         "",
-		MarkdownDescription: "",
+		Description:         "A map of tags assigned to the resource",
+		MarkdownDescription: "A map of tags assigned to the resource",
 		Validators: []validator.Map{
 			mapvalidator.SizeAtLeast(1),
 		},
