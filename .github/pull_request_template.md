@@ -18,7 +18,7 @@ Below please provide what should go into the changelog (if anything) conforming 
 
 <!-- Replace the changelog example below with your entry. One resource per line. -->
 
-* `azurerm_resource` - support for the `thing1` property [GH-00000]
+* added new function `AFunction` [GH-00000]
 
 
 <!-- What type of PR is this? -->
