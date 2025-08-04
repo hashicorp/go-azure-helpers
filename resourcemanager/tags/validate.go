@@ -68,6 +68,7 @@ func ValidateHasLowerCaseKeys(i interface{}, k string) (warnings []string, error
 	return warnings, errors
 }
 
+// nolint: staticcheck
 func ValidateWithMaximumElements(max int) schema.SchemaValidateFunc {
 	return func(v interface{}, _ string) (warnings []string, errors []error) {
 		tagsMap := v.(map[string]interface{})
