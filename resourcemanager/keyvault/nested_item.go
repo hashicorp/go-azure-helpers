@@ -88,7 +88,7 @@ func ParseNestedItemID(input string, versionType VersionType, nestedItemType Nes
 		return nil, fmt.Errorf("parsing `%s`: expected a versioned ID", input)
 	}
 
-	if versionType == VersionTypeVersionless && id.Version == nil {
+	if versionType == VersionTypeVersionless && id.Version != nil {
 		return nil, fmt.Errorf("parsing `%s`: expected a versionless ID", input)
 	}
 
