@@ -33,7 +33,7 @@ func NewNestedItemID(keyVaultBaseURL string, nestedItemType NestedItemType, name
 	}
 
 	return &NestedItemID{
-		KeyVaultBaseURL: keyVaultUrl.String(),
+		KeyVaultBaseURL: strings.TrimSuffix(keyVaultUrl.String(), "/"),
 		NestedItemType:  nestedItemType,
 		Name:            name,
 		Version:         version,
@@ -42,7 +42,7 @@ func NewNestedItemID(keyVaultBaseURL string, nestedItemType NestedItemType, name
 
 func (id NestedItemID) ID() string {
 	segments := []string{
-		strings.TrimSuffix(id.KeyVaultBaseURL, "/"),
+		id.KeyVaultBaseURL,
 		string(id.NestedItemType),
 		id.Name,
 	}
@@ -56,7 +56,7 @@ func (id NestedItemID) ID() string {
 
 func (id NestedItemID) VersionlessID() string {
 	segments := []string{
-		strings.TrimSuffix(id.KeyVaultBaseURL, "/"),
+		id.KeyVaultBaseURL,
 		string(id.NestedItemType),
 		id.Name,
 	}
