@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"net/url"
+	"slices"
 	"strings"
 )
 
@@ -19,6 +20,14 @@ func NewNestedItemID(keyVaultBaseURL string, nestedItemType NestedItemType, name
 		return nil, errors.New("expected a non-empty value for `keyVaultBaseURL`")
 	}
 
+	if name == "" {
+		return nil, errors.New("expected a non-empty value for `name`")
+	}
+
+	if nestedItemType == NestedItemTypeAny {
+		return nil, fmt.Errorf("`NestedItemTypeAny` is not valid when creating a new nested item ID, please specify one of %s", strings.Join(PossibleNestedItemTypeValues(), ", "))
+	}
+
 	keyVaultUrl, err := url.Parse(keyVaultBaseURL)
 	if err != nil {
 		return nil, fmt.Errorf("parsing `%s`: %w", keyVaultBaseURL, err)
@@ -26,10 +35,6 @@ func NewNestedItemID(keyVaultBaseURL string, nestedItemType NestedItemType, name
 
 	if hostParts := strings.Split(keyVaultUrl.Host, ":"); len(hostParts) > 1 {
 		keyVaultUrl.Host = hostParts[0]
-	}
-
-	if nestedItemType == NestedItemTypeAny {
-		return nil, fmt.Errorf("`NestedItemTypeAny` is not valid when creating a new nested item ID, please specify one of %s", strings.Join(PossibleNestedItemTypeValues(), ", "))
 	}
 
 	return &NestedItemID{
@@ -90,6 +95,10 @@ func ParseNestedItemID(input string, versionType VersionType, nestedItemType Nes
 
 	if versionType == VersionTypeVersionless && id.Version != nil {
 		return nil, fmt.Errorf("parsing `%s`: expected a versionless ID", input)
+	}
+
+	if nestedItemType == NestedItemTypeAny && !slices.Contains(PossibleNestedItemTypeValues(), string(id.NestedItemType)) {
+		return nil, fmt.Errorf("parsing `%s`: unexpected `NestedItemType` found (`%s`)", input, string(id.NestedItemType))
 	}
 
 	if nestedItemType != id.NestedItemType && nestedItemType != NestedItemTypeAny {
