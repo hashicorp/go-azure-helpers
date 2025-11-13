@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"net/url"
+	"regexp"
 	"slices"
 	"strings"
 )
@@ -148,6 +149,14 @@ func ValidateNestedItemID(versionType VersionType, nestedItemType NestedItemType
 
 		return
 	}
+}
+
+func ValidateNestedItemName(v interface{}, k string) (warnings []string, errors []error) {
+	if !regexp.MustCompile(`^[0-9a-zA-Z-]+$`).MatchString(v.(string)) {
+		errors = append(errors, fmt.Errorf("`%s` may only contain alphanumeric characters and dashes", k))
+	}
+
+	return warnings, errors
 }
 
 // IsManagedHSM is a helper to determine whether the key vault URL is for a Managed HSM vault.
