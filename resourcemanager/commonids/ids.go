@@ -20,6 +20,7 @@ func CommonIds() []resourceids.ResourceId {
 		&ChaosStudioTargetId{},
 		&CloudServicesIPConfigurationId{},
 		&CloudServicesPublicIPAddressId{},
+		&CosmosDBAccountId{},
 		&DedicatedHostId{},
 		&DedicatedHostGroupId{},
 		&DevCenterId{},
