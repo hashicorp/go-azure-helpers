@@ -2,8 +2,6 @@ package keyvault
 
 import (
 	"testing"
-
-	"github.com/hashicorp/go-azure-helpers/lang/pointer"
 )
 
 func TestNewNestedItemID(t *testing.T) {
@@ -46,7 +44,7 @@ func TestNewNestedItemID(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		id, err := NewNestedItemID(tc.KeyVaultBaseURL, NestedItemTypeKey, "test", pointer.To("testVersionString"))
+		id, err := NewNestedItemID(tc.KeyVaultBaseURL, NestedItemTypeKey, "test", "testVersionString")
 		if err != nil {
 			if !tc.ExpectError {
 				t.Fatalf("%s: unexpected error: %+v", tc.Scenario, err)
@@ -106,7 +104,7 @@ func TestParseNestedItemID(t *testing.T) {
 				Name:            "bird",
 				NestedItemType:  NestedItemTypeSecret,
 				KeyVaultBaseURL: "https://my-keyvault.vault.azure.net",
-				Version:         pointer.To("fdf067c93bbb4b22bff4d8b7a9a56217"),
+				Version:         "fdf067c93bbb4b22bff4d8b7a9a56217",
 			},
 		},
 		{
@@ -116,7 +114,6 @@ func TestParseNestedItemID(t *testing.T) {
 				Name:            "bird",
 				NestedItemType:  NestedItemTypeSecret,
 				KeyVaultBaseURL: "https://my-keyvault.vault.azure.net",
-				Version:         nil,
 			},
 		},
 		{
@@ -126,7 +123,7 @@ func TestParseNestedItemID(t *testing.T) {
 				Name:            "hello",
 				NestedItemType:  NestedItemTypeCertificate,
 				KeyVaultBaseURL: "https://my-keyvault.vault.azure.net",
-				Version:         pointer.To("world"),
+				Version:         "world",
 			},
 		},
 		{
@@ -136,7 +133,7 @@ func TestParseNestedItemID(t *testing.T) {
 				Name:            "castle",
 				NestedItemType:  NestedItemTypeKey,
 				KeyVaultBaseURL: "https://my-keyvault.vault.azure.net",
-				Version:         pointer.To("1492"),
+				Version:         "1492",
 			},
 		},
 		{
@@ -146,7 +143,7 @@ func TestParseNestedItemID(t *testing.T) {
 				Name:            "castle",
 				NestedItemType:  NestedItemTypeKey,
 				KeyVaultBaseURL: "https://my-keyvault.managedhsm.azure.net",
-				Version:         pointer.To("1492"),
+				Version:         "1492",
 			},
 		},
 	}
@@ -177,8 +174,8 @@ func TestParseNestedItemID(t *testing.T) {
 			t.Fatalf("expected `Name` to be `%s`, got `%s` for ID `%s`", tc.Expected.Name, id.Name, tc.Input)
 		}
 
-		if (tc.Expected.Version == nil && id.Version != nil) || (pointer.From(tc.Expected.Version) != pointer.From(id.Version)) {
-			t.Fatalf("expected `Version` to be `%s`, got `%s` for ID `%s`", pointer.From(tc.Expected.Version), pointer.From(id.Version), tc.Input)
+		if tc.Expected.Version != id.Version {
+			t.Fatalf("expected `Version` to be `%s`, got `%s` for ID `%s`", tc.Expected.Version, id.Version, tc.Input)
 		}
 
 		if tc.Input != id.ID() {

@@ -13,10 +13,10 @@ type NestedItemID struct {
 	KeyVaultBaseURL string
 	NestedItemType  NestedItemType
 	Name            string
-	Version         *string
+	Version         string
 }
 
-func NewNestedItemID(keyVaultBaseURL string, nestedItemType NestedItemType, name string, version *string) (*NestedItemID, error) {
+func NewNestedItemID(keyVaultBaseURL string, nestedItemType NestedItemType, name string, version string) (*NestedItemID, error) {
 	if keyVaultBaseURL == "" {
 		return nil, errors.New("expected a non-empty value for `keyVaultBaseURL`")
 	}
@@ -53,8 +53,8 @@ func (id NestedItemID) ID() string {
 		id.Name,
 	}
 
-	if id.Version != nil {
-		segments = append(segments, *id.Version)
+	if id.Version != "" {
+		segments = append(segments, id.Version)
 	}
 
 	return strings.Join(segments, "/")
@@ -77,8 +77,8 @@ func (id NestedItemID) String() string {
 		fmt.Sprintf("Name %q", id.Name),
 	}
 
-	if id.Version != nil {
-		components = append(components, fmt.Sprintf("Version %q", *id.Version))
+	if id.Version != "" {
+		components = append(components, fmt.Sprintf("Version %q", id.Version))
 	}
 
 	return fmt.Sprintf("Key Vault Nested Item (%s)", strings.Join(components, " / "))
@@ -90,11 +90,11 @@ func ParseNestedItemID(input string, versionType VersionType, nestedItemType Nes
 		return nil, err
 	}
 
-	if versionType == VersionTypeVersioned && id.Version == nil {
+	if versionType == VersionTypeVersioned && id.Version == "" {
 		return nil, fmt.Errorf("parsing `%s`: expected a versioned ID", input)
 	}
 
-	if versionType == VersionTypeVersionless && id.Version != nil {
+	if versionType == VersionTypeVersionless && id.Version != "" {
 		return nil, fmt.Errorf("parsing `%s`: expected a versionless ID", input)
 	}
 
@@ -122,9 +122,9 @@ func parseNestedItemID(input string) (*NestedItemID, error) {
 		return nil, fmt.Errorf("expected 2 or 3 path segments, found %d segment(s) in `%s`", l, input)
 	}
 
-	var version *string
+	var version string
 	if len(pathSegments) == 3 {
-		version = &pathSegments[2]
+		version = pathSegments[2]
 	}
 
 	return &NestedItemID{
