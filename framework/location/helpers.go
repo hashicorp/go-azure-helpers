@@ -7,6 +7,8 @@ import (
 	"strings"
 
 	"github.com/hashicorp/go-azure-helpers/lang/pointer"
+	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 )
 
 // Normalize transforms the human readable Azure Region/Location names (e.g. `West US`)
@@ -19,4 +21,9 @@ func Normalize(input string) string {
 // can always have a value
 func NormalizeNilable(input *string) string {
 	return Normalize(pointer.From(input))
+}
+
+// NormalizeValue returns a Framework compatible StringValue for the location
+func NormalizeValue(input string) types.String {
+	return basetypes.NewStringValue(Normalize(input))
 }
