@@ -38,11 +38,11 @@ func TestNormalizeNilableLocation(t *testing.T) {
 		expected string
 	}{
 		{
-			input:    pointer.FromString("MicrosoftLosAngeles1"),
+			input:    pointer.To("MicrosoftLosAngeles1"),
 			expected: "microsoftlosangeles1",
 		},
 		{
-			input:    pointer.FromString("Microsoft Los Angeles 1"),
+			input:    pointer.To("Microsoft Los Angeles 1"),
 			expected: "microsoftlosangeles1",
 		},
 		{
