@@ -86,7 +86,7 @@ func ParseAzureResourceID(id string) (*ResourceID, error) {
 	if subscriptionID != "" {
 		idObj.SubscriptionID = subscriptionID
 	} else {
-		return nil, fmt.Errorf("No subscription ID found in: %q", path)
+		return nil, fmt.Errorf("no subscription ID found in: %q", path)
 	}
 
 	if resourceGroup, ok := componentMap["resourceGroups"]; ok {

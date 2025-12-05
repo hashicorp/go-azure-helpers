@@ -6,6 +6,7 @@ package authentication
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -63,7 +64,7 @@ func DetermineEnvironment(name string) (*azure.Environment, error) {
 		wrapped := fmt.Sprintf("AZURE%sCLOUD", name)
 		env, envErr = azure.EnvironmentFromName(wrapped)
 		if envErr != nil {
-			return nil, fmt.Errorf("An Azure Environment with name %q was not found: %+v", name, envErr)
+			return nil, fmt.Errorf("an Azure Environment with name %q was not found: %+v", name, envErr)
 		}
 	}
 
@@ -75,12 +76,12 @@ func DetermineEnvironment(name string) (*azure.Environment, error) {
 // found at the endpoint url then an error is returned
 func LoadEnvironmentFromUrl(endpoint string) (*azure.Environment, error) {
 	if endpoint == "" {
-		return nil, fmt.Errorf("Endpoint was not set!")
+		return nil, errors.New("endpoint was not set")
 	}
 
 	env, err := azure.EnvironmentFromURL(endpoint)
 	if err != nil {
-		return nil, fmt.Errorf("Error retrieving Environment from Endpoint %q: %+v", endpoint, err)
+		return nil, fmt.Errorf("error retrieving Environment from Endpoint %q: %+v", endpoint, err)
 	}
 
 	return &env, nil
@@ -99,7 +100,7 @@ func normalizeEnvironmentName(input string) string {
 	return output
 }
 
-// AzureEnvironmentByName returns a specific Azure Environment from the specified endpoint
+// AzureEnvironmentByNameFromEndpoint returns a specific Azure Environment from the specified endpoint
 func AzureEnvironmentByNameFromEndpoint(ctx context.Context, endpoint string, environmentName string) (*azure.Environment, error) {
 	if env, ok := sdkEnvironmentLookupMap[strings.ToLower(environmentName)]; ok {
 		return &env, nil
@@ -142,14 +143,11 @@ func IsEnvironmentAzureStack(ctx context.Context, endpoint string, environmentNa
 
 	environments, err := getSupportedEnvironments(ctx, endpoint)
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("unable to decode environment from %q response: %+v", endpoint, err)
 	}
 
 	// while the array contains values
 	for _, env := range environments {
-		if err != nil {
-			return false, fmt.Errorf("unable to decode environment from %q response: %+v", endpoint, err)
-		}
 		if strings.EqualFold(env.Name, environmentName) {
 			if !strings.EqualFold(env.Authentication.IdentityProvider, "AAD") || !strings.EqualFold(env.Authentication.Tenant, "common") {
 				return true, nil
