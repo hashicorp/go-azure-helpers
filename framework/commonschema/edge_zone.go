@@ -25,6 +25,7 @@ func EdgeZoneComputedAttribute() resourceschema.StringAttribute {
 func EdgeZoneOptionalAttribute() resourceschema.StringAttribute {
 	return resourceschema.StringAttribute{
 		Optional: true,
+		Computed: true,
 		Validators: []validator.String{
 			stringvalidator.LengthAtLeast(1),
 		},
@@ -37,6 +38,7 @@ func EdgeZoneOptionalAttribute() resourceschema.StringAttribute {
 func EdgeZoneOptionalRequiresReplaceAttribute() resourceschema.StringAttribute {
 	return resourceschema.StringAttribute{
 		Optional: true,
+		Computed: true,
 		Validators: []validator.String{
 			stringvalidator.LengthAtLeast(1),
 		},
