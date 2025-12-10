@@ -162,7 +162,7 @@ type WrappedListDefault struct {
 func DecodeObjectListOfOne[T any](ctx context.Context, input ListNestedObjectValueOf[T]) (result T, diags diag.Diagnostics) {
 	if !input.IsNull() && len(input.Elements()) > 0 {
 		l := make([]T, 0)
-		diags.Append(input.ListValue.ElementsAs(ctx, &l, false)...)
+		diags.Append(input.ElementsAs(ctx, &l, false)...)
 		if diags.HasError() {
 			return result, diags
 		}
@@ -177,7 +177,7 @@ func DecodeObjectListOfOne[T any](ctx context.Context, input ListNestedObjectVal
 func DecodeObjectList[T any](ctx context.Context, input ListNestedObjectValueOf[T]) (result []T, diags diag.Diagnostics) {
 	if !input.IsNull() && len(input.Elements()) > 0 {
 		l := make([]T, 0)
-		diags.Append(input.ListValue.ElementsAs(ctx, &l, false)...)
+		diags.Append(input.ElementsAs(ctx, &l, false)...)
 		if diags.HasError() {
 			return result, diags
 		}
