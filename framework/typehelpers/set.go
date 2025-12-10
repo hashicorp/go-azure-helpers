@@ -10,7 +10,7 @@ import (
 func DecodeObjectSet[T any](ctx context.Context, input SetNestedObjectValueOf[T]) (result []T, diags diag.Diagnostics) {
 	if !input.IsNull() && len(input.Elements()) > 0 {
 		l := make([]T, 0)
-		diags.Append(input.SetValue.ElementsAs(ctx, &l, false)...)
+		diags.Append(input.ElementsAs(ctx, &l, false)...)
 		if diags.HasError() {
 			return result, diags
 		}
