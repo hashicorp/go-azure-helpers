@@ -30,6 +30,10 @@ func (s sshKeyPlanModifier) PlanModifyString(_ context.Context, request planmodi
 		return
 	}
 
+	if request.StateValue.IsNull() || request.StateValue.IsUnknown() {
+		return
+	}
+
 	stateKey, err := NormalizeSSHKey(request.StateValue.ValueString())
 	if err != nil {
 		response.Diagnostics.AddError("normalising state SSH key failed", "Failed to normalise state key.")

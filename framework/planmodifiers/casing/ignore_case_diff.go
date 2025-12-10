@@ -25,6 +25,6 @@ func (i ignoreCaseStringPlanModifier) MarkdownDescription(ctx context.Context) s
 
 func (i ignoreCaseStringPlanModifier) PlanModifyString(ctx context.Context, request planmodifier.StringRequest, response *planmodifier.StringResponse) {
 	if strings.EqualFold(request.PlanValue.ValueString(), request.StateValue.ValueString()) {
-		response.PlanValue = request.PlanValue
+		response.PlanValue = request.StateValue
 	}
 }
