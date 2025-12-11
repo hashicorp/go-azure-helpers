@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/commonids"
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/identity"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/setvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	datasourceschema "github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -135,11 +136,11 @@ func IdentityResourceBlockSchema(ctx context.Context, validTypes ...identity.Typ
 					},
 				},
 
-				"identity_ids": schema.ListAttribute{
+				"identity_ids": schema.SetAttribute{
 					ElementType: types.StringType,
 					Optional:    true,
-					Validators: []validator.List{
-						listvalidator.ValueStringsAre(
+					Validators: []validator.Set{
+						setvalidator.ValueStringsAre(
 							typehelpers.WrappedStringValidator{
 								Func: commonids.ValidateUserAssignedIdentityID,
 							},
