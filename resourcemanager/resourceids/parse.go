@@ -94,7 +94,10 @@ func (p Parser) Parse(input string, insensitively bool) (*ParseResult, error) {
 	hasScopeAtStart := p.segments[0].Type == ScopeSegmentType
 	hasScopeAtEnd := p.segments[len(p.segments)-1].Type == ScopeSegmentType
 	hasDataPlaneBaseURIAtStart := p.segments[0].Type == DataPlaneBaseURISegmentType
-	dataPlaneHasScopeAtStart := p.segments[1].Type == ScopeSegmentType && hasDataPlaneBaseURIAtStart
+	dataPlaneHasScopeAtStart := false
+	if len(p.segments) > 1 {
+		dataPlaneHasScopeAtStart = p.segments[1].Type == ScopeSegmentType && hasDataPlaneBaseURIAtStart
+	}
 
 	// go through and build up a regex which will count for the `middle` components of the Resource ID
 	nonScopeComponentsRegex := ""
