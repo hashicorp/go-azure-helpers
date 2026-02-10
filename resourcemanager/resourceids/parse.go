@@ -272,11 +272,9 @@ func (p Parser) parseScopePrefix(input, regexForNonScopeSegments string, insensi
 func (p Parser) parseScopeSegment(input, regexForNonScopeSegments string, insensitively bool) (*string, error) {
 	knownPatterns := []string{
 		`(subscriptions\/[^\/]+\/resourceGroups\/[^\/]+)`,
-		// `(subscriptions\/[^\/]+\/resourceGroups\/[^\/]+)\/`,
 		`providers/Microsoft.Management/managementGroups/[^\/]+`,
 	}
 	for _, regexToUse := range knownPatterns {
-		// TODO - if the ID contains more than 1 `providers` then the first is part of the scope so we need to consume it here *sigh*
 		if insensitively {
 			regexToUse = fmt.Sprintf("(?i)%s", regexToUse)
 		}
