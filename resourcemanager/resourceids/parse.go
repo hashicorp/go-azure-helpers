@@ -194,9 +194,7 @@ func (p Parser) Parse(input string, insensitively bool) (*ParseResult, error) {
 
 	if dataPlaneHasScopeAtStart {
 		uri = strings.TrimPrefix(uri, "fakeScope")
-		if strings.HasPrefix(uri, "/") {
-			uri = strings.TrimPrefix(uri, "/")
-		}
+		uri = strings.TrimPrefix(uri, "/")
 	}
 
 	for i, segment := range p.segments {
@@ -285,7 +283,7 @@ func (p Parser) parseScopeSegment(input string, insensitively bool) (*string, er
 		// 0 is the entire string, 1 will be the scope prefix, we can ignore the rest
 		values := r.FindStringSubmatch(input)
 		if len(values) < 2 {
-			return nil, fmt.Errorf("unable to find the scope prefix from the value %q with the regex %q", input, regexToUse)
+			continue
 		}
 		v := values[1]
 		if v == "" {
@@ -296,6 +294,7 @@ func (p Parser) parseScopeSegment(input string, insensitively bool) (*string, er
 		}
 		return &v, nil
 	}
+
 	return nil, fmt.Errorf("input %q does not match any supported scope pattern", input)
 }
 
