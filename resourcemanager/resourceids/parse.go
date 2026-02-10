@@ -159,7 +159,7 @@ func (p Parser) Parse(input string, insensitively bool) (*ParseResult, error) {
 		idPrefix = *prefix
 		parseResult.Parsed[p.segments[0].Name] = strings.TrimSuffix(*prefix, "/") // Trim the trailing / to match up to the ID builder value or we'll get a double
 		if dataPlaneHasScopeAtStart {
-			scope, err := p.parseScopeSegment(input, nonScopeComponentsRegex, insensitively)
+			scope, err := p.parseScopeSegment(input, insensitively)
 			if err != nil {
 				return nil, fmt.Errorf("parsing data plane scope: %+v", err)
 			}
@@ -269,7 +269,7 @@ func (p Parser) parseScopePrefix(input, regexForNonScopeSegments string, insensi
 	return &v, nil
 }
 
-func (p Parser) parseScopeSegment(input, regexForNonScopeSegments string, insensitively bool) (*string, error) {
+func (p Parser) parseScopeSegment(input string, insensitively bool) (*string, error) {
 	knownPatterns := []string{
 		`(subscriptions\/[^\/]+\/resourceGroups\/[^\/]+)`,
 		`providers/Microsoft.Management/managementGroups/[^\/]+`,
