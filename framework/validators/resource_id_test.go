@@ -6,24 +6,33 @@ import (
 	"testing"
 
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/commonids"
+	"github.com/hashicorp/go-azure-helpers/resourcemanager/resourceids"
 	"github.com/hashicorp/terraform-plugin-framework/function"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 func TestResourceId_ValidateString(t *testing.T) {
-	v := AzureResourceManagerId(&commonids.AppServiceId{})
-
-	req := validator.StringRequest{ // TODO - more ID cases?
-		ConfigValue: types.StringValue("/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.Web/sites/site1"),
+	cases := map[string]resourceids.ResourceId{
+		"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.Web/sites/site1":                   &commonids.AppServiceId{},
+		"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RG1/providers/Microsoft.Compute/virtualMachines/vmname":    &commonids.VirtualMachineId{},
+		"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myrg/providers/Microsoft.Network/networkInterfaces/someNI": &commonids.NetworkInterfaceId{},
 	}
-	var resp validator.StringResponse
 
-	v.ValidateString(context.Background(), req, &resp)
+	for k, v := range cases {
+		v := AzureResourceManagerId(v)
 
-	if len(resp.Diagnostics) != 0 {
-		for _, d := range resp.Diagnostics {
-			t.Errorf("unexpected diagnostic: %s: %s", d.Summary(), d.Detail())
+		req := validator.StringRequest{
+			ConfigValue: types.StringValue(k),
+		}
+		var resp validator.StringResponse
+
+		v.ValidateString(context.Background(), req, &resp)
+
+		if len(resp.Diagnostics) != 0 {
+			for _, d := range resp.Diagnostics {
+				t.Errorf("unexpected diagnostic: %s: %s", d.Summary(), d.Detail())
+			}
 		}
 	}
 }
