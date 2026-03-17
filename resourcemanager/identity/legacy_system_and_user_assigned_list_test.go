@@ -12,24 +12,28 @@ import (
 
 func TestLegacySystemUserAssignedListMarshal(t *testing.T) {
 	testData := []struct {
-		input                           *LegacySystemAndUserAssignedList
+		input                           any
+		expect                          map[string]any
 		expectedIdentityType            string
 		expectedUserAssignedIdentityIds []string
 		expectError                     bool
 	}{
 		{
-			input:                           nil,
-			expectedIdentityType:            "None",
-			expectedUserAssignedIdentityIds: []string{},
-		},
-		{
-			input:                           &LegacySystemAndUserAssignedList{},
+			input: &LegacySystemAndUserAssignedList{},
+			expect: map[string]any{
+				"type":                   "None",
+				"userAssignedIdentities": nil,
+			},
 			expectedIdentityType:            "None",
 			expectedUserAssignedIdentityIds: []string{},
 		},
 		{
 			input: &LegacySystemAndUserAssignedList{
 				Type: TypeNone,
+			},
+			expect: map[string]any{
+				"type":                   "None",
+				"userAssignedIdentities": nil,
 			},
 			expectedIdentityType:            "None",
 			expectedUserAssignedIdentityIds: []string{},
@@ -41,6 +45,10 @@ func TestLegacySystemUserAssignedListMarshal(t *testing.T) {
 					"first",
 				},
 			},
+			expect: map[string]any{
+				"type":                   "None",
+				"userAssignedIdentities": nil,
+			},
 			expectedIdentityType:            "None",
 			expectedUserAssignedIdentityIds: []string{
 				// intentionally empty since this is bad data
@@ -51,6 +59,23 @@ func TestLegacySystemUserAssignedListMarshal(t *testing.T) {
 				Type:        TypeSystemAssigned,
 				IdentityIds: []string{},
 			},
+			expect: map[string]any{
+				"type":                   "SystemAssigned",
+				"userAssignedIdentities": nil,
+			},
+			expectedIdentityType:            "SystemAssigned",
+			expectedUserAssignedIdentityIds: []string{},
+		},
+		{
+			// Value type (instead of pointer type)
+			input: LegacySystemAndUserAssignedList{
+				Type:        TypeSystemAssigned,
+				IdentityIds: []string{},
+			},
+			expect: map[string]any{
+				"type":                   "SystemAssigned",
+				"userAssignedIdentities": nil,
+			},
 			expectedIdentityType:            "SystemAssigned",
 			expectedUserAssignedIdentityIds: []string{},
 		},
@@ -58,6 +83,10 @@ func TestLegacySystemUserAssignedListMarshal(t *testing.T) {
 			input: &LegacySystemAndUserAssignedList{
 				Type:        TypeSystemAssignedUserAssigned,
 				IdentityIds: []string{},
+			},
+			expect: map[string]any{
+				"type":                   "SystemAssigned,UserAssigned",
+				"userAssignedIdentities": nil,
 			},
 			expectedIdentityType:            "SystemAssigned,UserAssigned",
 			expectedUserAssignedIdentityIds: []string{},
@@ -74,6 +103,10 @@ func TestLegacySystemUserAssignedListMarshal(t *testing.T) {
 				Type:        TypeUserAssigned,
 				IdentityIds: []string{},
 			},
+			expect: map[string]any{
+				"type":                   "UserAssigned",
+				"userAssignedIdentities": nil,
+			},
 			expectedIdentityType:            "UserAssigned",
 			expectedUserAssignedIdentityIds: []string{},
 		},
@@ -81,6 +114,13 @@ func TestLegacySystemUserAssignedListMarshal(t *testing.T) {
 			input: &LegacySystemAndUserAssignedList{
 				Type: TypeSystemAssignedUserAssigned,
 				IdentityIds: []string{
+					"first",
+					"second",
+				},
+			},
+			expect: map[string]any{
+				"type": "SystemAssigned,UserAssigned",
+				"userAssignedIdentities": []any{
 					"first",
 					"second",
 				},
@@ -109,6 +149,13 @@ func TestLegacySystemUserAssignedListMarshal(t *testing.T) {
 					"second",
 				},
 			},
+			expect: map[string]any{
+				"type": "UserAssigned",
+				"userAssignedIdentities": []any{
+					"first",
+					"second",
+				},
+			},
 			expectedIdentityType: "UserAssigned",
 			expectedUserAssignedIdentityIds: []string{
 				"first",
@@ -119,7 +166,7 @@ func TestLegacySystemUserAssignedListMarshal(t *testing.T) {
 	for i, v := range testData {
 		t.Logf("step %d..", i)
 
-		encoded, err := v.input.MarshalJSON()
+		encoded, err := json.Marshal(v.input)
 		if err != nil {
 			if v.expectError {
 				continue
@@ -129,6 +176,11 @@ func TestLegacySystemUserAssignedListMarshal(t *testing.T) {
 		}
 		if v.expectError {
 			t.Fatalf("expected an error but didn't get one")
+		}
+
+		expectEncoded, _ := json.Marshal(v.expect)
+		if string(encoded) != string(expectEncoded) {
+			t.Fatalf("marshaled JSON is not as expected. got=%v, expect=%v", string(encoded), string(expectEncoded))
 		}
 
 		var out map[string]interface{}

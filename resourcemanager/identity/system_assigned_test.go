@@ -10,20 +10,23 @@ import (
 
 func TestSystemAssignedMarshal(t *testing.T) {
 	testData := []struct {
-		input         *SystemAssigned
+		input         any
+		expect        map[string]any
 		expectedValue string
 	}{
 		{
-			input:         nil,
-			expectedValue: "None",
-		},
-		{
-			input:         &SystemAssigned{},
+			input: &SystemAssigned{},
+			expect: map[string]any{
+				"type": "None",
+			},
 			expectedValue: "None",
 		},
 		{
 			input: &SystemAssigned{
 				Type: TypeNone,
+			},
+			expect: map[string]any{
+				"type": "None",
 			},
 			expectedValue: "None",
 		},
@@ -31,11 +34,17 @@ func TestSystemAssignedMarshal(t *testing.T) {
 			input: &SystemAssigned{
 				Type: TypeSystemAssignedUserAssigned,
 			},
+			expect: map[string]any{
+				"type": "None",
+			},
 			expectedValue: "None",
 		},
 		{
 			input: &SystemAssigned{
 				Type: TypeUserAssigned,
+			},
+			expect: map[string]any{
+				"type": "None",
 			},
 			expectedValue: "None",
 		},
@@ -43,15 +52,33 @@ func TestSystemAssignedMarshal(t *testing.T) {
 			input: &SystemAssigned{
 				Type: TypeSystemAssigned,
 			},
+			expect: map[string]any{
+				"type": "SystemAssigned",
+			},
+			expectedValue: "SystemAssigned",
+		},
+		{
+			// Value type (instead of pointer type)
+			input: SystemAssigned{
+				Type: TypeSystemAssigned,
+			},
+			expect: map[string]any{
+				"type": "SystemAssigned",
+			},
 			expectedValue: "SystemAssigned",
 		},
 	}
 	for i, v := range testData {
 		t.Logf("step %d..", i)
 
-		encoded, err := v.input.MarshalJSON()
+		encoded, err := json.Marshal(v.input)
 		if err != nil {
 			t.Fatalf("marshaling: %+v", err)
+		}
+
+		expectEncoded, _ := json.Marshal(v.expect)
+		if string(encoded) != string(expectEncoded) {
+			t.Fatalf("marshaled JSON is not as expected. got=%v, expect=%v", string(encoded), string(expectEncoded))
 		}
 
 		var out map[string]interface{}

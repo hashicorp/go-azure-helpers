@@ -13,23 +13,27 @@ import (
 
 func TestSystemOrUserAssignedMapMarshal(t *testing.T) {
 	testData := []struct {
-		input                           *SystemOrUserAssignedMap
+		input                           any
+		expect                          map[string]any
 		expectedIdentityType            string
 		expectedUserAssignedIdentityIds []string
 	}{
 		{
-			input:                           nil,
-			expectedIdentityType:            "None",
-			expectedUserAssignedIdentityIds: []string{},
-		},
-		{
-			input:                           &SystemOrUserAssignedMap{},
+			input: &SystemOrUserAssignedMap{},
+			expect: map[string]any{
+				"type":                   "None",
+				"userAssignedIdentities": nil,
+			},
 			expectedIdentityType:            "None",
 			expectedUserAssignedIdentityIds: []string{},
 		},
 		{
 			input: &SystemOrUserAssignedMap{
 				Type: TypeNone,
+			},
+			expect: map[string]any{
+				"type":                   "None",
+				"userAssignedIdentities": nil,
 			},
 			expectedIdentityType:            "None",
 			expectedUserAssignedIdentityIds: []string{},
@@ -41,6 +45,10 @@ func TestSystemOrUserAssignedMapMarshal(t *testing.T) {
 					"first": {},
 				},
 			},
+			expect: map[string]any{
+				"type":                   "None",
+				"userAssignedIdentities": nil,
+			},
 			expectedIdentityType:            "None",
 			expectedUserAssignedIdentityIds: []string{
 				// intentionally empty since this is bad data
@@ -51,6 +59,23 @@ func TestSystemOrUserAssignedMapMarshal(t *testing.T) {
 				Type:        TypeSystemAssigned,
 				IdentityIds: map[string]UserAssignedIdentityDetails{},
 			},
+			expect: map[string]any{
+				"type":                   "SystemAssigned",
+				"userAssignedIdentities": nil,
+			},
+			expectedIdentityType:            "SystemAssigned",
+			expectedUserAssignedIdentityIds: []string{},
+		},
+		{
+			// Value type (instead of pointer type)
+			input: SystemOrUserAssignedMap{
+				Type:        TypeSystemAssigned,
+				IdentityIds: map[string]UserAssignedIdentityDetails{},
+			},
+			expect: map[string]any{
+				"type":                   "SystemAssigned",
+				"userAssignedIdentities": nil,
+			},
 			expectedIdentityType:            "SystemAssigned",
 			expectedUserAssignedIdentityIds: []string{},
 		},
@@ -59,6 +84,10 @@ func TestSystemOrUserAssignedMapMarshal(t *testing.T) {
 				Type:        TypeSystemAssignedUserAssigned,
 				IdentityIds: map[string]UserAssignedIdentityDetails{},
 			},
+			expect: map[string]any{
+				"type":                   "None",
+				"userAssignedIdentities": nil,
+			},
 			expectedIdentityType:            "None",
 			expectedUserAssignedIdentityIds: []string{},
 		},
@@ -66,6 +95,10 @@ func TestSystemOrUserAssignedMapMarshal(t *testing.T) {
 			input: &SystemOrUserAssignedMap{
 				Type:        TypeUserAssigned,
 				IdentityIds: map[string]UserAssignedIdentityDetails{},
+			},
+			expect: map[string]any{
+				"type":                   "UserAssigned",
+				"userAssignedIdentities": nil,
 			},
 			expectedIdentityType:            "UserAssigned",
 			expectedUserAssignedIdentityIds: []string{},
@@ -78,6 +111,10 @@ func TestSystemOrUserAssignedMapMarshal(t *testing.T) {
 					"first":  {},
 					"second": {},
 				},
+			},
+			expect: map[string]any{
+				"type":                   "None",
+				"userAssignedIdentities": nil,
 			},
 			expectedIdentityType:            "None",
 			expectedUserAssignedIdentityIds: []string{
@@ -92,6 +129,13 @@ func TestSystemOrUserAssignedMapMarshal(t *testing.T) {
 					"second": {},
 				},
 			},
+			expect: map[string]any{
+				"type": "UserAssigned",
+				"userAssignedIdentities": map[string]any{
+					"first":  map[string]any{},
+					"second": map[string]any{},
+				},
+			},
 			expectedIdentityType: "UserAssigned",
 			expectedUserAssignedIdentityIds: []string{
 				"first",
@@ -102,9 +146,14 @@ func TestSystemOrUserAssignedMapMarshal(t *testing.T) {
 	for i, v := range testData {
 		t.Logf("step %d..", i)
 
-		encoded, err := v.input.MarshalJSON()
+		encoded, err := json.Marshal(v.input)
 		if err != nil {
 			t.Fatalf("marshaling: %+v", err)
+		}
+
+		expectEncoded, _ := json.Marshal(v.expect)
+		if string(encoded) != string(expectEncoded) {
+			t.Fatalf("marshaled JSON is not as expected. got=%v, expect=%v", string(encoded), string(expectEncoded))
 		}
 
 		var out map[string]interface{}
