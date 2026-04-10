@@ -150,9 +150,19 @@ func TestSystemOrUserAssignedListMarshal(t *testing.T) {
 			t.Fatalf("marshaling: %+v", err)
 		}
 
+		encodedDirect, err := v.input.(json.Marshaler).MarshalJSON()
+		if err != nil {
+			t.Fatalf("direct marshaling: %+v", err)
+		}
+
 		expectEncoded, _ := json.Marshal(v.expect)
+
 		if string(encoded) != string(expectEncoded) {
 			t.Fatalf("marshaled JSON is not as expected. got=%v, expect=%v", string(encoded), string(expectEncoded))
+		}
+
+		if string(encodedDirect) != string(expectEncoded) {
+			t.Fatalf("direct marshaled JSON is not as expected. got=%v, expect=%v", string(encodedDirect), string(expectEncoded))
 		}
 
 		var out map[string]interface{}

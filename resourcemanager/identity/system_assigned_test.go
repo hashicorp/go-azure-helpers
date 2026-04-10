@@ -76,9 +76,19 @@ func TestSystemAssignedMarshal(t *testing.T) {
 			t.Fatalf("marshaling: %+v", err)
 		}
 
+		encodedDirect, err := v.input.(json.Marshaler).MarshalJSON()
+		if err != nil {
+			t.Fatalf("direct marshaling: %+v", err)
+		}
+
 		expectEncoded, _ := json.Marshal(v.expect)
+
 		if string(encoded) != string(expectEncoded) {
 			t.Fatalf("marshaled JSON is not as expected. got=%v, expect=%v", string(encoded), string(expectEncoded))
+		}
+
+		if string(encodedDirect) != string(expectEncoded) {
+			t.Fatalf("direct marshaled JSON is not as expected. got=%v, expect=%v", string(encodedDirect), string(expectEncoded))
 		}
 
 		var out map[string]interface{}
@@ -90,5 +100,6 @@ func TestSystemAssignedMarshal(t *testing.T) {
 		if v.expectedValue != actualValue {
 			t.Fatalf("expected %q but got %q", v.expectedValue, actualValue)
 		}
+
 	}
 }
