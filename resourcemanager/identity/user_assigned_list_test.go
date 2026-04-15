@@ -12,23 +12,27 @@ import (
 
 func TestUserAssignedListMarshal(t *testing.T) {
 	testData := []struct {
-		input                           *UserAssignedList
+		input                           any
+		expect                          map[string]any
 		expectedIdentityType            string
 		expectedUserAssignedIdentityIds []string
 	}{
 		{
-			input:                           nil,
-			expectedIdentityType:            "None",
-			expectedUserAssignedIdentityIds: []string{},
-		},
-		{
-			input:                           &UserAssignedList{},
+			input: &UserAssignedList{},
+			expect: map[string]any{
+				"type":                   "None",
+				"userAssignedIdentities": nil,
+			},
 			expectedIdentityType:            "None",
 			expectedUserAssignedIdentityIds: []string{},
 		},
 		{
 			input: &UserAssignedList{
 				Type: TypeNone,
+			},
+			expect: map[string]any{
+				"type":                   "None",
+				"userAssignedIdentities": nil,
 			},
 			expectedIdentityType:            "None",
 			expectedUserAssignedIdentityIds: []string{},
@@ -40,6 +44,10 @@ func TestUserAssignedListMarshal(t *testing.T) {
 					"first",
 				},
 			},
+			expect: map[string]any{
+				"type":                   "None",
+				"userAssignedIdentities": nil,
+			},
 			expectedIdentityType:            "None",
 			expectedUserAssignedIdentityIds: []string{
 				// intentionally empty since this is bad data
@@ -50,6 +58,10 @@ func TestUserAssignedListMarshal(t *testing.T) {
 				Type:        TypeSystemAssigned,
 				IdentityIds: []string{},
 			},
+			expect: map[string]any{
+				"type":                   "None",
+				"userAssignedIdentities": nil,
+			},
 			expectedIdentityType:            "None",
 			expectedUserAssignedIdentityIds: []string{},
 		},
@@ -58,6 +70,10 @@ func TestUserAssignedListMarshal(t *testing.T) {
 				Type:        TypeSystemAssignedUserAssigned,
 				IdentityIds: []string{},
 			},
+			expect: map[string]any{
+				"type":                   "None",
+				"userAssignedIdentities": nil,
+			},
 			expectedIdentityType:            "None",
 			expectedUserAssignedIdentityIds: []string{},
 		},
@@ -65,6 +81,23 @@ func TestUserAssignedListMarshal(t *testing.T) {
 			input: &UserAssignedList{
 				Type:        TypeUserAssigned,
 				IdentityIds: []string{},
+			},
+			expect: map[string]any{
+				"type":                   "UserAssigned",
+				"userAssignedIdentities": nil,
+			},
+			expectedIdentityType:            "UserAssigned",
+			expectedUserAssignedIdentityIds: []string{},
+		},
+		{
+			// Value type (instead of pointer type)
+			input: UserAssignedList{
+				Type:        TypeUserAssigned,
+				IdentityIds: []string{},
+			},
+			expect: map[string]any{
+				"type":                   "UserAssigned",
+				"userAssignedIdentities": nil,
 			},
 			expectedIdentityType:            "UserAssigned",
 			expectedUserAssignedIdentityIds: []string{},
@@ -77,6 +110,10 @@ func TestUserAssignedListMarshal(t *testing.T) {
 					"first",
 					"second",
 				},
+			},
+			expect: map[string]any{
+				"type":                   "None",
+				"userAssignedIdentities": nil,
 			},
 			expectedIdentityType:            "None",
 			expectedUserAssignedIdentityIds: []string{
@@ -91,6 +128,13 @@ func TestUserAssignedListMarshal(t *testing.T) {
 					"second",
 				},
 			},
+			expect: map[string]any{
+				"type": "UserAssigned",
+				"userAssignedIdentities": []any{
+					"first",
+					"second",
+				},
+			},
 			expectedIdentityType: "UserAssigned",
 			expectedUserAssignedIdentityIds: []string{
 				"first",
@@ -101,9 +145,24 @@ func TestUserAssignedListMarshal(t *testing.T) {
 	for i, v := range testData {
 		t.Logf("step %d..", i)
 
-		encoded, err := v.input.MarshalJSON()
+		encoded, err := json.Marshal(v.input)
 		if err != nil {
 			t.Fatalf("marshaling: %+v", err)
+		}
+
+		encodedDirect, err := v.input.(json.Marshaler).MarshalJSON()
+		if err != nil {
+			t.Fatalf("direct marshaling: %+v", err)
+		}
+
+		expectEncoded, _ := json.Marshal(v.expect)
+
+		if string(encoded) != string(expectEncoded) {
+			t.Fatalf("marshaled JSON is not as expected. got=%v, expect=%v", string(encoded), string(expectEncoded))
+		}
+
+		if string(encodedDirect) != string(expectEncoded) {
+			t.Fatalf("direct marshaled JSON is not as expected. got=%v, expect=%v", string(encodedDirect), string(expectEncoded))
 		}
 
 		var out map[string]interface{}
