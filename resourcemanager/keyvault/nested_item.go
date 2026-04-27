@@ -159,7 +159,7 @@ func ValidateNestedItemName(v interface{}, k string) (warnings []string, errors 
 	}
 
 	if len(name) > 127 {
-		errors = append(errors, fmt.Errorf("%q must be between 1 and 127 characters in length, got %d", k, len(name)))
+		errors = append(errors, fmt.Errorf("`%s` must be between 1 and 127 characters in length, got %d", k, len(name)))
 	}
 
 	if !regexp.MustCompile(`^[0-9a-zA-Z-]+$`).MatchString(v.(string)) {
