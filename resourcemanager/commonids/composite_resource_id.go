@@ -28,13 +28,13 @@ type CompositeResourceID[T1 resourceids.ResourceId, T2 resourceids.ResourceId] s
 func (id CompositeResourceID[T1, T2]) FromParseResult(_ resourceids.ParseResult) error {
 	if id.firstParseResult != nil {
 		if err := id.First.FromParseResult(*id.firstParseResult); err != nil {
-			fmt.Errorf("populating first ID (%s) of CompositeResourceID: %v", id.First.ID(), err)
+			return fmt.Errorf("populating first ID (%s) of CompositeResourceID: %v", id.First.ID(), err)
 		}
 	}
 
 	if id.secondParseResult != nil {
 		if err := id.Second.FromParseResult(*id.secondParseResult); err != nil {
-			fmt.Errorf("populating second ID (%s) of CompositeResourceID: %v", id.Second.ID(), err)
+			return fmt.Errorf("populating second ID (%s) of CompositeResourceID: %v", id.Second.ID(), err)
 		}
 	}
 
