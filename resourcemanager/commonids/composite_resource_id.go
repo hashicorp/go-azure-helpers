@@ -43,8 +43,8 @@ func (id CompositeResourceID[T1, T2]) FromParseResult(_ resourceids.ParseResult)
 
 func (id CompositeResourceID[T1, T2]) Segments() []resourceids.Segment {
 	return []resourceids.Segment{
-		resourceids.ResourceIDSegment("resourceID1", id.First.ID()),
-		resourceids.ResourceIDSegment("resourceID2", id.Second.ID()),
+		resourceids.ResourceIDSegment("resourceID1", resourceids.BuildExpectedResourceId(id.First.Segments())),
+		resourceids.ResourceIDSegment("resourceID2", resourceids.BuildExpectedResourceId(id.Second.Segments())),
 	}
 }
 
