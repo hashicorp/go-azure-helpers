@@ -1,8 +1,6 @@
 package keyvault
 
-import (
-	"testing"
-)
+import "testing"
 
 func TestNewNestedItemID(t *testing.T) {
 	cases := []struct {
@@ -39,6 +37,12 @@ func TestNewNestedItemID(t *testing.T) {
 			Scenario:        "managed hsm valid, with port",
 			KeyVaultBaseURL: "https://test.managedhsm.azure.net:443",
 			Expected:        "https://test.managedhsm.azure.net/keys/test/testVersionString",
+			ExpectError:     false,
+		},
+		{
+			Scenario:        "valid, a non default port gets preserved",
+			KeyVaultBaseURL: "https://test.example:5661",
+			Expected:        "https://test.example:5661/keys/test/testVersionString",
 			ExpectError:     false,
 		},
 	}
@@ -144,6 +148,18 @@ func TestParseNestedItemID(t *testing.T) {
 				NestedItemType:  NestedItemTypeKey,
 				KeyVaultBaseURL: "https://my-keyvault.managedhsm.azure.net",
 				Version:         "1492",
+			},
+		},
+		{
+			// When the API returns a non-default port (e.g. not HTTPS:443)
+			// we should ensure the port is included when round-tripped.
+			Input:       "https://my-keyvault.example:5661/keys/castle/fdf067c93bbb4b22bff4d8b7a9a56217",
+			ExpectError: false,
+			Expected: NestedItemID{
+				Name:            "castle",
+				NestedItemType:  NestedItemTypeKey,
+				KeyVaultBaseURL: "https://my-keyvault.example:5661",
+				Version:         "fdf067c93bbb4b22bff4d8b7a9a56217",
 			},
 		},
 	}
