@@ -27,6 +27,18 @@ func FromEnum[T ~string](input *T) (output string) {
 	return string(*input)
 }
 
+// FromEnumSlice is a helper function to convert a pointer to a slice of an Enum type to a slice of strings
+func FromEnumSlice[T ~string](input *[]T) []string {
+	if input == nil {
+		return nil
+	}
+	result := make([]string, 0, len(*input))
+	for _, v := range *input {
+		result = append(result, string(v))
+	}
+	return result
+}
+
 // To is a generic function that returns a pointer to the value provided.
 func To[T any](input T) *T {
 	return &input
@@ -39,5 +51,14 @@ func To[T any](input T) *T {
 // APIModel.SomeValue = pointer.ToEnum[someservice.SomeEnumType](model.SomeVariable)
 func ToEnum[T ~string](input string) *T {
 	result := T(input)
+	return &result
+}
+
+// ToEnumSlice is a helper function to convert a slice of strings to a slice of an Enum type
+func ToEnumSlice[T ~string](input []string) *[]T {
+	result := make([]T, 0, len(input))
+	for _, v := range input {
+		result = append(result, T(v))
+	}
 	return &result
 }
