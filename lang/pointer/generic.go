@@ -3,6 +3,8 @@
 
 package pointer
 
+import "reflect"
+
 // From is a generic function that returns the value of a pointer
 // If the pointer is nil, a zero value for the underlying type of the pointer is returned.
 func From[T any](input *T) (output T) {
@@ -41,6 +43,15 @@ func FromEnumSlice[T ~string](input *[]T) []string {
 
 // To is a generic function that returns a pointer to the value provided.
 func To[T any](input T) *T {
+	return &input
+}
+
+// ToOrNil is a generic function that returns a pointer to the value provided
+// unless the value is the zero value for the type (T), in which case it returns nil.
+func ToOrNil[T any](input T) *T {
+	if reflect.ValueOf(input).IsZero() {
+		return nil
+	}
 	return &input
 }
 
