@@ -48,4 +48,4 @@ require (
 	google.golang.org/protobuf v1.36.11 // indirect
 )
 
-go 1.26.4
+go 1.26.6

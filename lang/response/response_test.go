@@ -192,3 +192,59 @@ func TestWasStatusCode_StatusCodes(t *testing.T) {
 		}
 	}
 }
+
+func TestWasStatusCodes_StatusCodes(t *testing.T) {
+	testCases := []struct {
+		returnedStatusCode  int
+		checkForStatusCodes []int
+		result              bool
+		nilResponse         bool
+	}{
+		{
+			checkForStatusCodes: []int{http.StatusOK},
+			returnedStatusCode:  http.StatusOK,
+			result:              true,
+		},
+		{
+			checkForStatusCodes: []int{http.StatusOK},
+			returnedStatusCode:  http.StatusInternalServerError,
+			result:              false,
+		},
+		{
+			checkForStatusCodes: []int{http.StatusOK, http.StatusNotFound, http.StatusInternalServerError},
+			returnedStatusCode:  http.StatusInternalServerError,
+			result:              true,
+		},
+		{
+			checkForStatusCodes: []int{http.StatusForbidden, http.StatusNotFound, http.StatusInternalServerError},
+			returnedStatusCode:  http.StatusTeapot,
+			result:              false,
+		},
+		{
+			checkForStatusCodes: []int{},
+			returnedStatusCode:  http.StatusNotFound,
+			result:              false,
+		},
+		{
+			checkForStatusCodes: []int{http.StatusForbidden, http.StatusNotFound, http.StatusInternalServerError},
+			returnedStatusCode:  http.StatusNotFound,
+			result:              false,
+			nilResponse:         true,
+		},
+	}
+
+	for _, test := range testCases {
+		resp := &http.Response{
+			StatusCode: test.returnedStatusCode,
+		}
+
+		if test.nilResponse {
+			resp = nil
+		}
+
+		actual := WasStatusCodes(resp, test.checkForStatusCodes...)
+		if test.result != actual {
+			t.Fatalf("expected %t but got %t for status codes %d (returned) and %d (checking for)", test.result, actual, test.returnedStatusCode, test.checkForStatusCodes)
+		}
+	}
+}
