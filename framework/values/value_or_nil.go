@@ -1,3 +1,5 @@
+// Copyright IBM Corp. 2018, 2026
+
 package values
 
 import "github.com/hashicorp/terraform-plugin-framework/types"
