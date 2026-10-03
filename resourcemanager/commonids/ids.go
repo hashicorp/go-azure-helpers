@@ -14,6 +14,7 @@ func CommonIds() []resourceids.ResourceId {
 		&AppServicePlanId{},
 		&AutomationCompilationJobId{},
 		&AvailabilitySetId{},
+		&BingAccountId{},
 		&BotServiceId{},
 		&BotServiceChannelId{},
 		&ChaosStudioCapabilityId{},
